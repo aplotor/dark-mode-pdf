@@ -59,7 +59,7 @@ app.get("/download", (req, res) => {
 });
 
 io.on("connect", (socket) => {
-	console.log("socket connected");
+	console.log(`socket connected: ${socket.id}`);
 
 	socket.on("process", (random_file_name, transform_option) => {
 		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/convert_pdf.py`, random_file_name, transform_option]);
