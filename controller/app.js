@@ -75,9 +75,11 @@ io.on("connect", (socket) => {
 			python_print = python_print.substring(0, python_print.length-1);
 			console.log(python_print);
 			socket.emit("message", python_print);
-			if (python_print == "end\n") {
-				socket.emit("download", random_file_name);
-			}
+		});
+
+		spawn.on("exit", (exit_code) => {
+			console.log(`python process exited with code ${exit_code}`);
+			socket.emit("download", random_file_name);
 		});
 	});
 });
