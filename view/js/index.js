@@ -120,7 +120,7 @@ convert_button.addEventListener("click", (event) => {
 	req.send(data);
 
 	const transform_option = document.querySelector("input[name='transform_option']:checked").value;
-	socket.emit("process", random_file_name, transform_option);
+	socket.emit("transform", random_file_name, transform_option);
 });
 
 function reset() {
