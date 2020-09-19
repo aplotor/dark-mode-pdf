@@ -13,7 +13,7 @@ socket.on("message", (message) => {
 });
 
 socket.on("download", (random_file_name) => {
-	window.location = `/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
+	window.location = `/apps/dark-mode-pdf/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
 });
 
 const progress = document.getElementById("progress");

@@ -24,7 +24,7 @@ app.engine("handlebars", exp_hbs({
 	defaultLayout: "template.handlebars"
 }));
 
-app.get("/", (req, res) => {
+app.get("/apps/dark-mode-pdf", (req, res) => {
 	res.render("index.handlebars", {
 		title: "dark mode PDF"
 	});
@@ -36,7 +36,7 @@ app.post("/", (req, res) => {
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
 
-app.get("/download", (req, res) => {
+app.get("/apps/dark-mode-pdf/download", (req, res) => {
 	const s_io = req.app.get("s_io");
 
 	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
