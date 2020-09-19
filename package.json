@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "nodemon ./controller/app.js",
 		"prod_start": "pm2 start ./controller/app.js --name dark-mode-pdf",
+		"prod_restart": "pm2 restart ./controller/app.js",
 		"prod_stop": "pm2 stop ./controller/app.js"
 	},
 	"devDependencies": {
