@@ -71,7 +71,9 @@ io.on("connect", (socket) => {
 		spawn.stdout.on("data", (data) => {
 			let python_print = data.toString();
 			console.log(python_print);
-			io.to(socket.id).emit("message", python_print);
+			if (python_print != "\n") {
+				io.to(socket.id).emit("message", python_print);
+			}
 		});
 
 		spawn.on("exit", (exit_code) => {
