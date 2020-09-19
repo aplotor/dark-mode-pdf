@@ -65,11 +65,11 @@ if (option == "dim"):
 	time.sleep(0.1)
 else:
 	# use hidden temporary directory to hide temp images and intermediary pdf
-	print("creating temporary directory")
-	time.sleep(0.1)
+	# print("creating temporary directory")
+	# time.sleep(0.1)
 	with tempfile.TemporaryDirectory() as tempdirname:
-		print(f"created temporary directory {tempdirname}")
-		time.sleep(0.1)
+		# print(f"created temporary directory {tempdirname}")
+		# time.sleep(0.1)
 
 		# accepting input pdf
 		print("accepting input pdf")
