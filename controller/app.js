@@ -41,20 +41,18 @@ app.get("/download", (req, res) => {
 
 	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
 		console.log("sending dark mode pdf to your downloads");
-		s_io.emit("message", "sending dark mode pdf to your downloads");
+		s_io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
 
 		// delete files from server storage
 		console.log("deleting your data from the server");
-		s_io.emit("message", "deleting your data from the server");
+		s_io.to(req.query.socket_id).emit("message", "deleting your data from the server");
+
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (error) => ((error) ? console.error(error) : null));
-		// console.log("deleted input pdf from server");
-		// s_io.emit("message", "deleted input pdf from server");
+
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (error) => ((error) ? console.error(error) : null));
-		// console.log("deleted output pdf from server");
-		// s_io.emit("message", "deleted output pdf from server");
-		
+
 		console.log("your data has been deleted from the server");
-		s_io.emit("message", "your data has been deleted from the server");
+		s_io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
 	});
 });
 
@@ -73,12 +71,12 @@ io.on("connect", (socket) => {
 		spawn.stdout.on("data", (data) => {
 			let python_print = data.toString();
 			console.log(python_print);
-			socket.emit("message", python_print);
+			io.to(socket.id).emit("message", python_print);
 		});
 
 		spawn.on("exit", (exit_code) => {
 			console.log(`python process exited with code ${exit_code}`);
-			socket.emit("download", random_file_name);
+			io.to(socket.id).emit("download", random_file_name);
 		});
 	});
 });
