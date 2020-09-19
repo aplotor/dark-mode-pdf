@@ -142,7 +142,7 @@ else:
 				time.sleep(0.1)
 			elif (pid == 0): # child process
 				# OCR the pdf and create output pdf (PDF/A)
-				print("child process performing OCR (might take a while)")
+				print("child process performing OCR (this might take a while)")
 				time.sleep(0.1)
 				ocrmypdf.ocr(f"{tempdirname}/temp2.pdf", f"{project_root}/data/{file_name}_out.pdf", language="eng", force_ocr=True)
 				print("done OCR and created output pdf")
