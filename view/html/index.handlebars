@@ -1,0 +1,72 @@
+<div class="row justify-content-center m-0">
+	<div class="col-lg-4 col-md-6 mt-4 pt-4">
+		<h2 class="mb-3 white_text">dark mode PDF</h2>
+		<div class="form-group">
+			<div class="custom-file">
+				<input id="file_input" class="custom-file-input" type="file" accept=".pdf">
+				<label for="file_input" id="file_input_label" class="custom-file-label">choose file</label>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row justify-content-center m-0">
+	<div class="col-lg-4 col-md-6">
+		<h7 class="white_text">transform option</h7>
+	</div>
+</div>
+<div class="row justify-content-center">
+	<div class="col-lg-3 col-md-5">
+		<div class="form-check p-0">
+			<input id="no_ocr_dark" class="form-check-input" name="transform_option" type="radio" value="no_ocr_dark" checked>
+			<label class="form-check-label white_text" for="no_ocr_dark"> dark mode (no OCR)</label>
+		</div>
+		<div class="form-check p-0">
+			<input id="ocr_dark" class="form-check-input" name="transform_option" type="radio" value="ocr_dark">
+			<label class="form-check-label white_text" for="no_ocr_dark"> dark mode (OCR)</label>
+		</div>
+		<div class="form-check p-0">
+			<input id="dim" class="form-check-input" name="transform_option" type="radio" value="dim">
+			<label class="form-check-label white_text" for="dim"> dim</label>
+		</div>
+	</div>
+</div>
+<div class="row justify-content-center">
+	<div class="col-lg-3 col-md-4 pr-0">
+		<div id="alert_wrapper"></div>
+		<button id="loading_button" class="btn btn-primary d-none" type="button" disabled>
+			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+		</button>
+	</div>
+	<div class="col-lg-1 col-md-2 pl-0">
+		<button id="convert_button" class="btn btn-primary float-right">convert</button>
+		<button id="cancel_button" class="btn btn-secondary float-right d-none" type="button">cancel</button>
+	</div>
+</div>
+<div class="row justify-content-center">
+	<div class="col-lg-4 col-md-6">
+		<div id="progress_wrapper" class="d-none">
+			<label id="progress_status" class="white_text">50% uploaded</label>
+			<div class="progress mb-3">
+				<div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" area-valuemin="0" area-valuemax="100"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row justify-content-center">
+	<div class="terminal">
+		<div class="messages">
+			<p id="gt_sign" class="white_text">> <span class="blinking_cursor">|</span></p>
+		</div>
+	</div>
+</div>
+<div class="row justify-content-center">
+	<a class="icon" href="https://github.com/j9108c/dark-mode-pdf" target="_blank"><i class="fab fa-github"></i></a>
+</div>
+<div class="row justify-content-center">
+	<a id="bmc" class="white_text" target="_blank" href="https://www.buymeacoffee.com/j9108c">buy me a coffee / support server costs</a>
+</div>
+<div class="row justify-content-center m-0">
+	<h5 class="white_text">&#169; 2020, released under the <a class="white_text" target="_blank" href="https://opensource.org/licenses/MIT">MIT License</a></h5>
+</div>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../js/index.js"></script>

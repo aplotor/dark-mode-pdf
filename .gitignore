@@ -1,0 +1,10 @@
+# ignore
+**/#*
+**/.*
+**/_*
+node_modules
+virtual_environment
+
+# keep
+!.git
+!.gitignore

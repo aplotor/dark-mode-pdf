@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
+body {
+	font-family: "Poppins", sans-serif;
+	background: rgb(43, 43, 43);
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+h5 {
+	font-size: 8px;
+}
+
+#bmc {
+	font-size: 10px;
+}
+
+.row {
+	margin: 0 0 10px 0;
+}
+
+.white_text {
+	color: white;
+}
+
+.terminal {
+	width: 600px;
+	height: 350px;
+	background: rgb(80, 80, 80);
+	border-radius: 5px;
+	padding: 10px;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+.terminal::-webkit-scrollbar {
+	width: 12px;
+}
+
+.terminal::-webkit-scrollbar-track {
+	background: rgb(80, 80, 80);
+	border-radius: 5px;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+	background-color: rgb(43, 43, 43);
+	border-radius: 10px;
+	border: 3px solid rgb(80, 80, 80);
+}
+
+.terminal_text {
+	color: white;
+	font-family: monospace, sans-serif;
+}
+
+.blinking_cursor {
+	font-weight: 100;
+	color: white;
+	animation: 1s blink step-end infinite;
+}
+@keyframes blink {
+	from, to {
+		color: transparent;
+	}
+	50% {
+		color: white;
+	}
+}
+
+.icon {
+	font-size: 60px;
+}
+
+.fa-github {
+	color: rgb(60, 60, 60);
+}
+
+.fa-github:hover {
+	color: rgb(120, 120, 120);
+}

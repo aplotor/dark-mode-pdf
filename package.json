@@ -1,0 +1,19 @@
+{
+	"name": "dark-mode-pdf",
+	"author": "j9108c",
+	"main": "./controller/app.js",
+	"scripts": {
+		"dev": "nodemon ./controller/app.js",
+		"prod_start": "pm2 start ./controller/app.js --name dark-mode-pdf",
+		"prod_stop": "pm2 stop ./controller/app.js"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.4"
+	},
+	"dependencies": {
+		"express": "^4.17.1",
+		"express-fileupload": "^1.1.7-alpha.3",
+		"express-handlebars": "^4.0.4",
+		"socket.io": "^2.3.0"
+	}
+}
