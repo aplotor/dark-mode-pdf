@@ -24,7 +24,11 @@ app.engine("handlebars", exp_hbs({
 	defaultLayout: "template.handlebars"
 }));
 
-app.get("/", (req, res) => {
+app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
+	if (req.url == "/") {
+		res.redirect(301, "/apps/dark-mode-pdf");
+	}
+
 	res.render("index.handlebars", {
 		title: "dark mode PDF"
 	});
