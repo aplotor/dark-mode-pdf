@@ -24,7 +24,7 @@ app.engine("handlebars", exp_hbs({
 	defaultLayout: "template.handlebars"
 }));
 
-app.get("/apps/dark-mode-pdf", (req, res) => {
+app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 	res.render("index.handlebars", {
 		title: "dark mode PDF"
 	});
