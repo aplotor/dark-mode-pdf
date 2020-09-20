@@ -17,14 +17,14 @@ option = sys.argv[2]
 # print(option)
 
 print("\nstart")
-time.sleep(0.1)
+time.sleep(0.1) # need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
 
 i = 1
 
 if (option == "dim"):
 	# accepting input pdf
 	print("accepting input pdf")
-	time.sleep(0.1) # need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
+	time.sleep(0.1)
 	inpdf = f"{project_root}/data/{file_name}_in.pdf"
 	print("accepted input pdf")
 	time.sleep(0.1)
