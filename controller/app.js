@@ -25,7 +25,7 @@ app.engine("handlebars", exp_hbs({
 }));
 
 app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
-	if (req.url == "/") {
+	if (req.url == "/" || req.url.endsWith("/")) {
 		res.redirect(301, "/apps/dark-mode-pdf");
 	}
 
