@@ -61,7 +61,7 @@ convert_button.addEventListener("click", (event) => {
 		return null;
 	}
 
-	const file_size_limit = 15728640; // 15mb (https://www.gbmb.org/mb-to-bytes)
+	const file_size_limit = 15728640; // 15mb
 	if (file_size > file_size_limit) {
 		show_alert(`file size limit exceeded (${file_size_limit/1048576}mb)`, "warning");
 		return null;
