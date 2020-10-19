@@ -14,8 +14,7 @@ const node_pg = require("pg");
 
 const secrets = require(`${project_root}/_secrets.js`);
 
-const sql_connection = secrets.sql_connection;
-const sql_client = new node_pg.Client(sql_connection);
+const sql_client = new node_pg.Client(secrets.sql_connection);
 sql_client.connect((err) => {
 	if (err) {
 		console.error(err);
