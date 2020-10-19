@@ -25,14 +25,16 @@ sql_client.connect((err) => {
 			"create table if not exists visit (" +
 				"id int primary key, " +
 				"count int not null" +
-			")"
-		, (err, result) => ((err) ? console.error(err) : null));
+			")",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
 	
 		sql_client.query(
 			"insert into visit " +
 			"values (0, 0) " +
-			"on conflict do nothing"
-		, (err, result) => ((err) ? console.error(err) : null));
+			"on conflict do nothing",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
 	}
 });
 
@@ -61,8 +63,9 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 	sql_client.query(
 		"update visit " +
 		"set count=count+1 " +
-		"where id=0"
-	, (err, result) => ((err) ? console.error(err) : null));
+		"where id=0",
+		(err, result) => ((err) ? console.error(err) : null)
+	);
 });
 
 app.post("/", (req, res) => {
