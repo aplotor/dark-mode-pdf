@@ -30,7 +30,7 @@ sql_client.connect((err) => {
 	
 		sql_client.query(
 			"insert into visit " +
-			"values (1, 0) " +
+			"values (0, 0) " +
 			"on conflict do nothing"
 		, (err, result) => ((err) ? console.error(err) : null));
 	}
@@ -60,7 +60,8 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 
 	sql_client.query(
 		"update visit " +
-		"set count=count+1"
+		"set count=count+1 " +
+		"where id=0"
 	, (err, result) => ((err) ? console.error(err) : null));
 });
 
