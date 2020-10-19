@@ -10,6 +10,32 @@ const file_upload = require("express-fileupload");
 const http = require("http");
 const socket_io = require("socket.io");
 const file_system = require("fs");
+const node_pg = require("pg");
+
+const secrets = require(`${project_root}/_secrets.js`);
+
+const sql_connection = secrets.sql_connection;
+const sql_client = new node_pg.Client(sql_connection);
+sql_client.connect((err) => {
+	if (err) {
+		console.error(err);
+	} else {
+		console.log("connected to sql db");
+
+		sql_client.query(
+			"create table if not exists visit (" +
+				"id int primary key, " +
+				"count int not null" +
+			")"
+		, (err, result) => ((err) ? console.error(err) : null));
+	
+		sql_client.query(
+			"insert into visit " +
+			"values (1, 0) " +
+			"on conflict do nothing"
+		, (err, result) => ((err) ? console.error(err) : null));
+	}
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -32,10 +58,15 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 	res.render("index.handlebars", {
 		title: "dark mode PDF"
 	});
+
+	sql_client.query(
+		"update visit " +
+		"set count=count+1"
+	, (err, result) => ((err) ? console.error(err) : null));
 });
 
 app.post("/", (req, res) => {
-	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (error) => ((error) ? console.error(error) : null));
+	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
@@ -51,9 +82,9 @@ app.get("/download", (req, res) => {
 		console.log("deleting your data from the server");
 		s_io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (error) => ((error) ? console.error(error) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (error) => ((error) ? console.error(error) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
 		s_io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
