@@ -17,6 +17,10 @@ h5 {
 	font-size: 10px;
 }
 
+.custom-file-label::after {
+    content: "browse";
+}
+
 .row {
 	margin: 0 0 10px 0;
 }
