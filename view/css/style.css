@@ -17,6 +17,10 @@ h5 {
 	font-size: 10px;
 }
 
+.custom-file-label {
+	overflow: hidden;
+}
+
 .custom-file-label::after {
     content: "browse";
 }
