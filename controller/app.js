@@ -43,7 +43,6 @@ const server = http.createServer(app);
 const io = socket_io(server);
 app.use(express.static(`${project_root}/view`));
 app.use(file_upload());
-app.set("s_io", io);
 app.set("views", `${project_root}/view/html`);
 app.set("view engine", "handlebars");
 app.engine("handlebars", exp_hbs({
@@ -75,22 +74,20 @@ app.post("/", (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-	const s_io = req.app.get("s_io");
-
 	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
 		console.log("sending dark mode pdf to your downloads");
-		s_io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
+		io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
 
 		// delete files from server storage
 		console.log("deleting your data from the server");
-		s_io.to(req.query.socket_id).emit("message", "deleting your data from the server");
+		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
-		s_io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
+		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
 	});
 });
 
@@ -102,7 +99,6 @@ io.on("connect", (socket) => {
 
 		spawn.stderr.on("data", (data) => { // if error in python process
 			let python_print = data.toString();
-			python_print = python_print.substring(0, python_print.length-1);
 			console.error(python_print);
 		});
 

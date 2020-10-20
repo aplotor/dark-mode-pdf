@@ -14,6 +14,8 @@ socket.on("message", (message) => {
 
 socket.on("download", (random_file_name) => {
 	window.location = `/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
+
+	alert_wrapper.innerHTML = "";
 });
 
 const progress = document.getElementById("progress");
