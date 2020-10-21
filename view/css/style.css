@@ -22,7 +22,7 @@ h5 {
 }
 
 .custom-file-label::after {
-    content: "browse";
+	content: "browse";
 }
 
 .row {

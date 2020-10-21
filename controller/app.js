@@ -56,7 +56,8 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 	}
 
 	res.render("index.handlebars", {
-		title: "dark mode PDF"
+		title: "dark mode PDF",
+		description: "converts PDFs to dark mode"
 	});
 
 	sql_client.query(
