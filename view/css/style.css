@@ -2,19 +2,16 @@
 
 body {
 	font-family: "Poppins", sans-serif;
+	color: white;
 	background: rgb(43, 43, 43);
+}
+
+a {
+	color: white;
 }
 
 a:hover {
 	text-decoration: none;
-}
-
-h5 {
-	font-size: 8px;
-}
-
-#bmc {
-	font-size: 10px;
 }
 
 .custom-file-label {
@@ -27,10 +24,6 @@ h5 {
 
 .row {
 	margin: 0 0 10px 0;
-}
-
-.white_text {
-	color: white;
 }
 
 .terminal {
@@ -87,4 +80,12 @@ h5 {
 
 .fa-github:hover {
 	color: rgb(120, 120, 120);
+}
+
+.font_size_8 {
+	font-size: 8px;
+}
+
+.font_size_10 {
+	font-size: 10px;
 }
