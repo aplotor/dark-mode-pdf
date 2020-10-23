@@ -143,7 +143,7 @@ function output_message(message) {
 	const div = document.createElement("div");
 	div.classList.add("message");
 	div.innerHTML = `
-		<p class="terminal_text">> ${message}</p>
+		<p>> ${message}</p>
 	`;
 	messages.appendChild(div);
 }
