@@ -1,3 +1,12 @@
+let config = null;
+const argv = process.argv;
+if (argv[0].slice(0, 13) == "/home/j9108c/") {
+	config = "dev";
+} else {
+	config = "prod";
+}
+console.log(config);
+
 let project_root = __dirname.split("/");
 project_root.pop();
 project_root = project_root.join("/");
@@ -60,12 +69,14 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 		description: "converts PDFs to dark mode"
 	});
 
-	sql_client.query(
-		"update visit " +
-		"set count=count+1 " +
-		"where id=0",
-		(err, result) => ((err) ? console.error(err) : null)
-	);
+	if (config == "prod") {
+		sql_client.query(
+			"update visit " +
+			"set count=count+1 " +
+			"where id=0",
+			(err, result) => ((err) ? console.error(err) : null)
+		);	
+	}
 });
 
 app.post("/", (req, res) => {
