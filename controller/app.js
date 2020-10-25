@@ -1,6 +1,5 @@
 let config = null;
-const argv = process.argv;
-if (argv[0].slice(0, 13) == "/home/j9108c/") {
+if (process.argv[0].slice(0, 13) == "/home/j9108c/") {
 	config = "dev";
 } else {
 	config = "prod";
