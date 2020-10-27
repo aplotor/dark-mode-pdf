@@ -109,7 +109,7 @@ io.on("connect", (socket) => {
 			"select count " +
 			"from visit " +
 			"where id=0",
-			(err, result) => ((err) ? console.error(err) : io.to(socket.id).emit("update_visit_count", result.rows[0].count))
+			(err, result) => ((err) ? console.error(err) : io.emit("update_visit_count", result.rows[0].count))
 		);
 	}
 
