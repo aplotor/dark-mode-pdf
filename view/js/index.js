@@ -8,14 +8,17 @@ socket.on("message", (message) => {
 
 	add_blink_line();
 
-	// scroll down
-	terminal.scrollTop = terminal.scrollHeight;
+	terminal.scrollTop = terminal.scrollHeight; // scroll down
 });
 
 socket.on("download", (random_file_name) => {
 	window.location = `/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
 
 	alert_wrapper.innerHTML = "";
+});
+
+socket.on("update_visit_count", (visit_count) => {
+	domain_visits.innerHTML = `domain visits: ${visit_count}`;
 });
 
 const progress = document.getElementById("progress");
@@ -32,6 +35,8 @@ const file_input = document.getElementById("file_input");
 const file_input_label = document.getElementById("file_input_label");
 
 const send_download = document.getElementById("send_download");
+
+const domain_visits = document.getElementById("domain_visits");
 
 function show_alert(message, alert) {
 	alert_wrapper.innerHTML = `

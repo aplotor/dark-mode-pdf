@@ -67,15 +67,6 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 		title: "dark mode PDF",
 		description: "converts PDFs to dark mode"
 	});
-
-	if (config == "prod") {
-		sql_client.query(
-			"update visit " +
-			"set count=count+1 " +
-			"where id=0",
-			(err, result) => ((err) ? console.error(err) : null)
-		);	
-	}
 });
 
 app.post("/", (req, res) => {
@@ -104,6 +95,23 @@ app.get("/download", (req, res) => {
 
 io.on("connect", (socket) => {
 	console.log(`socket connected: ${socket.id}`);
+	if (config == "dev") {
+
+	} else if (config == "prod") {
+		sql_client.query(
+			"update visit " +
+			"set count=count+1 " +
+			"where id=0",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
+
+		sql_client.query(
+			"select count " +
+			"from visit " +
+			"where id=0",
+			(err, result) => ((err) ? console.error(err) : io.to(socket.id).emit("update_visit_count", result.rows[0].count))
+		);
+	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
 		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/convert_pdf.py`, random_file_name, transform_option]);
