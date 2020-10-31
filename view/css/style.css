@@ -28,6 +28,10 @@ a:hover {
 	}
 }
 
+.custom-file {
+	overflow: hidden;
+}
+
 .custom-file-label {
 	overflow: hidden;
 }
