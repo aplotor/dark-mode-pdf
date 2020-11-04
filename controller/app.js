@@ -131,7 +131,7 @@ io.on("connect", (socket) => {
 
 		spawn.on("exit", (exit_code) => {
 			console.log(`python process exited with code ${exit_code}`);
-			io.to(socket.id).emit(`python process exited with code ${exit_code}`, python_print);
+			io.to(socket.id).emit("message", `python process exited with code ${exit_code}`);
 			io.to(socket.id).emit("download", random_file_name);
 		});
 	});
