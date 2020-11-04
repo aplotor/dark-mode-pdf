@@ -124,10 +124,13 @@ convert_button.addEventListener("click", (event) => {
 	});
 
 	req.open("post", "/");
+	req.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) { // readystate 4 = data transfer complete
+			const transform_option = document.querySelector("input[name='transform_option']:checked").value;
+			socket.emit("transform", random_file_name, transform_option);
+		}
+	}
 	req.send(data);
-
-	const transform_option = document.querySelector("input[name='transform_option']:checked").value;
-	socket.emit("transform", random_file_name, transform_option);
 });
 
 function reset() {

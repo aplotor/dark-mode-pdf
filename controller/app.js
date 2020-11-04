@@ -84,12 +84,15 @@ app.get("/download", (req, res) => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
-		// file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		// file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
 		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
+
+		console.log(`end ${req.query.random_file_name}`);
+		io.to(req.query.socket_id).emit("message", `end ${req.query.random_file_name}`);
 	});
 });
 
@@ -114,6 +117,9 @@ io.on("connect", (socket) => {
 	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
+		console.log(`start ${random_file_name}`);
+		io.to(socket.id).emit("message", `start ${random_file_name}`);
+
 		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/convert_pdf.py`, random_file_name, transform_option]);
 
 		spawn.stderr.on("data", (data) => { // if error in python process
