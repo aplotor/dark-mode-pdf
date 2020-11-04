@@ -13,7 +13,7 @@ project_root = os.getcwd() # where the app is started from; NOT where the contro
 
 file_name = sys.argv[1]
 # print(file_name)
-time.sleep(0.1)
+# time.sleep(0.1)
 option = sys.argv[2]
 # print(option)
 # time.sleep(0.1)
