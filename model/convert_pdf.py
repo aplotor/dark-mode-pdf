@@ -12,9 +12,11 @@ project_root = os.getcwd() # where the app is started from; NOT where the contro
 # print(project_root)
 
 file_name = sys.argv[1]
-# print(file_name)
+print(file_name)
+time.sleep(0.1)
 option = sys.argv[2]
-# print(option)
+print(option)
+time.sleep(0.1)
 
 print("\nstart")
 time.sleep(0.1) # need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
