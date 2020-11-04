@@ -15,21 +15,22 @@ file_name = sys.argv[1]
 print(file_name)
 time.sleep(0.1)
 option = sys.argv[2]
-print(option)
-time.sleep(0.1)
+# print(option)
+# time.sleep(0.1)
 
 print("\nstart")
 time.sleep(0.1) # need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
 
+# accepting input pdf
+print("accepting input pdf")
+time.sleep(0.1)
+inpdf = f"{project_root}/data/{file_name}_in.pdf"
+print("accepted input pdf")
+time.sleep(0.1)
+
 i = 1
 
 if (option == "dim"):
-	# accepting input pdf
-	print("accepting input pdf")
-	time.sleep(0.1)
-	inpdf = f"{project_root}/data/{file_name}_in.pdf"
-	print("accepted input pdf")
-	time.sleep(0.1)
 	read_inpdf = pdfrw.PdfReader(inpdf)
 	inpdf_pages = read_inpdf.pages
 	inpdf_num_pages = len(read_inpdf.pages)
@@ -72,13 +73,6 @@ else:
 	with tempfile.TemporaryDirectory() as tempdirname:
 		# print(f"created temporary directory {tempdirname}")
 		# time.sleep(0.1)
-
-		# accepting input pdf
-		print("accepting input pdf")
-		time.sleep(0.1)
-		inpdf = f"{project_root}/data/{file_name}_in.pdf"
-		print("accepted input pdf")
-		time.sleep(0.1)
 
 		# converting input pdf pages to temp images
 		print("converting pdf pages to dark mode")

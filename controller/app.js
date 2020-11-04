@@ -84,9 +84,9 @@ app.get("/download", (req, res) => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
+		// file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
+		// file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
 		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
