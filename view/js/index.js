@@ -34,8 +34,6 @@ const alert_wrapper = document.getElementById("alert_wrapper");
 const file_input = document.getElementById("file_input");
 const file_input_label = document.getElementById("file_input_label");
 
-const send_download = document.getElementById("send_download");
-
 const domain_visits = document.getElementById("domain_visits");
 
 function show_alert(message, alert) {
