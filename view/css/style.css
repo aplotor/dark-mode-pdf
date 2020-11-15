@@ -1,9 +1,21 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins");
 
+html {
+	position: relative;
+	min-height: 100%;
+}
+
 body {
 	font-family: "Poppins", sans-serif;
 	color: white;
 	background: rgb(43, 43, 43);
+	margin: 0 0 75px 0; /* bottom px changes sticky footer position */
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	width: calc(100% - 30px);
 }
 
 a {
@@ -50,6 +62,10 @@ a:hover {
 
 .font_size_8 {
 	font-size: 8px;
+}
+
+.font_size_9 {
+	font-size: 9px;
 }
 
 .font_size_10 {

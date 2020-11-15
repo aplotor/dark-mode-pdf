@@ -36,7 +36,7 @@ sql_client.connect((err) => {
 			")",
 			(err, result) => ((err) ? console.error(err) : null)
 		);
-	
+		
 		sql_client.query(
 			"insert into visit " +
 			"values (0, 0) " +
