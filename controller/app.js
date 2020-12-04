@@ -23,28 +23,32 @@ const node_pg = require("pg");
 const secrets = require(`${project_root}/_secrets.js`);
 
 const sql_client = new node_pg.Client(secrets.sql_connection);
-sql_client.connect((err) => {
-	if (err) {
-		console.error(err);
-	} else {
-		console.log("connected to sql db");
+if (config == "dev") {
 
-		sql_client.query(
-			"create table if not exists visit (" +
-				"id int primary key, " +
-				"count int not null" +
-			")",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-		
-		sql_client.query(
-			"insert into visit " +
-			"values (0, 0) " +
-			"on conflict do nothing",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-	}
-});
+} else if (config == "prod") {
+	sql_client.connect((err) => {
+		if (err) {
+			console.error(err);
+		} else {
+			console.log("connected to sql db");
+	
+			sql_client.query(
+				"create table if not exists visit (" +
+					"id int primary key, " +
+					"count int not null" +
+				")",
+				(err, result) => ((err) ? console.error(err) : null)
+			);
+			
+			sql_client.query(
+				"insert into visit " +
+				"values (0, 0) " +
+				"on conflict do nothing",
+				(err, result) => ((err) ? console.error(err) : null)
+			);
+		}
+	});
+}
 
 const app = express();
 const server = http.createServer(app);

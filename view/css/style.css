@@ -18,6 +18,24 @@ footer {
 	width: calc(100% - 30px);
 }
 
+::-webkit-scrollbar {
+	width: 16px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgb(43, 43, 43);
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgb(80, 80, 80);
+	border: 5px solid rgb(43, 43, 43);
+	border-radius: 16px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	border: 3px solid rgb(43, 43, 43);
+}
+
 a {
 	color: white;
 }
@@ -100,13 +118,17 @@ a:hover {
 	width: 12px;
 }
 
-.terminal::-webkit-scrollbar-thumb {
-	background: rgb(43, 43, 43);
-	border-radius: 10px;
-	border: 3px solid rgb(80, 80, 80);
-}
-
 .terminal::-webkit-scrollbar-track {
 	background: rgb(80, 80, 80);
 	border-radius: 5px;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+	background: rgb(43, 43, 43);
+	border: 3px solid rgb(80, 80, 80);
+	border-radius: 12px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+	border: 2px solid rgb(80, 80, 80);
 }
