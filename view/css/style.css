@@ -12,28 +12,28 @@ body {
 	margin: 0 0 75px 0; /* bottom px changes sticky footer position */
 }
 
-footer {
-	position: absolute;
-	bottom: 0;
-	width: calc(100% - 30px);
-}
-
-::-webkit-scrollbar {
+body::-webkit-scrollbar {
 	width: 16px;
 }
 
-::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track {
 	background: rgb(43, 43, 43);
 }
 
-::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
 	background: rgb(80, 80, 80);
 	border: 5px solid rgb(43, 43, 43);
 	border-radius: 16px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+body::-webkit-scrollbar-thumb:hover {
 	border: 3px solid rgb(43, 43, 43);
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	width: calc(100% - 30px);
 }
 
 a {
