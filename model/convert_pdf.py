@@ -18,7 +18,6 @@ option = sys.argv[2]
 # print(option)
 # time.sleep(0.1)
 
-# accepting input pdf
 print("accepting input pdf")
 time.sleep(0.1) # need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
 inpdf = f"{project_root}/data/{file_name}_in.pdf"
@@ -32,19 +31,19 @@ if (option == "dim"):
 	inpdf_pages = read_inpdf.pages
 	inpdf_num_pages = len(read_inpdf.pages)
 
-	# setting up input pdf to transfer to reportlab canvas
+	# set up input pdf to transfer to reportlab canvas
 	print("setting up input pdf to transfer to reportlab canvas")
 	time.sleep(0.1)
 	inpdf_pages = [pdfrw.buildxobj.pagexobj(page) for page in inpdf_pages[0:inpdf_num_pages]]
 
-	# creating reportlab canvas
+	# create reportlab canvas
 	print("creating reportlab canvas")
 	time.sleep(0.1)
 	outpdf = f"{project_root}/data/{file_name}_out.pdf"
 	canvas = reportlab.pdfgen.canvas.Canvas(outpdf, pagesize=reportlab.lib.pagesizes.A4)
 	canvas.setTitle("")
 
-	# putting input pdf pages onto canvas and adding a dimmer layer on top of each page
+	# put input pdf pages onto canvas and add a dimmer layer on top of each page
 	print("filling canvas and dimming pages")
 	time.sleep(0.1)
 	for page in inpdf_pages:
@@ -60,8 +59,11 @@ if (option == "dim"):
 			time.sleep(0.1)
 		i += 1
 
-	canvas.save()
 	print(f"done all pages ({i-1})")
+	time.sleep(0.1)
+
+	canvas.save()
+	print("created output pdf")
 	time.sleep(0.1)
 else:
 	# use hidden temporary directory to hide temp images and intermediary pdf
@@ -71,15 +73,17 @@ else:
 		# print(f"created temporary directory {tempdirname}")
 		# time.sleep(0.1)
 
-		# converting input pdf pages to temp images
+		# convert input pdf pages to images
 		print("converting pdf pages to dark mode")
 		time.sleep(0.1)
-		images = pdf2image.convert_from_path(inpdf, dpi=200, output_folder=tempdirname)
+		images = pdf2image.convert_from_path(inpdf, dpi=200, output_folder=tempdirname) # pdf -> list of PIL image objects
+
+		# convert images to dark mode
 		for image in images:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
 			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=(255,255,255))
-			image.save(f"{tempdirname}/image{str(i)}.jpg")
+			image.save(f"{tempdirname}/image{str(i)}.jpg", format="JPEG", optimize=True)
 			if (i == 1):
 				print("done 1 page")
 				time.sleep(0.1)
@@ -90,41 +94,23 @@ else:
 		print(f"done all pages ({i-1})")
 		time.sleep(0.1)
 
-		# creating temp pdf from temp images
-		print("creating temp pdf from temp pages")
+		# combine images into pdf
+		print("creating pdf from temp pages")
 		time.sleep(0.1)
 		image1 = PIL.Image.open(f"{tempdirname}/image1.jpg")
 		images = []
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{tempdirname}/image{str(num)}.jpg"))
-		image1.save(f"{tempdirname}/temp.pdf", "PDF", resolution=200, save_all=True, append_images=images)
-		print("created temp pdf")
-		time.sleep(0.1)
-
 		if (option == "no_ocr_dark"):
-			# recreate the pdf without title so that the title will change to match the filename
-			print("recreating pdf without title")
-			time.sleep(0.1)
-			inpdf = f"{tempdirname}/temp.pdf"
-			outpdf = f"{project_root}/data/{file_name}_out.pdf"
-			trailer = pdfrw.PdfReader(inpdf)
-			trailer.Info.Title = ""
-			pdfrw.PdfWriter(outpdf, trailer=trailer).write()
-			print("recreated pdf without title")
+			image1.save(f"{project_root}/data/{file_name}_out.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=250) # resolution affects page dimensions, not file size
+			print("created output pdf")
 			time.sleep(0.1)
 		elif (option == "ocr_dark"):
-			# recreate the temp pdf without title so that the title will change to match the filename
-			print("recreating temp pdf without title")
-			time.sleep(0.1)
-			inpdf = f"{tempdirname}/temp.pdf"
-			outpdf = f"{tempdirname}/temp2.pdf"
-			trailer = pdfrw.PdfReader(inpdf)
-			trailer.Info.Title = ""
-			pdfrw.PdfWriter(outpdf, trailer=trailer).write()
-			print("recreated temp pdf without title")
+			image1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=250) # resolution affects page dimensions, not file size
+			print("created temp pdf")
 			time.sleep(0.1)
 
-			# fork a child process to perform the OCR so that the application will survive even if ocrmypdf() fails due to insufficient privileges
+			# OCR: fork a child process to perform the OCR so that the application will survive if ocrmypdf() fails
 			print("forking process to perform OCR")
 			time.sleep(0.1)
 			pid = os.fork()
@@ -137,7 +123,9 @@ else:
 				# OCR the pdf and create output pdf (PDF/A)
 				print("child process performing OCR (this might take a while)")
 				time.sleep(0.1)
-				ocrmypdf.ocr(f"{tempdirname}/temp2.pdf", f"{project_root}/data/{file_name}_out.pdf", language="eng", force_ocr=True)
-				print("done OCR and created output pdf")
+				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{file_name}_out.pdf", force_ocr=True, language="eng")
+				print("done OCR")
+				time.sleep(0.1)
+				print("created output pdf")
 				time.sleep(0.1)
 				os._exit(0)
