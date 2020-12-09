@@ -102,7 +102,7 @@ else:
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{tempdirname}/image{str(num)}.jpg"))
 		if (option == "no_ocr_dark"):
-			image1.save(f"{project_root}/data/{file_name}_out.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=250) # resolution affects page dimensions, not file size
+			image1.save(f"{project_root}/data/{file_name}_out.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=150) # resolution affects page dimensions, not file size
 			print("created output pdf")
 			time.sleep(0.1)
 		elif (option == "ocr_dark"):
