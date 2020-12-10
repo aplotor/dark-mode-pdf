@@ -18,7 +18,7 @@ socket.on("download", (random_file_name) => {
 });
 
 socket.on("update_visit_count", (visit_count) => {
-	domain_visits.innerHTML = `domain visits: ${visit_count}`;
+	visits.innerHTML = `visits: ${visit_count}`;
 });
 
 const progress = document.getElementById("progress");
@@ -34,7 +34,7 @@ const alert_wrapper = document.getElementById("alert_wrapper");
 const file_input = document.getElementById("file_input");
 const file_input_label = document.getElementById("file_input_label");
 
-const domain_visits = document.getElementById("domain_visits");
+const visits = document.getElementById("visits");
 
 function show_alert(message, alert) {
 	alert_wrapper.innerHTML = `

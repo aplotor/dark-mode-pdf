@@ -83,7 +83,7 @@ else:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
 			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=(255,255,255))
-			image.save(f"{tempdirname}/image{str(i)}.jpg", format="JPEG", optimize=True)
+			image.save(f"{tempdirname}/image{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
 			if (i == 1):
 				print("done 1 page")
 				time.sleep(0.1)
