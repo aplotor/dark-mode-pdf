@@ -22,33 +22,50 @@ const node_pg = require("pg");
 
 const secrets = require(`${project_root}/_secrets.js`);
 
-const sql_client = new node_pg.Client(secrets.sql_connection);
+let sql_client = null;
 if (config == "dev") {
-
+	sql_client = new node_pg.Client(secrets.sql_connection_test);
 } else if (config == "prod") {
-	sql_client.connect((err) => {
-		if (err) {
-			console.error(err);
-		} else {
-			console.log("connected to sql db");
-	
-			sql_client.query(
-				"create table if not exists visit (" +
-					"id int primary key, " +
-					"count int not null" +
-				")",
-				(err, result) => ((err) ? console.error(err) : null)
-			);
-			
-			sql_client.query(
-				"insert into visit " +
-				"values (0, 0) " +
-				"on conflict do nothing",
-				(err, result) => ((err) ? console.error(err) : null)
-			);
-		}
-	});
+	sql_client = new node_pg.Client(secrets.sql_connection_prod);
 }
+
+sql_client.connect((err) => {
+	if (err) {
+		console.error(err);
+	} else {
+		console.log("connected to sql db");
+
+		sql_client.query(
+			"create table if not exists visit (" +
+				"id int primary key, " +
+				"count int not null" +
+			")",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
+
+		sql_client.query(
+			"insert into visit " +
+			"values (0, 0) " +
+			"on conflict do nothing",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
+
+		sql_client.query(
+			"create table if not exists conversion (" +
+				"id int primary key, " +
+				"count int not null" +
+			")",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
+
+		sql_client.query(
+			"insert into conversion " +
+			"values (0, 0) " +
+			"on conflict do nothing",
+			(err, result) => ((err) ? console.error(err) : null)
+		);
+	}
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -80,11 +97,10 @@ app.post("/", (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
-		console.log("sending dark mode pdf to your downloads");
-		io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
+	console.log("sending dark mode pdf to your downloads");
+	io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
 
-		// delete files from server storage
+	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
@@ -102,23 +118,20 @@ app.get("/download", (req, res) => {
 
 io.on("connect", (socket) => {
 	console.log(`socket connected: ${socket.id}`);
-	if (config == "dev") {
 
-	} else if (config == "prod") {
-		sql_client.query(
-			"update visit " +
-			"set count=count+1 " +
-			"where id=0",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
+	sql_client.query(
+		"update visit " +
+		"set count=count+1 " +
+		"where id=0",
+		(err, result) => ((err) ? console.error(err) : null)
+	);
 
-		sql_client.query(
-			"select count " +
-			"from visit " +
-			"where id=0",
-			(err, result) => ((err) ? console.error(err) : io.emit("update_visit_count", result.rows[0].count))
-		);
-	}
+	sql_client.query(
+		"select count " +
+		"from visit " +
+		"where id=0",
+		(err, result) => ((err) ? console.error(err) : io.emit("update_visit_count", result.rows[0].count))
+	);
 
 	socket.on("transform", (random_file_name, transform_option) => {
 		console.log(`start ${random_file_name}`);
@@ -142,6 +155,14 @@ io.on("connect", (socket) => {
 		spawn.on("exit", (exit_code) => {
 			console.log(`spawn process exited with code ${exit_code}`);
 			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
+			
+			sql_client.query(
+				"update conversion " +
+				"set count=count+1 " +
+				"where id=0",
+				(err, result) => ((err) ? console.error(err) : null)
+			);
+			
 			io.to(socket.id).emit("download", random_file_name);
 		});
 	});
