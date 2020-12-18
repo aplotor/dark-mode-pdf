@@ -39,14 +39,14 @@ sql_client.connect((err) => {
 			"create table if not exists visit (" +
 				"id int primary key, " +
 				"count int not null" +
-			")",
+			");",
 			(err, result) => ((err) ? console.error(err) : null)
 		);
 
 		sql_client.query(
 			"insert into visit " +
 			"values (0, 0) " +
-			"on conflict do nothing",
+			"on conflict do nothing;",
 			(err, result) => ((err) ? console.error(err) : null)
 		);
 
@@ -54,14 +54,14 @@ sql_client.connect((err) => {
 			"create table if not exists conversion (" +
 				"id int primary key, " +
 				"count int not null" +
-			")",
+			");",
 			(err, result) => ((err) ? console.error(err) : null)
 		);
 
 		sql_client.query(
 			"insert into conversion " +
 			"values (0, 0) " +
-			"on conflict do nothing",
+			"on conflict do nothing;",
 			(err, result) => ((err) ? console.error(err) : null)
 		);
 	}
@@ -122,14 +122,14 @@ io.on("connect", (socket) => {
 	sql_client.query(
 		"update visit " +
 		"set count=count+1 " +
-		"where id=0",
+		"where id=0;",
 		(err, result) => ((err) ? console.error(err) : null)
 	);
 
 	sql_client.query(
 		"select count " +
 		"from visit " +
-		"where id=0",
+		"where id=0;",
 		(err, result) => ((err) ? console.error(err) : io.emit("update_visit_count", result.rows[0].count))
 	);
 
@@ -159,7 +159,7 @@ io.on("connect", (socket) => {
 			sql_client.query(
 				"update conversion " +
 				"set count=count+1 " +
-				"where id=0",
+				"where id=0;",
 				(err, result) => ((err) ? console.error(err) : null)
 			);
 			

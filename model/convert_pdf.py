@@ -76,7 +76,7 @@ else:
 		# convert input pdf pages to images
 		print("converting pdf pages to dark mode")
 		time.sleep(0.1)
-		images = pdf2image.convert_from_path(inpdf, dpi=200, output_folder=tempdirname) # pdf -> list of PIL image objects
+		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=tempdirname) # pdf -> list of PIL image objects
 
 		# convert images to dark mode
 		for image in images:
@@ -102,11 +102,11 @@ else:
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{tempdirname}/image{str(num)}.jpg"))
 		if (option == "no_ocr_dark"):
-			image1.save(f"{project_root}/data/{file_name}_out.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=150) # resolution affects page dimensions, not file size
+			image1.save(f"{project_root}/data/{file_name}_out.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 			print("created output pdf")
 			time.sleep(0.1)
 		elif (option == "ocr_dark"):
-			image1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=250) # resolution affects page dimensions, not file size
+			image1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 			print("created temp pdf")
 			time.sleep(0.1)
 
