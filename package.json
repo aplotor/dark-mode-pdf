@@ -9,13 +9,13 @@
 		"prod_stop": "pm2 stop ./controller/app.js"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.4"
+		"nodemon": "^2.0.6"
 	},
 	"dependencies": {
 		"express": "^4.17.1",
-		"express-fileupload": "^1.1.7-alpha.3",
-		"express-handlebars": "^4.0.4",
-		"pg": "^8.4.1",
+		"express-fileupload": "^1.2.0",
+		"express-handlebars": "^4.0.6",
+		"pg": "^8.5.1",
 		"socket.io": "^2.3.0"
 	}
 }

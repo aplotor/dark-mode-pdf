@@ -1,5 +1,9 @@
 const socket = io(); // triggers backend io.on"connect"
 
+socket.on("update_visit_count", (visit_count) => {
+	visits.innerHTML = `visits: ${visit_count}`;
+});
+
 socket.on("message", (message) => {
 	remove_blink_line();
 
@@ -11,14 +15,14 @@ socket.on("message", (message) => {
 	terminal.scrollTop = terminal.scrollHeight; // scroll down
 });
 
+socket.on("overlay", (random_file_name) => {
+	socket.emit("overlay", random_file_name);
+});
+
 socket.on("download", (random_file_name) => {
 	window.location = `/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
 
 	alert_wrapper.innerHTML = "";
-});
-
-socket.on("update_visit_count", (visit_count) => {
-	visits.innerHTML = `visits: ${visit_count}`;
 });
 
 const progress = document.getElementById("progress");
