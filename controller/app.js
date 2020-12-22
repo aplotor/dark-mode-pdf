@@ -174,6 +174,8 @@ io.on("connect", (socket) => {
 	});
 
 	socket.on("overlay", (random_file_name) => {
+		io.to(socket.id).emit("message", "loading...");
+
 		const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox v.2.0.22 CLI tool.jar`, `${project_root}/model/overlay.java`, random_file_name]);
 
 		spawn.stderr.on("data", (data) => {
