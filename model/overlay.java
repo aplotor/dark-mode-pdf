@@ -15,7 +15,6 @@ public class overlay {
 		String project_root = System.getProperty("user.dir"); // where the app is started from; NOT where the controller file is and NOT where this file is
 		// System.out.println(project_root);
 
-		// file name for final pdf
 		String file_name = args[0];
 		// System.out.println(file_name);
 
