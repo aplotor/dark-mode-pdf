@@ -103,7 +103,7 @@ a:hover {
 }
 
 .terminal {
-	width: 600px;
+	width: auto;
 	height: 350px;
 	background: rgb(80, 80, 80);
 	border-radius: 5px;

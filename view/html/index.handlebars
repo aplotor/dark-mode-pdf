@@ -1,19 +1,17 @@
 <div class="row justify-content-center m-0">
-	<div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-10 mt-4 pt-2">
-		<h2 class="mb-3">dark mode PDF</h2>
+	<div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 mt-4 pt-2">
+		<h2 class="mb-4">dark mode PDF</h2>
 		<div class="form-group">
 			<div class="custom-file">
 				<input id="file_input" class="custom-file-input" type="file" accept=".pdf">
 				<label for="file_input" id="file_input_label" class="custom-file-label">choose file</label>
 			</div>
 		</div>
-		<div>
-			<span>transform option</span>
-		</div>
+		<span>transform option</span>
 	</div>
 </div>
 <div class="row justify-content-center">
-	<div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-8">
+	<div class="col-11 col-sm-7 col-md-5 col-lg-4 col-xl-3">
 		<div class="form-check p-0">
 			<input id="no_ocr_dark" class="form-check-input" name="transform_option" type="radio" value="no_ocr_dark" checked>
 			<label class="form-check-label" for="no_ocr_dark"> dark mode (no OCR: digital docs)</label>
@@ -29,31 +27,33 @@
 	</div>
 </div>
 <div class="row justify-content-center">
-	<div class="col-xl-3 col-lg-3 col-md-4 col-sm-5 col-6 pr-0">
-		<div id="alert_wrapper"></div>
+	<div class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-3 pr-0">
 		<button id="loading_button" class="btn btn-primary d-none" type="button" disabled>
-			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			<span class="spinner-border spinner-border-sm" role="status"></span>
 		</button>
 	</div>
-	<div class="col-xl-1 col-lg-2 col-md-2 col-sm-3 col-4 pl-0">
+	<div class="col-6 col-sm-4 col-md-2 col-lg-1 col-xl-1 pl-0">
 		<button id="convert_button" class="btn btn-primary float-right">convert</button>
 		<button id="cancel_button" class="btn btn-secondary float-right d-none" type="button">cancel</button>
 	</div>
 </div>
 <div class="row justify-content-center">
-	<div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-10">
+	<div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+		<div id="alert_wrapper"></div>
 		<div id="progress_wrapper" class="d-none">
-			<label id="progress_status">50% uploaded</label>
+			<label id="progress_status"></label>
 			<div class="progress mb-3">
-				<div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" area-valuemin="0" area-valuemax="100"></div>
+				<div id="progress" class="progress-bar" role="progressbar" area-valuemin="0" area-valuemax="100"></div>
 			</div>
 		</div>
 	</div>
 </div>
 <div class="row justify-content-center">
-	<div class="terminal">
-		<div class="messages">
-			<p id="gt_sign">> <span class="blinking_cursor">|</span></p>
+	<div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-6">
+		<div class="terminal">
+			<div class="messages">
+				<p id="gt_sign">> <span class="blinking_cursor">|</span></p>
+			</div>
 		</div>
 	</div>
 </div>

@@ -25,6 +25,7 @@ time.sleep(0.1)
 i = 1
 
 if (option == "dim"):
+	# initialization
 	read_inpdf = pdfrw.PdfReader(inpdf)
 	inpdf_pages = read_inpdf.pages
 	inpdf_num_pages = len(read_inpdf.pages)
@@ -76,6 +77,8 @@ else:
 		# time.sleep(0.1)
 
 		# convert input pdf pages to images
+		print("loading...")
+		time.sleep(0.1)
 		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=tempdirname) # pdf -> list of PIL image objects
 
 		# convert images to dark mode
@@ -105,8 +108,6 @@ else:
 			image1.save(f"{project_root}/data/{file_name}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 		elif (option == "ocr_dark"):
 			image1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
-			print("created temp pdf")
-			time.sleep(0.1)
 
 			# OCR: fork a child process to perform the OCR so that the application will survive if ocrmypdf() fails
 			print("forking process to perform OCR")

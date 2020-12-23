@@ -97,8 +97,8 @@ app.post("/", (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-	console.log("sending dark mode pdf to your downloads");
-	io.to(req.query.socket_id).emit("message", "sending dark mode pdf to your downloads");
+	console.log("sending pdf to your downloads");
+	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
 
 	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
 		console.log("deleting your data from the server");

@@ -44,8 +44,8 @@ function show_alert(message, alert) {
 	alert_wrapper.innerHTML = `
 		<div id="alert" class="alert alert-${alert} alert-dismissable fade show m-0 pt-1 pb-1" role="alert">
 			<span>${message}</span>
-			<button class="close" type="button" data-dismiss="alert" aria-label="close">
-				<span aria-hidden="true">&times;</span>
+			<button class="close" type="button" data-dismiss="alert">
+				<span>&times;</span>
 			</button>
 		</div>
 	`;
