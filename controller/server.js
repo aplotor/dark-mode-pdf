@@ -11,61 +11,19 @@ project_root.pop();
 project_root = project_root.join("/");
 console.log(project_root);
 
+const sql_operations = require(`${project_root}/model/sql_operations.js`);
+
 const express = require("express");
 const exp_hbs = require("express-handlebars");
-const child_process = require("child_process");
-const file_upload = require("express-fileupload");
 const http = require("http");
 const socket_io = require("socket.io");
+const socket_io_client = require("socket.io-client");
+const child_process = require("child_process");
+const file_upload = require("express-fileupload");
 const file_system = require("fs");
-const node_pg = require("pg");
 
-const secrets = require(`${project_root}/_secrets.js`);
-
-let sql_client = null;
-if (config == "dev") {
-	sql_client = new node_pg.Client(secrets.sql_connection_test);
-} else if (config == "prod") {
-	sql_client = new node_pg.Client(secrets.sql_connection_prod);
-}
-
-sql_client.connect((err) => {
-	if (err) {
-		console.error(err);
-	} else {
-		console.log("connected to sql db");
-
-		sql_client.query(
-			"create table if not exists visit (" +
-				"id int primary key, " +
-				"count int not null" +
-			");",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-
-		sql_client.query(
-			"insert into visit " +
-			"values (0, 0) " +
-			"on conflict do nothing;",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-
-		sql_client.query(
-			"create table if not exists conversion (" +
-				"id int primary key, " +
-				"count int not null" +
-			");",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-
-		sql_client.query(
-			"insert into conversion " +
-			"values (0, 0) " +
-			"on conflict do nothing;",
-			(err, result) => ((err) ? console.error(err) : null)
-		);
-	}
-});
+sql_operations.set_client(config);
+sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((error) => console.error(error));
 
 const app = express();
 const server = http.createServer(app);
@@ -85,18 +43,18 @@ app.get(["/", "/apps/dark-mode-pdf"], (req, res) => {
 	}
 
 	res.render("index.handlebars", {
-		title: "dark mode PDF",
+		title: "dark mode PDF — j9108c",
 		description: "converts PDFs to dark mode"
 	});
 });
 
-app.post("/", (req, res) => {
+app.post("/apps/dark-mode-pdf/upload", (req, res) => {
 	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
 
-app.get("/download", (req, res) => {
+app.get("/apps/dark-mode-pdf/download", (req, res) => {
 	console.log("sending pdf to your downloads");
 	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
 
@@ -121,19 +79,14 @@ app.get("/download", (req, res) => {
 io.on("connect", (socket) => {
 	console.log(`socket connected: ${socket.id}`);
 
-	sql_client.query(
-		"update visit " +
-		"set count=count+1 " +
-		"where id=0;",
-		(err, result) => ((err) ? console.error(err) : null)
-	);
+	sql_operations.add_visit();
 
-	sql_client.query(
-		"select count " +
-		"from visit " +
-		"where id=0;",
-		(err, result) => ((err) ? console.error(err) : io.emit("update_visit_count", result.rows[0].count))
-	);
+	io.to(socket.id).emit("update_countdown", countdown_instance);
+	if (stats_ready) {
+		io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
+	} else {
+		setTimeout(() => io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]), 5000);
+	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
 		console.log(`start ${random_file_name}`);
@@ -161,12 +114,7 @@ io.on("connect", (socket) => {
 			if (transform_option == "no_ocr_dark") {
 				io.to(socket.id).emit("overlay", random_file_name);
 			} else {
-				sql_client.query(
-					"update conversion " +
-					"set count=count+1 " +
-					"where id=0;",
-					(err, result) => ((err) ? console.error(err) : null)
-				);
+				sql_operations.add_conversion();
 				
 				io.to(socket.id).emit("download", random_file_name);
 			}
@@ -195,18 +143,37 @@ io.on("connect", (socket) => {
 			console.log(`spawn process exited with code ${exit_code}`);
 			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
 			
-			sql_client.query(
-				"update conversion " +
-				"set count=count+1 " +
-				"where id=0;",
-				(err, result) => ((err) ? console.error(err) : null)
-			);
+			sql_operations.add_conversion();
 			
 			io.to(socket.id).emit("download", random_file_name);
 		});
 	});
 });
 
+let stats_instance = null;
+let stats_ready = false;
+let countdown_instance = null;
+const io_as_client = socket_io_client.connect("http://localhost:1025", {
+	reconnect: true,
+	extraHeaders: {
+		app: "dark-mode-pdf"
+	}
+});
+io_as_client.on("connect", () => {
+	console.log("connected as client to localhost:1025");
+	
+	io_as_client.on("update_countdown", (countdown) => {
+		io.emit("update_countdown", countdown);
+		countdown_instance = countdown;
+	});
+
+	io_as_client.on("update_domain_request_info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
+		io.emit("update_domain_request_info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
+		stats_instance = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
+		stats_ready = true;
+	});
+});
+
 // port and listen
-const port = process.env.PORT || 5000;
-server.listen(port, () => console.log(`server started on port ${port}`));
+const port = process.env.PORT || 2000;
+server.listen(port, () => console.log(`server started on localhost:${port}`));

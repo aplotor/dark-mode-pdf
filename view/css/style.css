@@ -9,7 +9,7 @@ body {
 	font-family: "Poppins", sans-serif;
 	color: white;
 	background: rgb(43, 43, 43);
-	margin: 0 0 75px 0; /* bottom px changes sticky footer position */
+	margin: 0 0 130px 0; /* bottom px changes space from end of content to start of footer */
 }
 
 body::-webkit-scrollbar {
@@ -32,30 +32,21 @@ body::-webkit-scrollbar-thumb:hover {
 
 footer {
 	position: absolute;
-	bottom: 0;
-	width: calc(100% - 30px);
+	bottom: 10px; /* space from bottom */
+	width: 100%;
 }
 
 a {
-	color: white;
+	color: rgb(113, 142, 183);
 }
 
 a:hover {
-	text-decoration: none;
+	text-decoration: underline;
+	color: rgb(113, 142, 183);
 }
 
-.blinking_cursor {
-	font-weight: 100;
-	color: white;
-	animation: 1s blink step-end infinite;
-}
-@keyframes blink {
-	from, to {
-		color: transparent;
-	}
-	50% {
-		color: white;
-	}
+a:visited {
+	color: rgb(169, 110, 110);
 }
 
 .custom-file {
@@ -70,41 +61,44 @@ a:hover {
 	content: "browse";
 }
 
-.fa-github {
-	color: rgb(60, 60, 60);
-}
-
-.fa-github:hover {
-	color: rgb(120, 120, 120);
-}
-
-.font_size_8 {
-	font-size: 8px;
-}
-
-.font_size_9 {
-	font-size: 9px;
-}
-
 .font_size_10 {
 	font-size: 10px;
 }
 
-.icon {
-	font-size: 60px;
+.boxed {
+	border: 1px solid rgb(200, 200, 200);
 }
 
-.line_height_fit {
-	line-height: 1;
+.monospace {
+	font-family: monospace, sans-serif;
 }
 
-.row {
-	margin: 0 0 10px 0;
+.dropdown-toggle {
+	color: rgb(113, 142, 183);
 }
 
-.terminal {
-	width: auto;
+.dropdown-toggle:focus {
+	color: white;
+	box-shadow: none;
+}
+
+#dropright_menu {
+	background: white;
+	min-width: 9rem;
+}
+
+#dropdown_menu {
+	left: 50%;
+	right: auto;
+	transform: translate(-50%, 0);
+	border-bottom: 15px solid rgb(43, 43, 43);
+	border-radius: 0;
+	width: 180px;
+}
+
+#terminal {
 	height: 350px;
+	width: auto;
 	background: rgb(80, 80, 80);
 	border-radius: 5px;
 	padding: 10px;
@@ -114,21 +108,40 @@ a:hover {
 	font-family: monospace, sans-serif;
 }
 
-.terminal::-webkit-scrollbar {
+#terminal::-webkit-scrollbar {
 	width: 12px;
 }
 
-.terminal::-webkit-scrollbar-track {
+#terminal::-webkit-scrollbar-track {
 	background: rgb(80, 80, 80);
 	border-radius: 5px;
 }
 
-.terminal::-webkit-scrollbar-thumb {
+#terminal::-webkit-scrollbar-thumb {
 	background: rgb(43, 43, 43);
 	border: 3px solid rgb(80, 80, 80);
 	border-radius: 12px;
 }
 
-.terminal::-webkit-scrollbar-thumb:hover {
+#terminal::-webkit-scrollbar-thumb:hover {
 	border: 2px solid rgb(80, 80, 80);
+}
+
+#blinking_caret {
+	font-weight: 100;
+	color: white;
+	animation: 1s blink step-end infinite;
+}
+@keyframes blink {
+	0% {color: transparent;}
+	50% {color: white;}
+}
+
+#github_large {
+	font-size: 60px;
+	color: rgb(60, 60, 60);
+}
+
+#github_large:hover {
+	color: rgb(120, 120, 120);
 }

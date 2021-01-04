@@ -100,6 +100,8 @@ else:
 		time.sleep(0.1)
 
 		# combine images into pdf
+		print("saving...")
+		time.sleep(0.1)
 		image1 = PIL.Image.open(f"{tempdirname}/image1.jpg")
 		images = []
 		for num in range(2, i):

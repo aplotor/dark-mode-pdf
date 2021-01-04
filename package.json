@@ -1,12 +1,12 @@
 {
 	"name": "dark-mode-pdf",
 	"author": "j9108c",
-	"main": "./controller/app.js",
+	"main": "./controller/server.js",
 	"scripts": {
-		"dev": "nodemon ./controller/app.js",
-		"prod_start": "pm2 start ./controller/app.js --name dark-mode-pdf",
-		"prod_restart": "pm2 restart ./controller/app.js",
-		"prod_stop": "pm2 stop ./controller/app.js"
+		"dev": "nodemon ./controller/server.js",
+		"prod_start": "pm2 start ./controller/server.js --name dark-mode-pdf",
+		"prod_restart": "pm2 restart ./controller/server.js",
+		"prod_stop": "pm2 stop ./controller/server.js"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.6"
@@ -16,6 +16,7 @@
 		"express-fileupload": "^1.2.0",
 		"express-handlebars": "^4.0.6",
 		"pg": "^8.5.1",
-		"socket.io": "^2.3.0"
+		"socket.io": "^3.0.4",
+		"socket.io-client": "^3.0.4"
 	}
 }
