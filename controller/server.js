@@ -78,11 +78,11 @@ io.on("connect", (socket) => {
 	sql_operations.add_visit();
 
 	io.to(socket.id).emit("update_countdown", countdown_instance);
-	if (stats_ready) {
-		io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
-	} else {
-		setTimeout(() => io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]), 5000);
-	}
+	// if (stats_ready) {
+	// 	io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
+	// } else {
+	// 	setTimeout(() => io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]), 5000);
+	// }
 
 	socket.on("transform", (random_file_name, transform_option) => {
 		console.log(`start ${random_file_name}`);
