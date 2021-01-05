@@ -61,7 +61,7 @@ function init_db(config) {
 				if (error) {
 					console.error(error);
 				} else {
-					console.log("created table visit");
+					console.log("created table if not exists visit");
 
 					sql_client.query(
 						"insert into visit " +
@@ -82,7 +82,7 @@ function init_db(config) {
 				if (error) {
 					console.error(error);
 				} else {
-					console.log("created table conversion");
+					console.log("created table if not exists conversion");
 
 					sql_client.query(
 						"insert into conversion " +
