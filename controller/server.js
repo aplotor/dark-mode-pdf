@@ -78,11 +78,11 @@ io.on("connect", (socket) => {
 	sql_operations.add_visit();
 
 	io.to(socket.id).emit("update_countdown", countdown_instance);
-	// if (stats_ready) {
-	// 	io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
-	// } else {
-	// 	setTimeout(() => io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]), 5000);
-	// }
+	if (stats_instance != null) {
+		io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
+	} else {
+		setTimeout(() => ((stats_instance != null) ? io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]) : null), 5000);
+	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
 		console.log(`start ${random_file_name}`);
@@ -146,9 +146,8 @@ io.on("connect", (socket) => {
 	});
 });
 
-let stats_instance = null;
-let stats_ready = false;
 let countdown_instance = null;
+let stats_instance = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	reconnect: true,
 	extraHeaders: {
@@ -160,13 +159,14 @@ io_as_client.on("connect", () => {
 	
 	io_as_client.on("update_countdown", (countdown) => {
 		io.emit("update_countdown", countdown);
+
 		countdown_instance = countdown;
 	});
 
 	io_as_client.on("update_domain_request_info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
 		io.emit("update_domain_request_info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
+
 		stats_instance = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
-		stats_ready = true;
 	});
 });
 
