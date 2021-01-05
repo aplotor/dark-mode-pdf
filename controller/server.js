@@ -28,8 +28,8 @@ sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch(
 const app = express();
 const server = http.createServer(app);
 const io = socket_io(server);
-app.use(express.static(`${project_root}/view`));
 app.use(file_upload());
+app.use(express.static(`${project_root}/view`));
 app.set("views", `${project_root}/view/html`);
 app.set("view engine", "handlebars");
 app.engine("handlebars", exp_hbs({
