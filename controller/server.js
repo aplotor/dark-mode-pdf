@@ -40,7 +40,8 @@ app.engine("handlebars", exp_hbs({
 app.get(["/apps/dark-mode-pdf"], (req, res) => {
 	res.render("index.handlebars", {
 		title: "dark mode PDF — j9108c",
-		description: "converts PDFs to dark mode"
+		description: "converts PDFs to dark mode",
+		href_prefixes: href_prefixes_copy
 	});
 });
 
@@ -77,11 +78,11 @@ io.on("connect", (socket) => {
 
 	sql_operations.add_visit();
 
-	io.to(socket.id).emit("update_countdown", countdown_instance);
-	if (stats_instance != null) {
-		io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]);
+	io.to(socket.id).emit("update_countdown", countdown_copy);
+	if (stats_copy != null) {
+		io.to(socket.id).emit("update_domain_request_info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]);
 	} else {
-		setTimeout(() => ((stats_instance != null) ? io.to(socket.id).emit("update_domain_request_info", stats_instance[0], stats_instance[1], stats_instance[2], stats_instance[3], stats_instance[4], stats_instance[5]) : null), 5000);
+		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update_domain_request_info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]) : null), 5000);
 	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
@@ -146,8 +147,9 @@ io.on("connect", (socket) => {
 	});
 });
 
-let countdown_instance = null;
-let stats_instance = null;
+let href_prefixes_copy = null;
+let countdown_copy = null;
+let stats_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	reconnect: true,
 	extraHeaders: {
@@ -156,17 +158,19 @@ const io_as_client = socket_io_client.connect("http://localhost:1025", {
 });
 io_as_client.on("connect", () => {
 	console.log("connected as client to localhost:1025");
+
+	io_as_client.on("store_href_prefixes", (href_prefixes) => href_prefixes_copy = href_prefixes);
 	
 	io_as_client.on("update_countdown", (countdown) => {
 		io.emit("update_countdown", countdown);
 
-		countdown_instance = countdown;
+		countdown_copy = countdown;
 	});
 
 	io_as_client.on("update_domain_request_info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
 		io.emit("update_domain_request_info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
 
-		stats_instance = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
+		stats_copy = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
 	});
 });
 
