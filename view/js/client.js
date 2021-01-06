@@ -1,4 +1,5 @@
-const socket = io(); // triggers controller's io.on connect
+let index = null;
+const socket = io({path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`}); // triggers controller's io.on connect
 
 const progress = document.getElementById("progress");
 const progress_wrapper = document.getElementById("progress_wrapper");
@@ -122,7 +123,7 @@ socket.on("overlay", (random_file_name) => {
 });
 
 socket.on("download", (random_file_name) => {
-	window.location = `/apps/dark-mode-pdf/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
+	window.location = `${index}/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
 
 	alert_wrapper.innerHTML = "";
 });

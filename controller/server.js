@@ -25,11 +25,13 @@ const file_system = require("fs");
 sql_operations.set_client(config);
 sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((error) => console.error(error));
 
+const index = "/apps/dark-mode-pdf"; // index of this server relative to domain. use as project root for non-html static file links in handlebars html
+
 const app = express();
 const server = http.createServer(app);
-const io = socket_io(server);
+const io = socket_io(server, {path: `${index}/socket.io`});
 app.use(file_upload());
-app.use(express.static(`${project_root}/view`));
+app.use(`${index}/view`, express.static(`${project_root}/view`));
 app.set("views", `${project_root}/view/html`);
 app.set("view engine", "handlebars");
 app.engine("handlebars", exp_hbs({
@@ -37,21 +39,20 @@ app.engine("handlebars", exp_hbs({
 	defaultLayout: "template.handlebars"
 }));
 
-app.get(["/apps/dark-mode-pdf"], (req, res) => {
+app.get(index, (req, res) => {
 	res.render("index.handlebars", {
 		title: "dark mode PDF — j9108c",
-		description: "converts PDFs to dark mode",
-		href_prefixes: href_prefixes_copy
+		description: "converts PDFs to dark mode"
 	});
 });
 
-app.post("/apps/dark-mode-pdf/upload", (req, res) => {
+app.post(`${index}/upload`, (req, res) => {
 	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
 
-app.get("/apps/dark-mode-pdf/download", (req, res) => {
+app.get(`${index}/download`, (req, res) => {
 	console.log("sending pdf to your downloads");
 	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
 
@@ -147,7 +148,6 @@ io.on("connect", (socket) => {
 	});
 });
 
-let href_prefixes_copy = null;
 let countdown_copy = null;
 let stats_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
@@ -159,7 +159,7 @@ const io_as_client = socket_io_client.connect("http://localhost:1025", {
 io_as_client.on("connect", () => {
 	console.log("connected as client to localhost:1025");
 
-	io_as_client.on("store_href_prefixes", (href_prefixes) => href_prefixes_copy = href_prefixes);
+	io_as_client.on("store_hosts", (hosts) => app.locals.hosts = hosts);
 	
 	io_as_client.on("update_countdown", (countdown) => {
 		io.emit("update_countdown", countdown);
@@ -173,6 +173,10 @@ io_as_client.on("connect", () => {
 		stats_copy = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
 	});
 });
+
+// set app local vars (auto passed as data to all hbs renders)
+app.locals.index = index;
+app.locals.hosts = null;
 
 // port and listen
 const port = process.env.PORT || 2000;
