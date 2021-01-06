@@ -10,7 +10,7 @@ body {
 	font-family: "Poppins", sans-serif;
 	color: white;
 	background: rgb(43, 43, 43);
-	margin: 0 0 130px 0; /* bottom px changes space from end of content to start of footer */
+	margin: 0 0 125px 0; /* bottom px changes space from end of content to start of footer */
 }
 
 body::-webkit-scrollbar {
@@ -33,7 +33,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 footer {
 	position: absolute;
-	bottom: 10px; /* space from bottom */
+	bottom: 1rem; /* space from bottom */
 	width: 100%;
 }
 
