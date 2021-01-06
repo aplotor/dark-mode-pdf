@@ -33,7 +33,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 footer {
 	position: absolute;
-	bottom: 1rem; /* space from bottom */
+	bottom: 1em; /* space from bottom */
 	width: 100%;
 }
 
