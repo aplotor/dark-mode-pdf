@@ -11,6 +11,7 @@ project_root.pop();
 project_root = project_root.join("/");
 console.log(project_root);
 
+const secrets = require(`${project_root}/_secrets.js`)
 const sql_operations = require(`${project_root}/model/sql_operations.js`);
 
 const express = require("express");
@@ -76,6 +77,10 @@ app.get(`${index}/download`, (req, res) => {
 
 io.on("connect", (socket) => {
 	console.log(`socket connected: ${socket.id}`);
+
+	const headers = socket.request["headers"];
+	// console.log(headers);
+	io.to(socket.id).emit("check_dev_mobile", headers["host"].split(":")[0], secrets.dev_private_ip);
 
 	sql_operations.add_visit();
 

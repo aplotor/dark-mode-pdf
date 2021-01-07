@@ -110,6 +110,14 @@ dropdown_button.addEventListener("click", (event) => {
 	setTimeout(() => dropdown_menu.scrollIntoView({behavior: "smooth"}), 250);
 });
 
+socket.on("check_dev_mobile", (socket_address, dev_private_ip) => {
+	if (socket_address == dev_private_ip) { // dev mobile
+		const all_a_tags = document.getElementsByTagName("a");
+
+		[...all_a_tags].forEach((a_tag) => a_tag.href = a_tag.href.replace("localhost", dev_private_ip));
+	}
+});
+
 socket.on("message", (message) => {
 	remove_blinking_caret();
 	output_message(message);
