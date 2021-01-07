@@ -80,15 +80,16 @@ io.on("connect", (socket) => {
 
 	const headers = socket.request["headers"];
 	// console.log(headers);
-	io.to(socket.id).emit("check_dev_mobile", headers["host"].split(":")[0], secrets.dev_private_ip);
+	const socket_address = headers["host"].split(":")[0];
+	((socket_address == secrets.dev_private_ip) ? io.to(socket.id).emit("replace localhost with dev private ip", secrets.dev_private_ip) : null);
 
 	sql_operations.add_visit();
 
-	io.to(socket.id).emit("update_countdown", countdown_copy);
+	io.to(socket.id).emit("update countdown", countdown_copy);
 	if (stats_copy != null) {
-		io.to(socket.id).emit("update_domain_request_info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]);
+		io.to(socket.id).emit("update domain request info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]);
 	} else {
-		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update_domain_request_info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]) : null), 5000);
+		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]) : null), 5000);
 	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
@@ -164,16 +165,16 @@ const io_as_client = socket_io_client.connect("http://localhost:1025", {
 io_as_client.on("connect", () => {
 	console.log("connected as client to localhost:1025");
 
-	io_as_client.on("store_hosts", (hosts) => app.locals.hosts = hosts);
+	io_as_client.on("store hosts", (hosts) => app.locals.hosts = hosts);
 	
-	io_as_client.on("update_countdown", (countdown) => {
-		io.emit("update_countdown", countdown);
+	io_as_client.on("update countdown", (countdown) => {
+		io.emit("update countdown", countdown);
 
 		countdown_copy = countdown;
 	});
 
-	io_as_client.on("update_domain_request_info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
-		io.emit("update_domain_request_info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
+	io_as_client.on("update domain request info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
+		io.emit("update domain request info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
 
 		stats_copy = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
 	});

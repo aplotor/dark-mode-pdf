@@ -47,10 +47,6 @@ convert_button.addEventListener("click", (event) => {
 		return null;
 	}
 
-	const data = new FormData();
-	const req = new XMLHttpRequest();
-	req.responseType = "json";
-
 	alert_wrapper.innerHTML = "";
 	file_input.disabled = true;
 	convert_button.classList.add("d-none");
@@ -60,8 +56,11 @@ convert_button.addEventListener("click", (event) => {
 
 	const random_file_name = Math.random().toString().substring(2, 17);
 
-	document.cookie = `filesize=${file_size}`;
+	const data = new FormData();
 	data.append("file", file, random_file_name);
+
+	const req = new XMLHttpRequest();
+	req.responseType = "json";
 
 	req.upload.addEventListener("progress", (event) => {
 		const loaded = event.loaded;
@@ -110,12 +109,10 @@ dropdown_button.addEventListener("click", (event) => {
 	setTimeout(() => dropdown_menu.scrollIntoView({behavior: "smooth"}), 250);
 });
 
-socket.on("check_dev_mobile", (socket_address, dev_private_ip) => {
-	if (socket_address == dev_private_ip) { // dev mobile
-		const all_a_tags = document.getElementsByTagName("a");
+socket.on("replace localhost with dev private ip", (dev_private_ip) => {
+	const all_a_tags = document.getElementsByTagName("a");
 
-		[...all_a_tags].forEach((a_tag) => a_tag.href = a_tag.href.replace("localhost", dev_private_ip));
-	}
+	[...all_a_tags].forEach((a_tag) => a_tag.href = a_tag.href.replace("localhost", dev_private_ip));
 });
 
 socket.on("message", (message) => {
@@ -136,7 +133,7 @@ socket.on("download", (random_file_name) => {
 	alert_wrapper.innerHTML = "";
 });
 
-socket.on("update_domain_request_info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
+socket.on("update domain request info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
 	today_total_wrapper.innerHTML = today_total;
 	last7days_total_wrapper.innerHTML = last7days_total;
 	last30days_total_wrapper.innerHTML = last30days_total;
@@ -150,7 +147,7 @@ socket.on("update_domain_request_info", (today_total, last7days_total, last30day
 	list_domain_request_info(last30days_countries, last30days_list_wrapper);
 });
 
-socket.on("update_countdown", (countdown) => {
+socket.on("update countdown", (countdown) => {
 	countdown_wrapper.innerHTML = countdown;
 });
 
