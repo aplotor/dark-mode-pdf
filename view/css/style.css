@@ -10,6 +10,9 @@ body {
 	font-family: "Poppins", sans-serif;
 	color: white;
 	background: rgb(43, 43, 43);
+} body.light_mode {
+	color: rgb(43, 43, 43);
+	background: rgb(231, 238, 245);
 }
 
 body::-webkit-scrollbar {
@@ -18,16 +21,25 @@ body::-webkit-scrollbar {
 
 body::-webkit-scrollbar-track {
 	background: rgb(43, 43, 43);
+} body.light_mode::-webkit-scrollbar-track {
+	background: rgb(231, 238, 245);
 }
 
 body::-webkit-scrollbar-thumb {
 	background: rgb(80, 80, 80);
-	border: 5px solid rgb(43, 43, 43);
+	border: 5px solid;
+	border-color: rgb(43, 43, 43);
 	border-radius: 16px;
+} body.light_mode::-webkit-scrollbar-thumb {
+	background: rgb(190, 190, 190);
+	border-color: rgb(231, 238, 245);
 }
 
 body::-webkit-scrollbar-thumb:hover {
-	border: 3px solid rgb(43, 43, 43);
+	border: 3px solid;
+	border-color: rgb(43, 43, 43);
+} body.light_mode::-webkit-scrollbar-thumb:hover {
+	border-color: rgb(231, 238, 245);
 }
 
 content {
@@ -72,6 +84,8 @@ a:visited {
 
 .boxed {
 	border: 1px solid rgb(200, 200, 200);
+} .boxed.light_mode {
+	border-color: rgb(100, 100, 100);
 }
 
 .consolas {
@@ -85,6 +99,8 @@ a:visited {
 .dropdown-toggle:focus {
 	color: white;
 	box-shadow: none;
+} .dropdown-toggle.light_mode:focus {
+	color: rgb(43, 43, 43);
 }
 
 #dropright_menu {
@@ -96,9 +112,12 @@ a:visited {
 	left: 50%;
 	right: auto;
 	transform: translate(-50%, 0);
-	border-bottom: 15px solid rgb(43, 43, 43);
+	border-bottom: 15px solid;
+	border-color: rgb(43, 43, 43);
 	border-radius: 0;
 	width: 180px;
+} #dropdown_menu.light_mode {
+	border-color: rgb(231, 238, 245);
 }
 
 #terminal {
@@ -111,6 +130,9 @@ a:visited {
 	overflow-y: scroll;
 	color: white;
 	font-family: "Consolas", sans-serif;
+} #terminal.light_mode {
+	background: rgb(214, 216, 219);
+	color: black;
 }
 
 #terminal::-webkit-scrollbar {
@@ -120,33 +142,47 @@ a:visited {
 #terminal::-webkit-scrollbar-track {
 	background: rgb(80, 80, 80);
 	border-radius: 5px;
+} #terminal.light_mode::-webkit-scrollbar-track {
+	background: rgb(214, 216, 219);
 }
 
 #terminal::-webkit-scrollbar-thumb {
 	background: rgb(43, 43, 43);
-	border: 3px solid rgb(80, 80, 80);
+	border: 3px solid;
+	border-color: rgb(80, 80, 80);
 	border-radius: 12px;
+} #terminal.light_mode::-webkit-scrollbar-thumb {
+	background: rgb(231, 238, 245);
+	border-color: rgb(214, 216, 219);
 }
 
 #terminal::-webkit-scrollbar-thumb:hover {
-	border: 2px solid rgb(80, 80, 80);
+	border: 2px solid;
+	border-color: rgb(80, 80, 80);
+} #terminal.light_mode::-webkit-scrollbar-thumb:hover {
+	border-color: rgb(214, 216, 219);
 }
 
 #blinking_caret {
 	font-weight: 100;
 	color: white;
 	animation: 1s blink step-end infinite;
-}
-@keyframes blink {
+} #blinking_caret.light_mode {
+	color: rgb(43, 43, 43);
+} @keyframes blink {
 	0% {color: transparent;}
-	50% {color: white;}
+	50% {color: inherit;}
 }
 
-#github_large {
+#bottom_github {
 	font-size: 60px;
 	color: rgb(60, 60, 60);
+} #bottom_github.light_mode {
+	color: rgb(210, 210, 210);
 }
 
-#github_large:hover {
+#bottom_github:hover {
 	color: rgb(120, 120, 120);
+} #bottom_github.light_mode:hover {
+	color: rgb(150, 150, 150);
 }
