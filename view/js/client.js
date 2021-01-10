@@ -23,9 +23,8 @@ const last30days_list_wrapper = document.getElementById("last30days_list_wrapper
 const countdown_wrapper = document.getElementById("countdown_wrapper");
 const all_elements = document.getElementsByTagName("*");
 
-let light_mode_preference = null;
 if (document.cookie != "") {
-	light_mode_preference = document.cookie.split("; ").find((cookie) => cookie.startsWith("light_mode")).split("=")[1];
+	const light_mode_preference = document.cookie.split("; ").find((cookie) => cookie.startsWith("light_mode")).split("=")[1];
 
 	((light_mode_preference == "on") ? [...all_elements].forEach((element) => element.classList.add("light_mode")) : null);
 }
