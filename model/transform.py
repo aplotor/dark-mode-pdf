@@ -121,7 +121,7 @@ else:
 				print("child process exited with exit status 0")
 				time.sleep(0.1)
 			elif (pid == 0): # child process
-				# OCR the pdf and create output pdf (PDF/A compliant)
+				# OCR the pdf and create output pdf
 				print("child process performing OCR (this might take a while)...")
 				time.sleep(0.1)
 				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{file_name}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
