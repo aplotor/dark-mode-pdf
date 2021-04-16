@@ -46,6 +46,9 @@ app.get(index, (req, res) => {
 		description: "converts PDFs to dark mode"
 	});
 });
+app.get("/apps/darkmodepdf", (req, res) => {
+	res.redirect(301, index)
+});
 
 app.post(`${index}/upload`, (req, res) => {
 	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
