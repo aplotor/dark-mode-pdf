@@ -42,7 +42,7 @@ app.engine("handlebars", exp_hbs({
 
 app.get(index, (req, res) => {
 	res.render("index.handlebars", {
-		title: "dark mode PDF — j9108c",
+		title: "dark-mode-pdf — j9108c",
 		description: "converts PDFs to dark mode"
 	});
 });
@@ -128,7 +128,7 @@ io.on("connect", (socket) => {
 	socket.on("overlay", (random_file_name) => {
 		io.to(socket.id).emit("message", "loading...");
 
-		const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox v.2.0.22 CLI tool.jar`, `${project_root}/model/overlay.java`, random_file_name]);
+		const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
 
 		spawn.stderr.on("data", (data) => {
 			let java_stderr = data.toString();
@@ -163,7 +163,7 @@ const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	}
 });
 io_as_client.on("connect", () => {
-	console.log("connected as client to localhost:1025");
+	console.log("connected as client to localhost:1025 (j9108c)");
 
 	io_as_client.on("store hosts", (hosts) => app.locals.hosts = hosts);
 	
@@ -186,4 +186,4 @@ app.locals.hosts = null;
 
 // port and listen
 const port = process.env.PORT || 2000;
-server.listen(port, () => console.log(`server started on localhost:${port}`));
+server.listen(port, () => console.log(`(dark-mode-pdf) server started on localhost:${port}`));

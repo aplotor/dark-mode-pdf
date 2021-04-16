@@ -1,7 +1,6 @@
 let project_root = __dirname.split("/");
 project_root.pop();
 project_root = project_root.join("/");
-console.log(project_root);
 
 const secrets = require(`${project_root}/_secrets.js`);
 

@@ -103,11 +103,6 @@ a:visited {
 	color: rgb(43, 43, 43);
 }
 
-#dropright_menu {
-	background: white;
-	min-width: 9rem;
-}
-
 #dropdown_menu {
 	left: 50%;
 	right: auto;

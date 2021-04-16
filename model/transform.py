@@ -88,7 +88,7 @@ else:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
 			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=(255,255,255))
-			image.save(f"{tempdirname}/image{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
+			image.save(f"{tempdirname}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
 			if (i == 1):
 				print("done 1 page")
 				time.sleep(0.1)
@@ -102,16 +102,16 @@ else:
 		# combine images into pdf
 		print("saving...")
 		time.sleep(0.1)
-		image1 = PIL.Image.open(f"{tempdirname}/image1.jpg")
+		image_1 = PIL.Image.open(f"{tempdirname}/image_1.jpg")
 		images = []
 		for num in range(2, i):
-			images.append(PIL.Image.open(f"{tempdirname}/image{str(num)}.jpg"))
+			images.append(PIL.Image.open(f"{tempdirname}/image_{str(num)}.jpg"))
 		if (option == "no_ocr_dark"):
-			image1.save(f"{project_root}/data/{file_name}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
+			image_1.save(f"{project_root}/data/{file_name}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 		elif (option == "ocr_dark"):
-			image1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
+			image_1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 
-			# OCR: fork a child process to perform the OCR so that the application will survive if ocrmypdf() fails
+			# OCR: fork a child process to perform the OCR so that the application will survive if ocrmypdf.ocr fails
 			print("forking process to perform OCR")
 			time.sleep(0.1)
 			pid = os.fork()
@@ -121,10 +121,10 @@ else:
 				print("child process exited with exit status 0")
 				time.sleep(0.1)
 			elif (pid == 0): # child process
-				# OCR the pdf and create output pdf (PDF/A)
+				# OCR the pdf and create output pdf (PDF/A compliant)
 				print("child process performing OCR (this might take a while)...")
 				time.sleep(0.1)
-				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{file_name}_out.pdf", force_ocr=True, language="eng")
+				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{file_name}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
 				print("done OCR")
 				time.sleep(0.1)
 				print("created output pdf")
