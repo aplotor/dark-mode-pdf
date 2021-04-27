@@ -26,7 +26,8 @@ const file_system = require("fs");
 sql_operations.set_client(config);
 sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((error) => console.error(error));
 
-const index = "/apps/dark-mode-pdf"; // index of this server relative to domain. use as project root for non-html static file links in handlebars html
+const app_name = "dark-mode-pdf"
+const index = `/apps/${app_name}`; // index of this server relative to domain. use as project root for non-html static file links in handlebars html
 
 const app = express();
 const server = http.createServer(app);
@@ -42,11 +43,11 @@ app.engine("handlebars", exp_hbs({
 
 app.get(index, (req, res) => {
 	res.render("index.handlebars", {
-		title: "dark-mode-pdf — j9108c",
+		title: `${app_name} — j9108c`,
 		description: "converts PDFs to dark mode"
 	});
 });
-app.get("/apps/darkmodepdf", (req, res) => {
+app.get(index.split("-").join(""), (req, res) => {
 	res.redirect(301, index)
 });
 
@@ -90,9 +91,9 @@ io.on("connect", (socket) => {
 
 	io.to(socket.id).emit("update countdown", countdown_copy);
 	if (stats_copy != null) {
-		io.to(socket.id).emit("update domain request info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]);
+		io.to(socket.id).emit("update domain request info", stats_copy);
 	} else {
-		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy[0], stats_copy[1], stats_copy[2], stats_copy[3], stats_copy[4], stats_copy[5]) : null), 5000);
+		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy) : null), 5000);
 	}
 
 	socket.on("transform", (random_file_name, transform_option) => {
@@ -162,7 +163,7 @@ let stats_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	reconnect: true,
 	extraHeaders: {
-		app: "dark-mode-pdf"
+		app: app_name
 	}
 });
 io_as_client.on("connect", () => {
@@ -176,10 +177,10 @@ io_as_client.on("connect", () => {
 		countdown_copy = countdown;
 	});
 
-	io_as_client.on("update domain request info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
-		io.emit("update domain request info", today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries);
+	io_as_client.on("update domain request info", (stats) => {
+		io.emit("update domain request info", stats);
 
-		stats_copy = [today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries];
+		stats_copy = stats;
 	});
 });
 
@@ -189,4 +190,4 @@ app.locals.hosts = null;
 
 // port and listen
 const port = process.env.PORT || 2000;
-server.listen(port, () => console.log(`(dark-mode-pdf) server started on localhost:${port}`));
+server.listen(port, () => console.log(`(${app_name}) server started on localhost:${port}`));

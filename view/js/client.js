@@ -140,7 +140,14 @@ socket.on("download", (random_file_name) => {
 	alert_wrapper.innerHTML = "";
 });
 
-socket.on("update domain request info", (today_total, last7days_total, last30days_total, today_countries, last7days_countries, last30days_countries) => {
+socket.on("update domain request info", (stats) => {
+	today_total = stats[0];
+	last7days_total = stats[1];
+	last30days_total = stats[2];
+	today_countries = stats[3];
+	last7days_countries = stats[4];
+	last30days_countries = stats[5];
+
 	today_total_wrapper.innerHTML = today_total;
 	last7days_total_wrapper.innerHTML = last7days_total;
 	last30days_total_wrapper.innerHTML = last30days_total;
