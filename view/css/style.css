@@ -58,8 +58,8 @@ a {
 }
 
 a:hover {
-	text-decoration: underline;
 	color: rgb(113, 142, 183);
+	text-decoration: underline;
 }
 
 a:visited {

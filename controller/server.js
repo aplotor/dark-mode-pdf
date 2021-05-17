@@ -1,9 +1,5 @@
 let config = null;
-if (process.argv[0].slice(0, 13) == "/home/j9108c/") {
-	config = "dev";
-} else {
-	config = "prod";
-}
+((process.argv[0].slice(0, 13) == "/home/j9108c/") ? config = "dev" : config = "prod");
 console.log(config);
 
 let project_root = __dirname.split("/");
@@ -26,7 +22,7 @@ const file_system = require("fs");
 sql_operations.set_client(config);
 sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((error) => console.error(error));
 
-const app_name = "dark-mode-pdf"
+const app_name = "dark-mode-pdf";
 const index = `/apps/${app_name}`; // index of this server relative to domain. use as project root for non-html static file links in handlebars html
 
 const app = express();
@@ -48,7 +44,7 @@ app.get(index, (req, res) => {
 	});
 });
 app.get(index.split("-").join(""), (req, res) => {
-	res.redirect(301, index)
+	res.redirect(301, index);
 });
 
 app.post(`${index}/upload`, (req, res) => {
@@ -85,7 +81,7 @@ io.on("connect", (socket) => {
 	const headers = socket.request["headers"];
 	// console.log(headers);
 	const socket_address = headers["host"].split(":")[0];
-	((socket_address == secrets.dev_private_ip) ? io.to(socket.id).emit("replace localhost with dev private ip", secrets.dev_private_ip) : null);
+	((socket_address == dev_private_ip_copy) ? io.to(socket.id).emit("replace localhost with dev private ip", dev_private_ip_copy) : null);
 
 	sql_operations.add_visit();
 
@@ -120,7 +116,31 @@ io.on("connect", (socket) => {
 			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
 			
 			if (transform_option == "no_ocr_dark") {
-				io.to(socket.id).emit("overlay", random_file_name);
+				io.to(socket.id).emit("message", "loading...");
+
+				const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
+		
+				spawn.stderr.on("data", (data) => {
+					let java_stderr = data.toString();
+					console.error(java_stderr);
+				});
+		
+				spawn.stdout.on("data", (data) => {
+					let java_stdout = data.toString();
+					if (java_stdout != "\n") {
+						console.log(java_stdout);
+						io.to(socket.id).emit("message", java_stdout);
+					}
+				});
+		
+				spawn.on("exit", (exit_code) => {
+					console.log(`spawn process exited with code ${exit_code}`);
+					io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
+					
+					sql_operations.add_conversion();
+					
+					io.to(socket.id).emit("download", random_file_name);
+				});
 			} else {
 				sql_operations.add_conversion();
 				
@@ -128,36 +148,9 @@ io.on("connect", (socket) => {
 			}
 		});
 	});
-
-	socket.on("overlay", (random_file_name) => {
-		io.to(socket.id).emit("message", "loading...");
-
-		const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
-
-		spawn.stderr.on("data", (data) => {
-			let java_stderr = data.toString();
-			console.error(java_stderr);
-		});
-
-		spawn.stdout.on("data", (data) => {
-			let java_stdout = data.toString();
-			if (java_stdout != "\n") {
-				console.log(java_stdout);
-				io.to(socket.id).emit("message", java_stdout);
-			}
-		});
-
-		spawn.on("exit", (exit_code) => {
-			console.log(`spawn process exited with code ${exit_code}`);
-			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
-			
-			sql_operations.add_conversion();
-			
-			io.to(socket.id).emit("download", random_file_name);
-		});
-	});
 });
 
+let dev_private_ip_copy = null;
 let countdown_copy = null;
 let stats_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
@@ -170,6 +163,8 @@ io_as_client.on("connect", () => {
 	console.log("connected as client to localhost:1025 (j9108c)");
 
 	io_as_client.on("store hosts", (hosts) => app.locals.hosts = hosts);
+
+	io_as_client.on("store dev private ip", (dev_private_ip) => dev_private_ip_copy = dev_private_ip);
 	
 	io_as_client.on("update countdown", (countdown) => {
 		io.emit("update countdown", countdown);

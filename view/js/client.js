@@ -1,5 +1,5 @@
 let index = null;
-const socket = io({path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`}); // triggers controller's io.on connect
+const socket = io({path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`}); // triggers server's io.on connect
 
 const progress = document.getElementById("progress");
 const progress_wrapper = document.getElementById("progress_wrapper");
@@ -128,10 +128,6 @@ socket.on("message", (message) => {
 	add_blinking_caret();
 
 	terminal.scrollTop = terminal.scrollHeight; // scroll down
-});
-
-socket.on("overlay", (random_file_name) => {
-	socket.emit("overlay", random_file_name);
 });
 
 socket.on("download", (random_file_name) => {
