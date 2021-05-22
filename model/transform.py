@@ -2,7 +2,7 @@ import ocrmypdf
 import os
 import pdf2image
 import pdfrw, pdfrw.toreportlab
-import PIL.Image, PIL.ImageOps
+import PIL.Image, PIL.ImageOps, PIL.ImageColor
 import reportlab
 import sys
 import tempfile
@@ -15,6 +15,8 @@ file_name = sys.argv[1]
 # print(file_name)
 option = sys.argv[2]
 # print(option)
+text_color = PIL.ImageColor.getcolor(sys.argv[3], "RGB")
+# print(text_color)
 
 print("accepting input pdf")
 time.sleep(0.1) # sleep for 0.1s. need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
@@ -87,7 +89,7 @@ else:
 		for image in images:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
-			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=(255,255,255))
+			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=text_color)
 			image.save(f"{tempdirname}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
 			if (i == 1):
 				print("done 1 page")

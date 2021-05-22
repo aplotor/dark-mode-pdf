@@ -21,6 +21,7 @@ const today_list_wrapper = document.getElementById("today_list_wrapper");
 const last7days_list_wrapper = document.getElementById("last7days_list_wrapper");
 const last30days_list_wrapper = document.getElementById("last30days_list_wrapper");
 const countdown_wrapper = document.getElementById("countdown_wrapper");
+const color_picker = document.getElementById("color_picker");
 const all_elements = document.getElementsByTagName("*");
 
 if (document.cookie != "") {
@@ -106,7 +107,8 @@ convert_button.addEventListener("click", (event) => {
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) { // readystate 4 = data transfer complete
 			const transform_option = document.querySelector("input[name='transform_option']:checked").value;
-			socket.emit("transform", random_file_name, transform_option);
+			const color_hex = color_picker.value;
+			socket.emit("transform", random_file_name, transform_option, color_hex);
 		}
 	}
 	req.send(data);

@@ -92,11 +92,11 @@ io.on("connect", (socket) => {
 		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy) : null), 5000);
 	}
 
-	socket.on("transform", (random_file_name, transform_option) => {
+	socket.on("transform", (random_file_name, transform_option, color_hex) => {
 		console.log(`start ${random_file_name}`);
 		io.to(socket.id).emit("message", `start ${random_file_name}`);
 
-		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, random_file_name, transform_option]);
+		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, random_file_name, transform_option, color_hex]);
 
 		spawn.stderr.on("data", (data) => {
 			let python_stderr = data.toString();
