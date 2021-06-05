@@ -65,6 +65,8 @@ app.get(`${index}/download`, (req, res) => {
 
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
 
+		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
+
 		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
@@ -118,28 +120,32 @@ io.on("connect", (socket) => {
 			if (transform_option == "no_ocr_dark") {
 				io.to(socket.id).emit("message", "loading...");
 
-				const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
+				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_file_name}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_file_name}_in.pdf`]);
+
+				spawn.on("exit", () => {
+					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
 		
-				spawn.stderr.on("data", (data) => {
-					let java_stderr = data.toString();
-					console.error(java_stderr);
-				});
-		
-				spawn.stdout.on("data", (data) => {
-					let java_stdout = data.toString();
-					if (java_stdout != "\n") {
-						console.log(java_stdout);
-						io.to(socket.id).emit("message", java_stdout);
-					}
-				});
-		
-				spawn.on("exit", (exit_code) => {
-					console.log(`spawn process exited with code ${exit_code}`);
-					io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
-					
-					sql_operations.add_conversion();
-					
-					io.to(socket.id).emit("download", random_file_name);
+					spawn.stderr.on("data", (data) => {
+						let java_stderr = data.toString();
+						console.error(java_stderr);
+					});
+			
+					spawn.stdout.on("data", (data) => {
+						let java_stdout = data.toString();
+						if (java_stdout != "\n") {
+							console.log(java_stdout);
+							io.to(socket.id).emit("message", java_stdout);
+						}
+					});
+			
+					spawn.on("exit", (exit_code) => {
+						console.log(`spawn process exited with code ${exit_code}`);
+						io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
+						
+						sql_operations.add_conversion();
+						
+						io.to(socket.id).emit("download", random_file_name);
+					});
 				});
 			} else {
 				sql_operations.add_conversion();
