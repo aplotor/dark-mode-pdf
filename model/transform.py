@@ -81,7 +81,7 @@ else:
 		# convert input pdf pages to images
 		print("loading...")
 		time.sleep(0.1)
-		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=tempdirname) # pdf -> list of PIL image objects
+		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=tempdirname) # pdf −> list of pil image objects
 
 		# convert images to dark mode
 		print("applying dark mode")
@@ -113,7 +113,7 @@ else:
 		elif (option == "ocr_dark"):
 			image_1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 
-			# OCR: fork a child process to perform the OCR so that the application will survive if ocrmypdf.ocr fails
+			# ocr: fork a child process to perform the ocr so that the application will survive if ocrmypdf.ocr fails
 			print("forking process to perform OCR")
 			time.sleep(0.1)
 			pid = os.fork()
@@ -123,7 +123,7 @@ else:
 				print("child process exited with exit status 0")
 				time.sleep(0.1)
 			elif (pid == 0): # child process
-				# OCR the pdf and create output pdf
+				# ocr the pdf and create output pdf
 				print("child process performing OCR (this might take a while)...")
 				time.sleep(0.1)
 				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{file_name}_out.pdf", force_ocr=True, output_type="pdf", language="eng")

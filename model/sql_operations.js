@@ -18,7 +18,7 @@ function set_client(config) {
 
 function connect_to_db() {
 	return new Promise((resolve, reject) => {
-		sql_client.connect((error) => ((error) ? console.error(error) : resolve(console.log("connected to sql db"))));
+		sql_client.connect((err) => ((err) ? reject(console.error(err)) : resolve(console.log("connected to sql db"))));
 	});
 }
 
@@ -30,35 +30,33 @@ function init_db(config) {
 				"from information_schema.tables " +
 				"where table_schema='public' " +
 					"and table_type='BASE TABLE';",
-				(error, result) => {
-					if (error) {
-						console.error(error);
+				(err, result) => {
+					if (err) {
+						reject(console.error(err));
 					} else {
 						result.rows.forEach((table) => {
 							sql_client.query(
 								`drop table ${table["table_name"]} cascade;`,
-								(error, result) => ((error) ? console.error(error) : null)
+								(err, result) => ((err) ? reject(console.error(err)) : null)
 							);
 						});
 	
-						resolve("dropped all tables");
+						resolve(console.log("dropped all tables"));
 					}
 				}
 			);
 		} else if (config == "prod") {
-			resolve("kept all tables");
+			resolve(console.log("kept all tables"));
 		}
-	}).then((result) => {
-		console.log(result);
-
+	}).then(() => {
 		sql_client.query(
 			"create table if not exists visit (" +
 				"id int primary key, " +
 				"count int not null" +
 			");",
-			(error, result) => {
-				if (error) {
-					console.error(error);
+			(err, result) => {
+				if (err) {
+					console.error(err);
 				} else {
 					console.log("created table if not exists visit");
 
@@ -66,7 +64,7 @@ function init_db(config) {
 						"insert into visit " +
 						"values (0, 0) " +
 						"on conflict do nothing;",
-						(error, result) => ((error) ? console.error(error) : null)
+						(err, result) => ((err) ? console.error(err) : null)
 					);
 				}
 			}
@@ -77,9 +75,9 @@ function init_db(config) {
 				"id int primary key, " +
 				"count int not null" +
 			");",
-			(error, result) => {
-				if (error) {
-					console.error(error);
+			(err, result) => {
+				if (err) {
+					console.error(err);
 				} else {
 					console.log("created table if not exists conversion");
 
@@ -87,12 +85,12 @@ function init_db(config) {
 						"insert into conversion " +
 						"values (0, 0) " +
 						"on conflict do nothing;",
-						(error, result) => ((error) ? console.error(error) : null)
+						(err, result) => ((err) ? console.error(err) : null)
 					);
 				}
 			}
 		);
-	}).catch((error) => console.error(error));
+	}).catch((err) => console.error(err));
 }
 
 function add_visit() {
@@ -100,7 +98,7 @@ function add_visit() {
 		"update visit " +
 		"set count=count+1 " +
 		"where id=0;",
-		(error, result) => ((error) ? console.error(error) : null)
+		(err, result) => ((err) ? console.error(err) : null)
 	);
 }
 
@@ -109,7 +107,7 @@ function add_conversion() {
 		"update conversion " +
 		"set count=count+1 " +
 		"where id=0;",
-		(error, result) => ((error) ? console.error(error) : null)
+		(err, result) => ((err) ? console.error(err) : null)
 	);
 }
 

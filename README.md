@@ -1,2 +1,2 @@
 # dark-mode-pdf
-converts pdfs to dark mode
+converts PDFs to dark mode

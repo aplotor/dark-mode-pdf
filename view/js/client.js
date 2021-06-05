@@ -30,11 +30,11 @@ if (document.cookie != "") {
 	((light_mode_preference == "on") ? [...all_elements].forEach((element) => element.classList.add("light_mode")) : null);
 }
 
-file_input.addEventListener("input", (event) => {
+file_input.addEventListener("input", (evt) => {
 	file_input_label.innerText = file_input.files[0].name;
 });
 
-convert_button.addEventListener("click", (event) => {
+convert_button.addEventListener("click", (evt) => {
 	if (!file_input.value) {
 		show_alert("no file selected", "warning");
 		return null;
@@ -70,16 +70,16 @@ convert_button.addEventListener("click", (event) => {
 	const req = new XMLHttpRequest();
 	req.responseType = "json";
 
-	req.upload.addEventListener("progress", (event) => {
-		const loaded = event.loaded;
-		const total = event.total;
+	req.upload.addEventListener("progress", (evt) => {
+		const loaded = evt.loaded;
+		const total = evt.total;
 		const percentage_complete = (loaded/total)*100;
 
 		progress.setAttribute("style", `width: ${Math.floor(percentage_complete)}%`);
 		progress_status.innerText = `${Math.floor(percentage_complete)}% uploaded`;
 	});
 
-	req.addEventListener("load", (event) => {
+	req.addEventListener("load", (evt) => {
 		if (req.status == 200) {
 			show_alert("file uploaded", "success");
 		} else {
@@ -89,17 +89,17 @@ convert_button.addEventListener("click", (event) => {
 		reset();
 	});
 
-	req.addEventListener("error", (event) => {
+	req.addEventListener("error", (evt) => {
 		reset();
 		show_alert("error uploading file", "danger");
 	});
 
-	req.addEventListener("abort", (event) => {
+	req.addEventListener("abort", (evt) => {
 		reset();
 		show_alert("upload cancelled", "primary");
 	});
 
-	cancel_button.addEventListener("click", (event) => {
+	cancel_button.addEventListener("click", (evt) => {
 		req.abort();
 	});
 
@@ -114,7 +114,7 @@ convert_button.addEventListener("click", (event) => {
 	req.send(data);
 });
 
-dropdown_button.addEventListener("click", (event) => {
+dropdown_button.addEventListener("click", (evt) => {
 	setTimeout(() => dropdown_menu.scrollIntoView({behavior: "smooth"}), 250);
 });
 

@@ -20,10 +20,10 @@ const file_upload = require("express-fileupload");
 const file_system = require("fs");
 
 sql_operations.set_client(config);
-sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((error) => console.error(error));
+sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((err) => console.error(err));
 
 const app_name = "dark-mode-pdf";
-const index = `/apps/${app_name}`; // index of this server relative to domain. use as project root for non-html static file links in handlebars html
+const index = `/apps/${app_name}`; // index of this server relative to domain. use as project root for non-html static file links in hbs html
 
 const app = express();
 const server = http.createServer(app);
@@ -180,8 +180,9 @@ io_as_client.on("connect", () => {
 });
 
 // set app local vars (auto passed as data to all hbs renders)
-app.locals.index = index;
 app.locals.hosts = null;
+app.locals.index = index;
+app.locals.repo = "https://github.com/j9108c/dark-mode-pdf";
 
 // port and listen
 const port = process.env.PORT || 2000;
