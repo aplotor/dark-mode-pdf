@@ -16,9 +16,9 @@ public class overlay {
 		Thread.sleep(100); // sleep for 100ms. need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
 
 		Overlay overlayer = new Overlay();
-		if (position == "background") {
+		if (position.equals("background")) {
 			overlayer.setOverlayPosition(Overlay.Position.BACKGROUND);
-		} else if (position == "foreground") {
+		} else if (position.equals("foreground")) {
 			overlayer.setOverlayPosition(Overlay.Position.FOREGROUND);
 		}
 
@@ -48,7 +48,9 @@ public class overlay {
 		String project_root = System.getProperty("user.dir"); // where the app is started from; NOT where the controller file is and NOT where this file is
 		// System.out.println(project_root);
 
-		String filename = args[0];
+		String transform_option = args[0];
+		// System.out.println(transform_option);
+		String filename = args[1];
 		// System.out.println(filename);
 
 		// load original pdf to be the background overlay
@@ -79,9 +81,11 @@ public class overlay {
 		// overlay pages to dark mode transformed pdf pages, then append the aggregate pages to a final pdf
 		PDDocument out_pdf = new PDDocument();
 		overlay(split_b, "background", pagecount, split_m, out_pdf);
-		List<PDDocument> split_o = splitter.split(out_pdf);
-		out_pdf = new PDDocument();
-		overlay(split_f, "foreground", pagecount, split_o, out_pdf);
+		if (transform_option.equals("no_ocr_dark_retain_img_colors")) {
+			List<PDDocument> split_o = splitter.split(out_pdf);
+			out_pdf = new PDDocument();
+			overlay(split_f, "foreground", pagecount, split_o, out_pdf);
+		}
 
 		// save final pdf
 		System.out.println("creating output pdf");

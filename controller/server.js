@@ -57,23 +57,23 @@ app.get(`${index}/download`, (req, res) => {
 	console.log("sending pdf to your downloads");
 	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
 
-	res.download(`${project_root}/data/${req.query.random_file_name}_out.pdf`, `${req.query.random_file_name}_out.pdf`, () => {
+	res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`, () => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_filename}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_filename}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_filename}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_file_name}_out.pdf`, (err) => ((err) ? console.error(err) : null));
+		file_system.unlink(`${project_root}/data/${req.query.random_filename}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
 		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
 
-		console.log(`end ${req.query.random_file_name}`);
-		io.to(req.query.socket_id).emit("message", `end ${req.query.random_file_name}`);
+		console.log(`end ${req.query.random_filename}`);
+		io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
 	});
 });
 
@@ -94,11 +94,11 @@ io.on("connect", (socket) => {
 		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy) : null), 5000);
 	}
 
-	socket.on("transform", (random_file_name, transform_option, color_hex) => {
-		console.log(`start ${random_file_name}`);
-		io.to(socket.id).emit("message", `start ${random_file_name}`);
+	socket.on("transform", (transform_option, random_filename, color_hex) => {
+		console.log(`start ${random_filename}`);
+		io.to(socket.id).emit("message", `start ${random_filename}`);
 
-		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, random_file_name, transform_option, color_hex]);
+		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, transform_option, random_filename, color_hex]);
 
 		spawn.stderr.on("data", (data) => {
 			let python_stderr = data.toString();
@@ -117,13 +117,13 @@ io.on("connect", (socket) => {
 			console.log(`spawn process exited with code ${exit_code}`);
 			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
 			
-			if (transform_option == "no_ocr_dark") {
+			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
 				io.to(socket.id).emit("message", "loading...");
 
-				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_file_name}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_file_name}_in.pdf`]);
+				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_filename}_in.pdf`]);
 
 				spawn.on("exit", () => {
-					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, random_file_name]);
+					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
 		
 					spawn.stderr.on("data", (data) => {
 						let java_stderr = data.toString();
@@ -144,13 +144,13 @@ io.on("connect", (socket) => {
 						
 						sql_operations.add_conversion();
 						
-						io.to(socket.id).emit("download", random_file_name);
+						io.to(socket.id).emit("download", random_filename);
 					});
 				});
 			} else {
 				sql_operations.add_conversion();
 				
-				io.to(socket.id).emit("download", random_file_name);
+				io.to(socket.id).emit("download", random_filename);
 			}
 		});
 	});

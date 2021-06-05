@@ -11,10 +11,10 @@ import time
 project_root = os.getcwd() # where the app is started from; NOT where the controller file is and NOT where this file is
 # print(project_root)
 
-file_name = sys.argv[1]
-# print(file_name)
-option = sys.argv[2]
+option = sys.argv[1]
 # print(option)
+file_name = sys.argv[2]
+# print(file_name)
 text_color = PIL.ImageColor.getcolor(sys.argv[3], "RGB")
 # print(text_color)
 
@@ -108,7 +108,7 @@ else:
 		images = []
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{tempdirname}/image_{str(num)}.jpg"))
-		if (option == "no_ocr_dark"):
+		if (option == "no_ocr_dark" or option == "no_ocr_dark_retain_img_colors"):
 			image_1.save(f"{project_root}/data/{file_name}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 		elif (option == "ocr_dark"):
 			image_1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi

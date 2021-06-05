@@ -21,7 +21,14 @@ const today_list_wrapper = document.getElementById("today_list_wrapper");
 const last7days_list_wrapper = document.getElementById("last7days_list_wrapper");
 const last30days_list_wrapper = document.getElementById("last30days_list_wrapper");
 const countdown_wrapper = document.getElementById("countdown_wrapper");
-const color_picker = document.getElementById("color_picker");
+const checkbox_text_color_1 = document.getElementById("text_color_1");
+const checkbox_text_color_2 = document.getElementById("text_color_2");
+const color_picker_1 = document.getElementById("color_picker_1");
+const color_picker_2 = document.getElementById("color_picker_2");
+const radio_no_ocr_dark = document.getElementById("no_ocr_dark");
+const radio_ocr_dark = document.getElementById("ocr_dark");
+const radio_dim = document.getElementById("dim");
+const checkbox_retain_img_colors = document.getElementById("retain_img_colors");
 const all_elements = document.getElementsByTagName("*");
 
 if (document.cookie != "") {
@@ -34,6 +41,32 @@ file_input.addEventListener("input", (evt) => {
 	file_input_label.innerText = file_input.files[0].name;
 });
 
+radio_no_ocr_dark.addEventListener("click", (evt) => {
+	checkbox_text_color_1.disabled = false;
+	checkbox_text_color_1.checked = true;
+	checkbox_text_color_2.disabled = true;
+	checkbox_text_color_2.checked = false;
+	checkbox_retain_img_colors.disabled = false;
+});
+
+radio_ocr_dark.addEventListener("click", (evt) => {
+	checkbox_text_color_2.disabled = false;
+	checkbox_text_color_2.checked = true;
+	checkbox_text_color_1.disabled = true;
+	checkbox_text_color_1.checked = false;
+	checkbox_retain_img_colors.disabled = true;
+	checkbox_retain_img_colors.checked = false;
+});
+
+radio_dim.addEventListener("click", (evt) => {
+	checkbox_text_color_1.disabled = true;
+	checkbox_text_color_1.checked = false;
+	checkbox_text_color_2.disabled = true;
+	checkbox_text_color_2.checked = false;
+	checkbox_retain_img_colors.disabled = true;
+	checkbox_retain_img_colors.checked = false;
+});
+
 convert_button.addEventListener("click", (evt) => {
 	if (!file_input.value) {
 		show_alert("no file selected", "warning");
@@ -41,10 +74,10 @@ convert_button.addEventListener("click", (evt) => {
 	}
 
 	const file = file_input.files[0];
-	const file_name = file.name;
+	const filename = file.name;
 	const file_size = file.size; // in bytes
 
-	if (file_name.split(".").pop().toLowerCase() != "pdf") {
+	if (filename.split(".").pop().toLowerCase() != "pdf") {
 		show_alert("this is not a pdf file", "warning");
 		return null;
 	}
@@ -62,10 +95,10 @@ convert_button.addEventListener("click", (evt) => {
 	cancel_button.classList.remove("d-none");
 	progress_wrapper.classList.remove("d-none");
 
-	const random_file_name = Math.random().toString().substring(2, 17);
+	const random_filename = Math.random().toString().substring(2, 17);
 
 	const data = new FormData();
-	data.append("file", file, random_file_name);
+	data.append("file", file, random_filename);
 
 	const req = new XMLHttpRequest();
 	req.responseType = "json";
@@ -106,9 +139,13 @@ convert_button.addEventListener("click", (evt) => {
 	req.open("post", "/apps/dark-mode-pdf/upload");
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) { // readystate 4 = data transfer complete
-			const transform_option = document.querySelector("input[name='transform_option']:checked").value;
-			const color_hex = color_picker.value;
-			socket.emit("transform", random_file_name, transform_option, color_hex);
+			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
+			((transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked) ? transform_option = "no_ocr_dark_retain_img_colors" : null);
+
+			let color_hex = null;
+			((checkbox_text_color_1.checked) ? color_hex = color_picker_1.value : color_hex = color_picker_2.value);
+
+			socket.emit("transform", transform_option, random_filename, color_hex);
 		}
 	}
 	req.send(data);
@@ -132,8 +169,8 @@ socket.on("message", (message) => {
 	terminal.scrollTop = terminal.scrollHeight; // scroll down
 });
 
-socket.on("download", (random_file_name) => {
-	window.location = `${index}/download?socket_id=${socket.id}&random_file_name=${random_file_name}`;
+socket.on("download", (random_filename) => {
+	window.location = `${index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
 
 	alert_wrapper.innerHTML = "";
 });
