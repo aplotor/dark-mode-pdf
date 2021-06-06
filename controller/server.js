@@ -11,13 +11,13 @@ const secrets = require(`${project_root}/_secrets.js`)
 const sql_operations = require(`${project_root}/model/sql_operations.js`);
 
 const express = require("express");
-const exp_hbs = require("express-handlebars");
+const express_hbs = require("express-handlebars");
 const http = require("http");
 const socket_io = require("socket.io");
 const socket_io_client = require("socket.io-client");
 const child_process = require("child_process");
-const file_upload = require("express-fileupload");
-const file_system = require("fs");
+const fileupload = require("express-fileupload");
+const filesystem = require("fs");
 
 sql_operations.set_client(config);
 sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((err) => console.error(err));
@@ -28,11 +28,11 @@ const index = `/apps/${app_name}`; // index of this server relative to domain. u
 const app = express();
 const server = http.createServer(app);
 const io = socket_io(server, {path: `${index}/socket.io`});
-app.use(file_upload());
+app.use(fileupload());
 app.use(`${index}/view`, express.static(`${project_root}/view`));
 app.set("views", `${project_root}/view/html`);
 app.set("view engine", "handlebars");
-app.engine("handlebars", exp_hbs({
+app.engine("handlebars", express_hbs({
 	layoutsDir: `${project_root}/view/html`,
 	defaultLayout: "template.handlebars"
 }));
@@ -61,13 +61,13 @@ app.get(`${index}/download`, (req, res) => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 
-		file_system.unlink(`${project_root}/data/${req.query.random_filename}_in.pdf`, (err) => ((err) ? console.error(err) : null));
+		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_in.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_filename}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
+		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_filename}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
+		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
 
-		file_system.unlink(`${project_root}/data/${req.query.random_filename}_out.pdf`, (err) => ((err) ? console.error(err) : null));
+		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_out.pdf`, (err) => ((err) ? console.error(err) : null));
 
 		console.log("your data has been deleted from the server");
 		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");

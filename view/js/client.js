@@ -113,13 +113,8 @@ convert_button.addEventListener("click", (evt) => {
 	});
 
 	req.addEventListener("load", (evt) => {
-		if (req.status == 200) {
-			show_alert("file uploaded", "success");
-		} else {
-			show_alert("error uploading file", "danger");
-		}
-
 		reset();
+		((req.status == 200) ? show_alert("file uploaded", "success") : show_alert("error uploading file", "danger"));
 	});
 
 	req.addEventListener("error", (evt) => {
