@@ -16,99 +16,87 @@ function set_client(config) {
 	}
 }
 
-function connect_to_db() {
-	return new Promise((resolve, reject) => {
-		sql_client.connect((err) => ((err) ? reject(console.error(err)) : resolve(console.log("connected to sql db"))));
-	});
+async function connect_to_db() {
+	try {
+		await sql_client.connect();
+		console.log("connected to sql db");
+	} catch (err) {
+		console.error(err);
+	}
 }
 
-function init_db(config) {
-	new Promise((resolve, reject) => {
+async function init_db(config) {
+	try {
 		if (config == "dev") {
-			sql_client.query(
+			const result = await sql_client.query(
 				"select table_name " +
 				"from information_schema.tables " +
 				"where table_schema='public' " +
-					"and table_type='BASE TABLE';",
-				(err, result) => {
-					if (err) {
-						reject(console.error(err));
-					} else {
-						result.rows.forEach((table) => {
-							sql_client.query(
-								`drop table ${table["table_name"]} cascade;`,
-								(err, result) => ((err) ? reject(console.error(err)) : null)
-							);
-						});
-	
-						resolve(console.log("dropped all tables"));
-					}
-				}
+					"and table_type='BASE TABLE';"
 			);
+			const all_tables = result.rows;
+			await Promise.all(all_tables.map((table) => {
+				sql_client.query(
+					`drop table ${table["table_name"]} cascade;`
+				);
+			}));
+			console.log("dropped all tables");
 		} else if (config == "prod") {
-			resolve(console.log("kept all tables"));
+			console.log("kept all tables");
 		}
-	}).then(() => {
-		sql_client.query(
+
+		await sql_client.query(
 			"create table if not exists visit (" +
 				"id int primary key, " +
 				"count int not null" +
-			");",
-			(err, result) => {
-				if (err) {
-					console.error(err);
-				} else {
-					console.log("created table if not exists visit");
-
-					sql_client.query(
-						"insert into visit " +
-						"values (0, 0) " +
-						"on conflict do nothing;",
-						(err, result) => ((err) ? console.error(err) : null)
-					);
-				}
-			}
+			");"
 		);
-	
-		sql_client.query(
+		console.log('created table "visit" if not exist');
+		await sql_client.query(
+			"insert into visit " +
+			"values (0, 0) " +
+			"on conflict do nothing;"
+		);
+
+		await sql_client.query(
 			"create table if not exists conversion (" +
 				"id int primary key, " +
 				"count int not null" +
-			");",
-			(err, result) => {
-				if (err) {
-					console.error(err);
-				} else {
-					console.log("created table if not exists conversion");
-
-					sql_client.query(
-						"insert into conversion " +
-						"values (0, 0) " +
-						"on conflict do nothing;",
-						(err, result) => ((err) ? console.error(err) : null)
-					);
-				}
-			}
+			");"
 		);
-	}).catch((err) => console.error(err));
+		console.log('created table "conversion" if not exist');
+		await sql_client.query(
+			"insert into conversion " +
+			"values (0, 0) " +
+			"on conflict do nothing;"
+		);
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 function add_visit() {
-	sql_client.query(
-		"update visit " +
-		"set count=count+1 " +
-		"where id=0;",
-		(err, result) => ((err) ? console.error(err) : null)
-	);
+	try {
+		sql_client.query(
+			"update visit " +
+			"set count=count+1 " +
+			"where id=0;"
+		);
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 function add_conversion() {
-	sql_client.query(
-		"update conversion " +
-		"set count=count+1 " +
-		"where id=0;",
-		(err, result) => ((err) ? console.error(err) : null)
-	);
+	try {
+		sql_client.query(
+			"update conversion " +
+			"set count=count+1 " +
+			"where id=0;"
+		);
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 module.exports.set_client = set_client;
