@@ -169,15 +169,15 @@ a:visited {
 	50% {color: inherit;}
 }
 
-#bottom_github {
+#bottom_gh {
 	font-size: 60px;
 	color: rgb(60, 60, 60);
-} #bottom_github.light_mode {
+} #bottom_gh.light_mode {
 	color: rgb(210, 210, 210);
 }
 
-#bottom_github:hover {
+#bottom_gh:hover {
 	color: rgb(120, 120, 120);
-} #bottom_github.light_mode:hover {
+} #bottom_gh.light_mode:hover {
 	color: rgb(150, 150, 150);
 }

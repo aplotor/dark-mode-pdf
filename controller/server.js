@@ -123,7 +123,7 @@ io.on("connect", (socket) => {
 				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_filename}_in.pdf`]);
 
 				spawn.on("exit", () => {
-					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v.2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
+					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
 		
 					spawn.stderr.on("data", (data) => {
 						let java_stderr = data.toString();

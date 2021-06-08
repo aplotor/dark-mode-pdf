@@ -29,6 +29,7 @@ const radio_no_ocr_dark = document.getElementById("no_ocr_dark");
 const radio_ocr_dark = document.getElementById("ocr_dark");
 const radio_dim = document.getElementById("dim");
 const checkbox_retain_img_colors = document.getElementById("retain_img_colors");
+const post_terminal_space = document.getElementById("post_terminal_space");
 const all_elements = document.getElementsByTagName("*");
 
 if (document.cookie != "") {
@@ -101,6 +102,7 @@ convert_button.addEventListener("click", (evt) => {
 	data.append("file", file, random_filename);
 
 	const req = new XMLHttpRequest();
+	req.open("post", "/apps/dark-mode-pdf/upload");
 	req.responseType = "json";
 
 	req.upload.addEventListener("progress", (evt) => {
@@ -114,7 +116,7 @@ convert_button.addEventListener("click", (evt) => {
 
 	req.addEventListener("load", (evt) => {
 		reset();
-		((req.status == 200) ? show_alert("file uploaded", "success") : show_alert("error uploading file", "danger"));
+		show_alert("file uploaded", "success");
 	});
 
 	req.addEventListener("error", (evt) => {
@@ -131,9 +133,15 @@ convert_button.addEventListener("click", (evt) => {
 		req.abort();
 	});
 
-	req.open("post", "/apps/dark-mode-pdf/upload");
 	req.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) { // readystate 4 = data transfer complete
+		if (this.readyState == 4 && this.status == 200) {
+			setTimeout(() => {
+				post_terminal_space.scrollIntoView({
+					behavior: "smooth",
+					block: "end"
+				});
+			}, 500);
+
 			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
 			((transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked) ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
@@ -143,6 +151,7 @@ convert_button.addEventListener("click", (evt) => {
 			socket.emit("transform", transform_option, random_filename, color_hex);
 		}
 	}
+
 	req.send(data);
 });
 
