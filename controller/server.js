@@ -7,7 +7,7 @@ project_root.pop();
 project_root = project_root.join("/");
 console.log(project_root);
 
-const secrets = require(`${project_root}/_secrets.js`)
+const file_operations = require(`${project_root}/model/file_operations.js`);
 const sql_operations = require(`${project_root}/model/sql_operations.js`);
 
 const express = require("express");
@@ -17,10 +17,18 @@ const socket_io = require("socket.io");
 const socket_io_client = require("socket.io-client");
 const child_process = require("child_process");
 const fileupload = require("express-fileupload");
-const filesystem = require("fs");
 
 sql_operations.set_client(config);
 sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((err) => console.error(err));
+
+setInterval(async () => {
+	try {
+		await file_operations.delete_leftover_pdfs();
+		file_operations.log_leftover_pdfs();
+	} catch (err) {
+		console.error(err);
+	}
+}, 14400000); // 4h
 
 const app_name = "dark-mode-pdf";
 const index = `/apps/${app_name}`; // index of this server relative to domain. use as project root for non-html static file links in hbs html
@@ -53,28 +61,23 @@ app.post(`${index}/upload`, (req, res) => {
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
 
-app.get(`${index}/download`, (req, res) => {
-	console.log("sending pdf to your downloads");
-	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
+app.get(`${index}/download`, async (req, res) => {
+	try {
+		console.log("sending pdf to your downloads");
+		io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
+		await res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`);
 
-	res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`, () => {
 		console.log("deleting your data from the server");
 		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
-
-		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_in.pdf`, (err) => ((err) ? console.error(err) : null));
-
-		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_temp.pdf`, (err) => ((err) ? console.error(err) : null));
-
-		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_no_text.pdf`, (err) => ((err) ? console.error(err) : null));
-
-		filesystem.unlink(`${project_root}/data/${req.query.random_filename}_out.pdf`, (err) => ((err) ? console.error(err) : null));
-
+		await file_operations.purge(req.query.random_filename);
 		console.log("your data has been deleted from the server");
 		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
+	} catch (err) {
+		console.error(err);
+	}
 
-		console.log(`end ${req.query.random_filename}`);
-		io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
-	});
+	console.log(`end ${req.query.random_filename}`);
+	io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
 });
 
 io.on("connect", (socket) => {
