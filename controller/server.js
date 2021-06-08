@@ -61,17 +61,17 @@ app.post(`${index}/upload`, (req, res) => {
 	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
 });
 
-app.get(`${index}/download`, async (req, res) => {
+app.get(`${index}/download`, (req, res) => {
 	try {
 		console.log("sending pdf to your downloads");
 		io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
-		await res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`);
-
-		console.log("deleting your data from the server");
-		io.to(req.query.socket_id).emit("message", "deleting your data from the server");
-		await file_operations.purge(req.query.random_filename);
-		console.log("your data has been deleted from the server");
-		io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
+		res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`, async () => { // do NOT use await on res.download(...)
+			console.log("deleting your data from the server");
+			io.to(req.query.socket_id).emit("message", "deleting your data from the server");
+			await file_operations.purge(req.query.random_filename);
+			console.log("your data has been deleted from the server");
+			io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
+		});
 	} catch (err) {
 		console.error(err);
 	}

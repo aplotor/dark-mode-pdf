@@ -23,7 +23,7 @@ async function log_leftover_pdfs() {
 	try {
 		files = await filesystem.promises.readdir(`${project_root}/data`);
 		files.forEach((file) => ((file.endsWith(".pdf")) ? leftover_pdfs.push(file) : null));
-		console.log("logged leftover pdfs");
+		// console.log("logged leftover pdfs");
 	} catch (err) {
 		console.error(err);
 	}
@@ -32,7 +32,7 @@ async function log_leftover_pdfs() {
 async function delete_leftover_pdfs() {
 	try {
 		await Promise.all(leftover_pdfs.map((pdf) => filesystem.promises.unlink(`${project_root}/data/${pdf}`)));
-		console.log("deleted leftover pdfs");
+		// console.log("deleted leftover pdfs");
 	} catch (err) {
 		console.error(err);
 	}
