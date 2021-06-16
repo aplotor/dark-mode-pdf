@@ -81,14 +81,18 @@ app.get(`${index}/download`, (req, res) => {
 });
 
 io.on("connect", (socket) => {
-	console.log(`socket connected: ${socket.id}`);
+	console.log(`socket "${socket.id}" connected`);
 
 	const headers = socket.request["headers"];
 	// console.log(headers);
 	const socket_address = headers["host"].split(":")[0];
 	((socket_address == dev_private_ip_copy) ? io.to(socket.id).emit("replace localhost with dev private ip", dev_private_ip_copy) : null);
 
-	sql_operations.add_visit();
+	try {
+		sql_operations.add_visit();
+	} catch (err) {
+		console.error(err);
+	}
 
 	io.to(socket.id).emit("update countdown", countdown_copy);
 	if (stats_copy != null) {
@@ -145,13 +149,21 @@ io.on("connect", (socket) => {
 						console.log(`spawn process exited with code ${exit_code}`);
 						io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
 						
-						sql_operations.add_conversion();
+						try {
+							sql_operations.add_conversion();
+						} catch (err) {
+							console.error(err);
+						}
 						
 						io.to(socket.id).emit("download", random_filename);
 					});
 				});
 			} else {
-				sql_operations.add_conversion();
+				try {
+					sql_operations.add_conversion();
+				} catch (err) {
+					console.error(err);
+				}
 				
 				io.to(socket.id).emit("download", random_filename);
 			}
