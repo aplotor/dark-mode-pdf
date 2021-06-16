@@ -1,6 +1,8 @@
 {
-	"name": "dark-mode-pdf",
 	"author": "j9108c",
+	"name": "dark-mode-pdf",
+	"repository": "github:j9108c/dark-mode-pdf",
+	"license": "MIT",
 	"main": "./controller/server.js",
 	"scripts": {
 		"dev": "nodemon ./controller/server.js",
@@ -9,17 +11,19 @@
 		"prod_stop": "pm2 stop ./controller/server.js"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.6"
+		"nodemon": "^2.0.7"
 	},
 	"nodemonConfig": {
-		"ignore": ["./data/"]
+		"ignore": [
+			"./data/"
+		]
 	},
 	"dependencies": {
 		"express": "^4.17.1",
-		"express-fileupload": "^1.2.0",
+		"express-fileupload": "^1.2.1",
 		"express-handlebars": "^4.0.6",
-		"pg": "^8.5.1",
-		"socket.io": "^3.0.4",
-		"socket.io-client": "^3.0.4"
+		"pg": "^8.6.0",
+		"socket.io": "^3.1.2",
+		"socket.io-client": "^3.1.2"
 	}
 }
