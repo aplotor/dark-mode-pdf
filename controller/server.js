@@ -69,15 +69,16 @@ app.get(`${index}/download`, (req, res) => {
 			console.log("deleting your data from the server");
 			io.to(req.query.socket_id).emit("message", "deleting your data from the server");
 			await file_operations.purge(req.query.random_filename);
+		} catch (err) {
+			null;
+		} finally {
 			console.log("your data has been deleted from the server");
 			io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
-		} catch (err) {
-			console.error(err);
+
+			console.log(`end ${req.query.random_filename}`);
+			io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
 		}
 	});
-
-	console.log(`end ${req.query.random_filename}`);
-	io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
 });
 
 io.on("connect", (socket) => {
@@ -88,11 +89,7 @@ io.on("connect", (socket) => {
 	const socket_address = headers["host"].split(":")[0];
 	((socket_address == dev_private_ip_copy) ? io.to(socket.id).emit("replace localhost with dev private ip", dev_private_ip_copy) : null);
 
-	try {
-		sql_operations.add_visit();
-	} catch (err) {
-		console.error(err);
-	}
+	sql_operations.add_visit().catch((err) => console.error(err));
 
 	io.to(socket.id).emit("update countdown", countdown_copy);
 	if (stats_copy != null) {
@@ -149,21 +146,13 @@ io.on("connect", (socket) => {
 						console.log(`spawn process exited with code ${exit_code}`);
 						io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
 						
-						try {
-							sql_operations.add_conversion();
-						} catch (err) {
-							console.error(err);
-						}
+						sql_operations.add_conversion().catch((err) => console.error(err));
 						
 						io.to(socket.id).emit("download", random_filename);
 					});
 				});
 			} else {
-				try {
-					sql_operations.add_conversion();
-				} catch (err) {
-					console.error(err);
-				}
+				sql_operations.add_conversion().catch((err) => console.error(err));
 				
 				io.to(socket.id).emit("download", random_filename);
 			}

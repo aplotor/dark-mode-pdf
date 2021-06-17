@@ -30,6 +30,7 @@ const radio_ocr_dark = document.getElementById("ocr_dark");
 const radio_dim = document.getElementById("dim");
 const checkbox_retain_img_colors = document.getElementById("retain_img_colors");
 const post_terminal_space = document.getElementById("post_terminal_space");
+const dl = document.getElementById("dl");
 const all_elements = document.getElementsByTagName("*");
 
 if (document.cookie != "") {
@@ -102,7 +103,7 @@ convert_button.addEventListener("click", (evt) => {
 	data.append("file", file, random_filename);
 
 	const req = new XMLHttpRequest();
-	req.open("post", "/apps/dark-mode-pdf/upload");
+	req.open("POST", `${index}/upload`);
 	req.responseType = "json";
 
 	req.upload.addEventListener("progress", (evt) => {
@@ -174,7 +175,8 @@ socket.on("message", (message) => {
 });
 
 socket.on("download", (random_filename) => {
-	window.location = `${index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
+	dl.href = `${index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
+	dl.click();
 
 	alert_wrapper.innerHTML = "";
 });
