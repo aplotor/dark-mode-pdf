@@ -97,7 +97,8 @@ convert_button.addEventListener("click", async (evt) => {
 			const reader = new FileReader();
 			reader.readAsBinaryString(file);
 			reader.onloadend = function () {
-				resolve(reader.result.match(/\/Type[\s]*\/Page[^s]/g).length);
+				const match = reader.result.match(/\/Type[\s]*\/Page[^s]/g);
+				((match) ? resolve(match.length) : reject("no match"));
 			}
 			reader.onerror = function () {
 				reject(reader.error);
@@ -109,8 +110,10 @@ convert_button.addEventListener("click", async (evt) => {
 		}
 	} catch (err) {
 		console.error(err);
-		show_alert("error", "danger");
-		return;
+		if (err != "no match") {
+			show_alert("error", "danger");
+			return;
+		}
 	}
 
 	alert_wrapper.innerHTML = "";
