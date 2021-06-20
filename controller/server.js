@@ -182,6 +182,7 @@ io_as_client.on("connect", () => {
 app.locals.hosts = null;
 app.locals.index = index;
 app.locals.repo = "https://github.com/j9108c/dark-mode-pdf";
+app.locals.current_year = new Date().getFullYear();
 
 // port and listen
 const port = process.env.PORT || 2000;
