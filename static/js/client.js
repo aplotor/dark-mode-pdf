@@ -162,7 +162,7 @@ convert_button.addEventListener("click", async (evt) => {
 					behavior: "smooth",
 					block: "end"
 				});
-			}, 500);
+			}, 1000);
 
 			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
 			((transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked) ? transform_option = "no_ocr_dark_retain_img_colors" : null);
