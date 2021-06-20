@@ -52,13 +52,12 @@ app.get(index, (req, res) => {
 	});
 });
 app.get(index.split("-").join(""), (req, res) => {
-	res.redirect(301, index);
+	res.redirect(302, index);
 });
 
 app.post(`${index}/upload`, (req, res) => {
 	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => ((err) ? console.error(err) : null));
-
-	res.end(); // do nothing with response (but this line is required bc an action on res is required after any request ?)
+	res.end();
 });
 
 app.get(`${index}/download`, (req, res) => {
@@ -84,18 +83,18 @@ app.get(`${index}/download`, (req, res) => {
 io.on("connect", (socket) => {
 	console.log(`socket "${socket.id}" connected`);
 
-	const headers = socket.request["headers"];
+	const headers = socket.handshake.headers;
 	// console.log(headers);
-	const socket_address = headers["host"].split(":")[0];
+	const socket_address = headers.host.split(":")[0];
 	((socket_address == dev_private_ip_copy) ? io.to(socket.id).emit("replace localhost with dev private ip", dev_private_ip_copy) : null);
 
 	sql_operations.add_visit().catch((err) => console.error(err));
 
 	io.to(socket.id).emit("update countdown", countdown_copy);
-	if (stats_copy != null) {
+	if (stats_copy) {
 		io.to(socket.id).emit("update domain request info", stats_copy);
 	} else {
-		setTimeout(() => ((stats_copy != null) ? io.to(socket.id).emit("update domain request info", stats_copy) : null), 5000);
+		setTimeout(() => ((stats_copy) ? io.to(socket.id).emit("update domain request info", stats_copy) : null), 5000);
 	}
 
 	socket.on("transform", (transform_option, random_filename, color_hex) => {
@@ -165,9 +164,7 @@ let countdown_copy = null;
 let stats_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	reconnect: true,
-	extraHeaders: {
-		app: app_name
-	}
+	extraHeaders: {app: app_name}
 });
 io_as_client.on("connect", () => {
 	console.log("connected as client to localhost:1025 (j9108c)");
@@ -176,17 +173,9 @@ io_as_client.on("connect", () => {
 
 	io_as_client.on("store dev private ip", (dev_private_ip) => dev_private_ip_copy = dev_private_ip);
 	
-	io_as_client.on("update countdown", (countdown) => {
-		io.emit("update countdown", countdown);
+	io_as_client.on("update countdown", (countdown) => io.emit("update countdown", countdown_copy = countdown));
 
-		countdown_copy = countdown;
-	});
-
-	io_as_client.on("update domain request info", (stats) => {
-		io.emit("update domain request info", stats);
-
-		stats_copy = stats;
-	});
+	io_as_client.on("update domain request info", (stats) => io.emit("update domain request info", stats_copy = stats));
 });
 
 // set app local vars (auto passed as data to all hbs renders)
