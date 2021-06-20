@@ -37,11 +37,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socket_io(server, {path: `${index}/socket.io`});
 app.use(fileupload());
-app.use(`${index}/view`, express.static(`${project_root}/view`));
-app.set("views", `${project_root}/view/html`);
+app.use(`${index}/static`, express.static(`${project_root}/static`));
+app.set("views", `${project_root}/static/html`);
 app.set("view engine", "handlebars");
 app.engine("handlebars", express_hbs({
-	layoutsDir: `${project_root}/view/html`,
+	layoutsDir: `${project_root}/static/html`,
 	defaultLayout: "template.handlebars"
 }));
 
@@ -126,7 +126,7 @@ io.on("connect", (socket) => {
 				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_filename}_in.pdf`]);
 
 				spawn.on("exit", () => {
-					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/resources/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
+					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/vendor/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
 		
 					spawn.stderr.on("data", (data) => {
 						let java_stderr = data.toString();
