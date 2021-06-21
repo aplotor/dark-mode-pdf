@@ -1,6 +1,4 @@
-let project_root = __dirname.split("/");
-project_root.pop();
-project_root = project_root.join("/");
+const project_root = process.cwd();
 
 const filesystem = require("fs");
 

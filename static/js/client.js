@@ -158,7 +158,7 @@ convert_button.addEventListener("click", async (evt) => {
 
 	cancel_button.addEventListener("click", (evt) => request.abort());
 
-	request.onreadystatechange = function() {
+	request.onreadystatechange = function () {
 		if (this.readyState == 4 && this.status == 200) {
 			setTimeout(() => {
 				post_terminal_space.scrollIntoView({
@@ -170,8 +170,7 @@ convert_button.addEventListener("click", async (evt) => {
 			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
 			((transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked) ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
-			let color_hex = null;
-			((checkbox_text_color_1.checked) ? color_hex = color_picker_1.value : color_hex = color_picker_2.value);
+			const color_hex = ((checkbox_text_color_1.checked) ? color_picker_1.value : color_picker_2.value);
 
 			socket.emit("transform", transform_option, random_filename, color_hex);
 		}
@@ -232,14 +231,14 @@ function list_domain_request_info(countries_array, parent_ul) {
 		countries_array.forEach((country) => {
 			li = document.createElement("li");
 			li.classList.add("mt-n1");
-			li.innerHTML = `${country["clientCountryName"]}: ${country["requests"]}`;
+			li.innerHTML = `${country.clientCountryName}: ${country.requests}`;
 			parent_ul.appendChild(li);
 		});
 	} else {
 		countries_array.slice(0, 3).forEach((country) => {
 			li = document.createElement("li");
 			li.classList.add("mt-n1");
-			li.innerHTML = `${country["clientCountryName"]}: ${country["requests"]}`;
+			li.innerHTML = `${country.clientCountryName}: ${country.requests}`;
 			parent_ul.appendChild(li);
 		});
 

@@ -1,10 +1,6 @@
-let config = null;
-((process.argv[0].slice(0, 13) == "/home/j9108c/") ? config = "dev" : config = "prod");
-console.log(config);
-
-let project_root = __dirname.split("/");
-project_root.pop();
-project_root = project_root.join("/");
+const run_config = ((process.argv[0].slice(0, 13) == "/home/j9108c/") ? "dev" : "prod");
+console.log(run_config);
+const project_root = process.cwd();
 console.log(project_root);
 
 const file_operations = require(`${project_root}/model/file_operations.js`);
@@ -18,8 +14,7 @@ const socket_io_client = require("socket.io-client");
 const child_process = require("child_process");
 const fileupload = require("express-fileupload");
 
-sql_operations.set_client(config);
-sql_operations.connect_to_db().then(() => sql_operations.init_db(config)).catch((err) => console.error(err));
+sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) => console.error(err));
 
 setInterval(async () => {
 	try {
@@ -81,7 +76,7 @@ app.get(`${index}/download`, (req, res) => {
 });
 
 io.on("connect", (socket) => {
-	console.log(`socket "${socket.id}" connected`);
+	console.log(`socket (${socket.id}) connected`);
 
 	const headers = socket.handshake.headers;
 	// console.log(headers);
@@ -167,7 +162,7 @@ const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	extraHeaders: {app: app_name}
 });
 io_as_client.on("connect", () => {
-	console.log("connected as client to localhost:1025 (j9108c)");
+	console.log("connected as client to j9108c (localhost:1025)");
 
 	io_as_client.on("store hosts", (hosts) => app.locals.hosts = hosts);
 
@@ -181,9 +176,9 @@ io_as_client.on("connect", () => {
 // set app local vars (auto passed as data to all hbs renders)
 app.locals.hosts = null;
 app.locals.index = index;
-app.locals.repo = "https://github.com/j9108c/dark-mode-pdf";
+app.locals.repo = `https://github.com/j9108c/${app_name}`;
 app.locals.current_year = new Date().getFullYear();
 
 // port and listen
 const port = process.env.PORT || 2000;
-server.listen(port, () => console.log(`(${app_name}) server started on localhost:${port}`));
+server.listen(port, () => console.log(`server (${app_name}) started on (localhost:${port})`));

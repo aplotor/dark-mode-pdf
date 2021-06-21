@@ -26,7 +26,7 @@ time.sleep(0.1)
 
 i = 1
 
-if (option == "dim"):
+if option == "dim":
 	# initialization
 	read_inpdf = pdfrw.PdfReader(inpdf)
 	inpdf_pages = read_inpdf.pages
@@ -54,12 +54,8 @@ if (option == "dim"):
 		canvas.setFillColor(reportlab.lib.colors.Color(0.43, 0.43, 0.43, alpha=0.5))
 		canvas.rect(0, 0, 8.26*reportlab.lib.units.inch, 11.69*reportlab.lib.units.inch, fill=1)
 		canvas.showPage()
-		if (i == 1):
-			print("done 1 page")
-			time.sleep(0.1)
-		else:
-			print(f"done {i} pages")
-			time.sleep(0.1)
+		print("done 1 page") if i==1 else print(f"done {i} pages")
+		time.sleep(0.1)
 		i += 1
 	print(f"dimmed all pages ({i-1})")
 	time.sleep(0.1)
@@ -91,12 +87,8 @@ else:
 			image = PIL.ImageOps.invert(image)
 			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=text_color)
 			image.save(f"{tempdirname}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
-			if (i == 1):
-				print("done 1 page")
-				time.sleep(0.1)
-			else:
-				print(f"done {i} pages")
-				time.sleep(0.1)
+			print("done 1 page") if i==1 else print(f"done {i} pages")
+			time.sleep(0.1)
 			i += 1
 		print(f"dark moded all pages ({i-1})")
 		time.sleep(0.1)
@@ -108,26 +100,26 @@ else:
 		images = []
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{tempdirname}/image_{str(num)}.jpg"))
-		if (option == "no_ocr_dark" or option == "no_ocr_dark_retain_img_colors"):
+		if option == "no_ocr_dark" or option == "no_ocr_dark_retain_img_colors":
 			image_1.save(f"{project_root}/data/{filename}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
-		elif (option == "ocr_dark"):
+		elif option == "ocr_dark":
 			image_1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 
 			# ocr: fork a child process to perform the ocr so that the application will survive if ocrmypdf.ocr fails
-			print("forking process to perform OCR")
+			print("forking process to perform ocr")
 			time.sleep(0.1)
 			pid = os.fork()
-			if (pid > 0): # parent process
+			if pid > 0: # parent process
 				# wait for child process to end
 				os.waitpid(pid, 0)
 				print("child process exited with exit status 0")
 				time.sleep(0.1)
-			elif (pid == 0): # child process
+			elif pid == 0: # child process
 				# ocr the pdf and create output pdf
-				print("child process performing OCR (this might take a while)...")
+				print("child process performing ocr (this might take a while)...")
 				time.sleep(0.1)
 				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
-				print("done OCR")
+				print("done ocr")
 				time.sleep(0.1)
 				print("created output pdf")
 				time.sleep(0.1)
