@@ -1,12 +1,14 @@
 let index = null;
-const socket = io({path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`}); // triggers server's io.on connect
+const socket = io({ // triggers server's io.on connect
+	path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`
+});
 
-const dropdown_button = document.getElementById("dropdown_button");
+const dropdown_btn = document.getElementById("dropdown_btn");
 const dropdown_menu = document.getElementById("dropdown_menu");
-const today_total_wrapper = document.getElementById("today_total_wrapper");
+const last24hours_total_wrapper = document.getElementById("last24hours_total_wrapper");
 const last7days_total_wrapper = document.getElementById("last7days_total_wrapper");
 const last30days_total_wrapper = document.getElementById("last30days_total_wrapper");
-const today_list_wrapper = document.getElementById("today_list_wrapper");
+const last24hours_list_wrapper = document.getElementById("last24hours_list_wrapper");
 const last7days_list_wrapper = document.getElementById("last7days_list_wrapper");
 const last30days_list_wrapper = document.getElementById("last30days_list_wrapper");
 const countdown_wrapper = document.getElementById("countdown_wrapper");
@@ -17,11 +19,13 @@ const convert_button = document.getElementById("convert_button");
 const loading_button = document.getElementById("loading_button");
 const cancel_button = document.getElementById("cancel_button");
 const alert_wrapper = document.getElementById("alert_wrapper");
+const file_input_container = document.getElementById("file_input_container");
 const file_input = document.getElementById("file_input");
 const file_input_label = document.getElementById("file_input_label");
 const terminal = document.getElementById("terminal");
 const post_terminal_space = document.getElementById("post_terminal_space");
 const messages = document.getElementById("messages");
+const form_check_inputs = document.getElementsByClassName("form-check-input");
 const radio_no_ocr_dark = document.getElementById("no_ocr_dark");
 const radio_ocr_dark = document.getElementById("ocr_dark");
 const radio_dim = document.getElementById("dim");
@@ -35,12 +39,32 @@ const dl = document.getElementById("dl");
 if (document.cookie) {
 	const light_mode = document.cookie.split("; ").find((cookie) => cookie.startsWith("light_mode")).split("=")[1];
 	if (light_mode == "on") {
-		const all_elements = document.getElementsByTagName("*");
-		[...all_elements].forEach((element) => element.classList.add("light_mode"));
+		document.documentElement.classList.add("invert");
+		document.body.classList.add("light_mode");
+		dropdown_btn.classList.add("anti_invert");
+		dropdown_menu.classList.add("anti_invert");
+		dropdown_menu.classList.add("light_mode");
+		file_input_container.classList.add("anti_invert");
+		convert_button.classList.add("anti_invert");
+		color_picker_1.classList.add("anti_invert");
+		color_picker_2.classList.add("anti_invert");
+		alert_wrapper.classList.add("anti_invert");
+		[...form_check_inputs].forEach((form_check_input) => form_check_input.classList.add("anti_invert"));
 	}
 }
 
-dropdown_button.addEventListener("click", (evt) => setTimeout(() => dropdown_menu.scrollIntoView({behavior: "smooth"}), 250));
+document.addEventListener("keydown", (evt) => (evt.code == "Escape" ? setTimeout(() => (!dropdown_menu.classList.contains("show") ? dropdown_btn.blur() : null), 100) : null));
+
+dropdown_btn.addEventListener("click", (evt) => {
+	setTimeout(() => (!dropdown_menu.classList.contains("show") ? dropdown_btn.blur() : null), 100);
+
+	setTimeout(() => {
+		dropdown_menu.scrollIntoView({
+			behavior: "smooth",
+			block: "end"
+		});
+	}, 250);
+});
 
 file_input.addEventListener("input", (evt) => file_input_label.innerText = file_input.files[0].name);
 
@@ -98,7 +122,7 @@ convert_button.addEventListener("click", async (evt) => {
 			reader.readAsBinaryString(file);
 			reader.onloadend = function () {
 				const match = reader.result.match(/\/Type[\s]*\/Page[^s]/g);
-				((match) ? resolve(match.length) : reject("no match"));
+				(match ? resolve(match.length) : reject("no match"));
 			}
 			reader.onerror = function () {
 				reject(reader.error);
@@ -168,9 +192,9 @@ convert_button.addEventListener("click", async (evt) => {
 			}, 1000);
 
 			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
-			((transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked) ? transform_option = "no_ocr_dark_retain_img_colors" : null);
+			(transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
-			const color_hex = ((checkbox_text_color_1.checked) ? color_picker_1.value : color_picker_2.value);
+			const color_hex = (checkbox_text_color_1.checked ? color_picker_1.value : color_picker_2.value);
 
 			socket.emit("transform", transform_option, random_filename, color_hex);
 		}
@@ -186,25 +210,18 @@ socket.on("replace localhost with dev private ip", (dev_private_ip) => {
 
 socket.on("update countdown", (countdown) => countdown_wrapper.innerHTML = countdown);
 
-socket.on("update domain request info", (stats) => {
-	today_total = stats[0];
-	last7days_total = stats[1];
-	last30days_total = stats[2];
-	today_countries = stats[3];
-	last7days_countries = stats[4];
-	last30days_countries = stats[5];
+socket.on("update domain request info", (domain_request_info) => {
+	last24hours_total_wrapper.innerHTML = domain_request_info.last24hours_total;
+	last7days_total_wrapper.innerHTML = domain_request_info.last7days_total;
+	last30days_total_wrapper.innerHTML = domain_request_info.last30days_total;
 
-	today_total_wrapper.innerHTML = today_total;
-	last7days_total_wrapper.innerHTML = last7days_total;
-	last30days_total_wrapper.innerHTML = last30days_total;
-
-	today_list_wrapper.innerHTML= "";
-	last7days_list_wrapper.innerHTML= "";
+	last24hours_list_wrapper.innerHTML = "";
+	last7days_list_wrapper.innerHTML = "";
 	last30days_list_wrapper.innerHTML = "";
 
-	list_domain_request_info(today_countries, today_list_wrapper);
-	list_domain_request_info(last7days_countries, last7days_list_wrapper);
-	list_domain_request_info(last30days_countries, last30days_list_wrapper);
+	list_domain_request_info(domain_request_info.last24hours_countries, last24hours_list_wrapper);
+	list_domain_request_info(domain_request_info.last7days_countries, last7days_list_wrapper);
+	list_domain_request_info(domain_request_info.last30days_countries, last30days_list_wrapper);
 });
 
 socket.on("message", (message) => {
@@ -271,7 +288,7 @@ function add_blinking_caret() {
 
 function show_alert(message, alert) {
 	alert_wrapper.innerHTML = `
-		<div id="alert" class="alert alert-${alert} alert-dismissable fade show mt-2 mb-0 pt-1 pb-1" role="alert">
+		<div id="alert" class="alert alert-${alert} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
 			<span>${message}</span>
 			<button class="close" type="button" data-dismiss="alert">
 				<span>&times;</span>

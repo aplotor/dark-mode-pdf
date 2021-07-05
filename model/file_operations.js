@@ -15,7 +15,7 @@ let leftover_pdfs = [];
 
 async function log_leftover_pdfs() {
 	files = await filesystem.promises.readdir(`${project_root}/data`);
-	files.forEach((file) => ((file.endsWith(".pdf")) ? leftover_pdfs.push(file) : null));
+	files.forEach((file) => (file.endsWith(".pdf") ? leftover_pdfs.push(file) : null));
 	// console.log("logged leftover pdfs");
 }
 
@@ -26,6 +26,15 @@ async function delete_leftover_pdfs() {
 	leftover_pdfs = [];
 }
 
+async function cleanup() {
+	await delete_leftover_pdfs();
+	log_leftover_pdfs();
+	// console.log("cleanup completed");
+}
+function cycle_cleanup() {
+	setInterval(() => cleanup().catch((err) => console.error(err)), 14400000); // 4h
+}
+
 module.exports.purge = purge;
-module.exports.log_leftover_pdfs = log_leftover_pdfs;
-module.exports.delete_leftover_pdfs = delete_leftover_pdfs;
+module.exports.cleanup = cleanup;
+module.exports.cycle_cleanup = cycle_cleanup;

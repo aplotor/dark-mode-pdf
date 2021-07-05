@@ -1,7 +1,7 @@
-const run_config = ((process.argv[0].slice(0, 13) == "/home/j9108c/") ? "dev" : "prod");
 const project_root = process.cwd();
+const run_config = (project_root.toLowerCase().slice(0, 20) == "/mnt/c/users/j9108c/" ? "dev" : "prod");
 
-const secrets = ((run_config == "dev") ? require(`${project_root}/_secrets.js`).dev : require(`${project_root}/_secrets.js`).prod);
+const secrets = (run_config == "dev" ? require(`${project_root}/_secrets.js`).dev : require(`${project_root}/_secrets.js`).prod);
 
 const node_pg = require("pg");
 
@@ -9,7 +9,7 @@ const sql_client = new node_pg.Client(secrets.sql_connection);
 
 async function connect_to_db() {
 	await sql_client.connect();
-	((run_config == "dev") ? console.log("connected to (test) sql db") : console.log("connected to (prod) sql db"));
+	(run_config == "dev" ? console.log("connected to (test) sql db") : console.log("connected to (prod) sql db"));
 }
 
 async function init_db() {

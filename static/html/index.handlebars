@@ -4,7 +4,7 @@
 		<span class="consolas mx-1">/</span>
 		<a href="{{{hosts.[1025]}}}/apps">apps</a>
 		<span class="consolas mx-1">/</span>
-		<a class="boxed px-1" href="{{{hosts.[2000]}}}/apps/dark-mode-pdf">dark-mode-pdf</a>
+		<a class="boxed px-1" href="{{{index}}}">dark-mode-pdf</a>
 	</span>
 </div>
 <div class="row justify-content-center mt-4 mb-0">
@@ -13,7 +13,7 @@
 			<div class="col-xl-8 col-lg-9 col-md-10 col-sm-11 col-12">
 				<h1 class="mb-3">dark-mode-pdf</h1>
 				<div class="form-group">
-					<div class="custom-file">
+					<div id="file_input_container" class="custom-file">
 						<input id="file_input" class="custom-file-input" type="file" accept=".pdf">
 						<label for="file_input" id="file_input_label" class="custom-file-label">choose file</label>
 					</div>
@@ -84,7 +84,7 @@
 					<div class="progress mb-3">
 						<div id="progress" class="progress-bar" role="progressbar" area-valuemin="0" area-valuemax="100"></div>
 					</div>
-				</div>	
+				</div>
 			</div>
 		</div>
 	</div>

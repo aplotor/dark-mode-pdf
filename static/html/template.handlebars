@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="{{{description}}}">
 	<meta id="index" content="{{{index}}}">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -28,14 +28,12 @@
 				<p class="font_size_10 m-0">released under the <a target="_blank" href="https://opensource.org/licenses/MIT">MIT License</a> &#169; 2020−{{{current_year}}}</p>
 				<p class="font_size_10 m-0"><a href="{{{hosts.[1025]}}}/stats">cloudflare zone analytics</a></p>
 				<div class="btn-group dropdown">
-					<button id="dropdown_button" type="button" class="btn btn-link dropdown-toggle mt-n2 px-1 py-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></button>
+					<button id="dropdown_btn" type="button" class="btn btn-link dropdown-toggle mt-n2 px-1 py-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></button>
 					<div id="dropdown_menu" class="dropdown-menu mt-n2 px-2 py-0">
-						<div class="text-center">
-							<b>domain requests (periods in UTC)</b>
-						</div>
+						<p class="text-center m-0"><b>domain requests (periods in UTC)</b></p>
 						<div class="dropdown-divider m-0"></div>
-						<span>today: <span id="today_total_wrapper"></span></span>
-						<ul id="today_list_wrapper" class="m-0"></ul>
+						<span>last 24 hours: <span id="last24hours_total_wrapper"></span></span>
+						<ul id="last24hours_list_wrapper" class="m-0"></ul>
 						<div class="dropdown-divider m-0"></div>
 						<span>last 7 days: <span id="last7days_total_wrapper"></span></span>
 						<ul id="last7days_list_wrapper" class="m-0"></ul>
