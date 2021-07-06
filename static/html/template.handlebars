@@ -4,11 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="{{{description}}}">
-	<meta id="index" content="{{{index}}}">
+	<meta id="app_index" content="{{{app_index}}}">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="{{{index}}}/static/css/style.css">
-	<link rel="icon" type="image/icon" href="{{{index}}}/static/images/favicon/ouroboros.ico">
+	<link rel="stylesheet" type="text/css" href="{{{app_index}}}/static/css/style.css">
+	<link rel="icon" type="image/icon" href="{{{app_index}}}/static/images/favicon/ouroboros.ico">
 	<title>{{{title}}}</title>
 </head>
 <body>
@@ -16,7 +16,7 @@
 		<div class="row justify-content-center">
 			<content class="col-xl-8 col-lg-9 col-md-10 col-sm-11 col-12">
 				{{{body}}}
-				<div class="text-center mt-3 mb-4 pt-2">
+				<div class="text-center my-4">
 					<a href="{{{repo}}}" target="_blank"><i id="bottom_gh" class="fab fa-github"></i></a>
 				</div>
 				<div class="text-center">
@@ -54,7 +54,7 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/js/all.min.js" integrity="sha512-YSdqvJoZr83hj76AIVdOcvLWYMWzy6sJyIMic2aQz5kh2bPTd9dzY3NtdeEAzPp/PhgZqr4aJObB3ym/vsItMg==" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="{{{index}}}/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="{{{index}}}/static/js/client.js"></script>
+	<script type="text/javascript" src="{{{app_index}}}/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="{{{app_index}}}/static/js/client.js"></script>
 </body>
 </html>

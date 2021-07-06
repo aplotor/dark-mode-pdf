@@ -1,6 +1,6 @@
-let index = null;
+let app_index = null;
 const socket = io({ // triggers server's io.on connect
-	path: `${index = document.getElementById("index").getAttribute("content")}/socket.io`
+	path: `${app_index = document.getElementById("app_index").getAttribute("content")}/socket.io`
 });
 
 const dropdown_btn = document.getElementById("dropdown_btn");
@@ -153,7 +153,7 @@ convert_button.addEventListener("click", async (evt) => {
 	data.append("file", file, random_filename);
 
 	const request = new XMLHttpRequest();
-	request.open("post", `${index}/upload`);
+	request.open("post", `${app_index}/upload`);
 	request.responseType = "json";
 
 	request.upload.addEventListener("progress", (evt) => {
@@ -233,7 +233,7 @@ socket.on("message", (message) => {
 });
 
 socket.on("download", (random_filename) => {
-	dl.href = `${index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
+	dl.href = `${app_index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
 	dl.click();
 
 	alert_wrapper.innerHTML = "";

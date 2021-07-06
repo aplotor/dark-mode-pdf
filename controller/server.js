@@ -17,15 +17,15 @@ sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) 
 file_operations.cleanup().then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
 
 const app_name = "dark-mode-pdf";
-const index = `/apps/${app_name}`; // index of this server relative to domain
+const app_index = `/apps/${app_name}`; // index of this server relative to domain
 
 const app = express();
 const server = http.createServer(app);
 const io = socket_io(server, {
-	path: `${index}/socket.io`
+	path: `${app_index}/socket.io`
 });
 
-app.use(`${index}/static`, express.static(`${project_root}/static`));
+app.use(`${app_index}/static`, express.static(`${project_root}/static`));
 app.set("views", `${project_root}/static/html`);
 app.set("view engine", "handlebars");
 app.engine("handlebars", express_hbs({
@@ -35,22 +35,22 @@ app.engine("handlebars", express_hbs({
 
 app.use(fileupload());
 
-app.get(index, (req, res) => {
+app.get(app_index, (req, res) => {
 	res.render("index.handlebars", {
 		title: `${app_name} — j9108c`,
 		description: "converts PDFs to dark mode"
 	});
 });
-app.get(index.split("-").join(""), (req, res) => {
-	res.redirect(302, index);
+app.get(app_index.split("-").join(""), (req, res) => {
+	res.redirect(302, app_index);
 });
 
-app.post(`${index}/upload`, (req, res) => {
+app.post(`${app_index}/upload`, (req, res) => {
 	req.files.file.mv(`${project_root}/data/${req.files.file.name}_in.pdf`, (err) => (err ? console.error(err) : null));
 	res.end();
 });
 
-app.get(`${index}/download`, (req, res) => {
+app.get(`${app_index}/download`, (req, res) => {
 	console.log("sending pdf to your downloads");
 	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
 	res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`, async () => {
@@ -170,7 +170,7 @@ io_as_client.on("connect", () => {
 
 // set app local vars (auto passed as data to all hbs renders)
 app.locals.hosts = null;
-app.locals.index = index;
+app.locals.app_index = app_index;
 app.locals.repo = `https://github.com/j9108c/${app_name}`;
 app.locals.current_year = new Date().getFullYear();
 
