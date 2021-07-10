@@ -6,7 +6,7 @@
 	"main": "./controller/server.js",
 	"scripts": {
 		"dev": "nodemon ./controller/server.js",
-		"prod_start": "pm2 start ./controller/server.js --name dark-mode-pdf",
+		"prod_start": "pm2 start ./controller/server.js --interpreter node --name dark-mode-pdf",
 		"prod_restart": "pm2 restart ./controller/server.js",
 		"prod_stop": "pm2 stop ./controller/server.js"
 	},
