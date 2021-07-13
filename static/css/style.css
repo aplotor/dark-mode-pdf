@@ -8,7 +8,6 @@ html {
 
 body {
 	font-family: "Poppins", sans-serif;
-	color: white;
 	background: rgb(43, 43, 43);
 }
 
@@ -89,7 +88,7 @@ a:visited {
 }
 
 .dropdown-toggle:focus {
-	color: white;
+	color: rgb(248, 249, 250);
 	box-shadow: none;
 }
 
@@ -99,7 +98,6 @@ a:visited {
 	transform: translate(-50%, 0);
 	border-bottom: 15px solid;
 	border-color: rgb(43, 43, 43);
-	border-radius: 0;
 	width: 180px;
 } #dropdown_menu.light_mode {
 	border-color: rgb(212, 212, 212);
@@ -121,11 +119,8 @@ a:visited {
 	height: 350px;
 	width: auto;
 	background: rgb(80, 80, 80);
-	border-radius: 5px;
 	padding: 10px;
-	overflow: hidden;
 	overflow-y: scroll;
-	color: white;
 	font-family: "Consolas", sans-serif;
 }
 
@@ -151,8 +146,6 @@ a:visited {
 }
 
 #blinking_caret {
-	font-weight: 100;
-	color: white;
 	animation: 1s blink step-end infinite;
 } @keyframes blink {
 	0% {color: transparent;}

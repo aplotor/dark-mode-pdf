@@ -12,9 +12,9 @@
 	<title>{{{title}}}</title>
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="row justify-content-center">
-			<content class="col-xl-8 col-lg-9 col-md-10 col-sm-11 col-12">
+	<div class="container-fluid text-light">
+		<div class="row d-flex justify-content-center">
+			<content class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-8">
 				{{{body}}}
 				<div class="text-center my-4">
 					<a href="{{{repo}}}" target="_blank"><i id="bottom_gh" class="fab fa-github"></i></a>
@@ -29,7 +29,7 @@
 				<p class="font_size_10 m-0"><a href="{{{hosts.[1025]}}}/stats">cloudflare zone analytics</a></p>
 				<div class="btn-group dropdown">
 					<button id="dropdown_btn" type="button" class="btn btn-link dropdown-toggle mt-n2 px-1 py-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></button>
-					<div id="dropdown_menu" class="dropdown-menu mt-n2 px-2 py-0">
+					<div id="dropdown_menu" class="dropdown-menu rounded-0 bg-light mt-n2 px-2 py-0">
 						<p class="text-center m-0"><b>domain requests (periods in UTC)</b></p>
 						<div class="dropdown-divider m-0"></div>
 						<span>last 24 hours: <span id="last24hours_total_wrapper"></span></span>
