@@ -95,7 +95,7 @@ radio_dim.addEventListener("click", (evt) => {
 });
 
 convert_button.addEventListener("click", async (evt) => {
-	let alert_message_wrapper = document.getElementById("alert_message_wrapper");
+	const alert_message_wrapper = document.getElementById("alert_message_wrapper");
 	if (alert_message_wrapper) {
 		const alert_message = alert_message_wrapper.innerHTML;
 		if (alert_message == "file uploaded" || alert_message == "current pdf incomplete") {
@@ -124,7 +124,7 @@ convert_button.addEventListener("click", async (evt) => {
 		return;
 	}
 
-	const page_limit = 500;
+	const page_limit = 250;
 	try {
 		const num_pages = await new Promise((resolve, reject) => {
 			const reader = new FileReader();
