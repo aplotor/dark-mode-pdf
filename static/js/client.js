@@ -95,6 +95,15 @@ radio_dim.addEventListener("click", (evt) => {
 });
 
 convert_button.addEventListener("click", async (evt) => {
+	let alert_message_wrapper = document.getElementById("alert_message_wrapper");
+	if (alert_message_wrapper) {
+		const alert_message = alert_message_wrapper.innerHTML;
+		if (alert_message == "file uploaded" || alert_message == "current pdf incomplete") {
+			show_alert("current pdf incomplete", "danger");
+			return;
+		}
+	}
+
 	if (!file_input.value) {
 		show_alert("no file selected", "warning");
 		return;
@@ -286,10 +295,10 @@ function add_blinking_caret() {
 	messages.appendChild(p);
 }
 
-function show_alert(message, alert) {
+function show_alert(message, type) {
 	alert_wrapper.innerHTML = `
-		<div id="alert" class="alert alert-${alert} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
-			<span>${message}</span>
+		<div id="alert" class="alert alert-${type} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
+			<span id="alert_message_wrapper">${message}</span>
 			<button class="close" type="button" data-dismiss="alert">
 				<span>&times;</span>
 			</button>
