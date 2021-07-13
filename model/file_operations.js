@@ -26,7 +26,8 @@ async function delete_leftover_pdfs() {
 	leftover_pdfs = [];
 }
 
-async function cleanup() {
+async function cleanup(init=false) {
+	(init ? await log_leftover_pdfs() : null);
 	await delete_leftover_pdfs();
 	log_leftover_pdfs();
 	// console.log("cleanup completed");

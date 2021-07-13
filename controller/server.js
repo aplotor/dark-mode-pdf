@@ -14,7 +14,7 @@ const child_process = require("child_process");
 const fileupload = require("express-fileupload");
 
 sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) => console.error(err));
-file_operations.cleanup().then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
+file_operations.cleanup(true).then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
 
 const app_name = "dark-mode-pdf";
 const app_index = `/apps/${app_name}`; // index of this server relative to domain
