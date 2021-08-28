@@ -111,20 +111,20 @@ convert_button.addEventListener("click", async (evt) => {
 
 	const file = file_input.files[0];
 	const filename = file.name;
-	const filesize = file.size; // in bytes
+	const filesize = file.size; // in binary bytes
 
 	if (filename.split(".").pop().toLowerCase() != "pdf") {
 		show_alert("this is not a pdf file", "warning");
 		return;
 	}
 
-	const filesize_limit = 5242880; // 5mb
+	const filesize_limit = 5242880; // 5mb binary
 	if (filesize > filesize_limit) {
 		show_alert(`file size limit exceeded (${filesize_limit/1048576}mb)`, "warning");
 		return;
 	}
 
-	const page_limit = 250;
+	const page_limit = 100;
 	try {
 		const num_pages = await new Promise((resolve, reject) => {
 			const reader = new FileReader();
@@ -277,7 +277,6 @@ function list_domain_request_info(countries_array, parent_ul) {
 
 function output_message(message) {
 	const p = document.createElement("p");
-	p.classList.add("message");
 	p.classList.add("mb-1");
 	p.innerHTML = `> ${message}`;
 	messages.appendChild(p);

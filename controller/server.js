@@ -107,8 +107,11 @@ io.on("connect", (socket) => {
 		});
 
 		spawn.on("exit", (exit_code) => {
-			console.log(`spawn process exited with code ${exit_code}`);
-			io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
+			if (exit_code != 0) {
+				console.error(`error: spawn process exited with code ${exit_code}`);
+				io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+				return
+			}
 			
 			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
 				io.to(socket.id).emit("message", "loading...");
@@ -132,8 +135,11 @@ io.on("connect", (socket) => {
 					});
 			
 					spawn.on("exit", (exit_code) => {
-						console.log(`spawn process exited with code ${exit_code}`);
-						io.to(socket.id).emit("message", `spawn process exited with code ${exit_code}`);
+						if (exit_code != 0) {
+							console.error(`error: spawn process exited with code ${exit_code}`);
+							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+							return
+						}
 						
 						sql_operations.add_conversion().catch((err) => console.error(err));
 						
