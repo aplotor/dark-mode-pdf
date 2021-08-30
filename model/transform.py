@@ -67,17 +67,11 @@ if option == "dim":
 	print("created output pdf")
 	time.sleep(0.1)
 else:
-	# use hidden temporary directory to hide temp images and intermediary pdf
-	# print("creating temporary directory")
-	# time.sleep(0.1)
-	with tempfile.TemporaryDirectory() as tempdirname:
-		# print(f"created temporary directory {tempdirname}")
-		# time.sleep(0.1)
-
+	with tempfile.TemporaryDirectory() as temp_dir: # gets auto-deleted when context (or process) is exited
 		# convert input pdf pages to images
 		print("loading...")
 		time.sleep(0.1)
-		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=tempdirname) # pdf −> list of pil image objects
+		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=temp_dir) # pdf −> list of pil image objects
 
 		# convert images to dark mode
 		print("applying dark mode")
@@ -86,7 +80,8 @@ else:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
 			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=text_color)
-			image.save(f"{tempdirname}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
+			image.save(f"{temp_dir}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
+			image.close() # release memory (method seems to be bugged; memory leaks from this loop (till this python spawn process exits))
 			print("done 1 page") if i==1 else print(f"done {i} pages")
 			time.sleep(0.1)
 			i += 1
@@ -96,14 +91,14 @@ else:
 		# combine images into pdf
 		print("saving...")
 		time.sleep(0.1)
-		image_1 = PIL.Image.open(f"{tempdirname}/image_1.jpg")
+		image_1 = PIL.Image.open(f"{temp_dir}/image_1.jpg")
 		images = []
 		for num in range(2, i):
-			images.append(PIL.Image.open(f"{tempdirname}/image_{str(num)}.jpg"))
+			images.append(PIL.Image.open(f"{temp_dir}/image_{str(num)}.jpg"))
 		if option == "no_ocr_dark" or option == "no_ocr_dark_retain_img_colors":
 			image_1.save(f"{project_root}/data/{filename}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 		elif option == "ocr_dark":
-			image_1.save(f"{tempdirname}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
+			image_1.save(f"{temp_dir}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 
 			# ocr: fork a child process to perform the ocr so that the application will survive if ocrmypdf.ocr fails
 			print("forking process to perform ocr")
@@ -118,9 +113,9 @@ else:
 				# ocr the pdf and create output pdf
 				print("child process performing ocr (this might take a while)...")
 				time.sleep(0.1)
-				ocrmypdf.ocr(f"{tempdirname}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
+				ocrmypdf.ocr(f"{temp_dir}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
 				print("done ocr")
 				time.sleep(0.1)
 				print("created output pdf")
 				time.sleep(0.1)
-				os._exit(0)
+				os._exit(0) # exit child process

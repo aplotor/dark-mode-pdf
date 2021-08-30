@@ -33,7 +33,7 @@ async function cleanup(init=false) {
 	// console.log("cleanup completed");
 }
 function cycle_cleanup() {
-	setInterval(() => cleanup().catch((err) => console.error(err)), 14400000); // 4h
+	setInterval(() => cleanup().catch((err) => console.error(err)), 36000000); // 10h
 }
 
 module.exports.purge = purge;

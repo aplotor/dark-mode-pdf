@@ -3,6 +3,10 @@ const socket = io({ // triggers server's io.on connect
 	path: `${app_index = document.getElementById("app_index").getAttribute("content")}/socket.io`
 });
 
+let filesize_limit = null;
+let page_limit = null;
+let queue_size = null;
+
 const dropdown_btn = document.getElementById("dropdown_btn");
 const dropdown_menu = document.getElementById("dropdown_menu");
 const last24hours_total_wrapper = document.getElementById("last24hours_total_wrapper");
@@ -34,6 +38,10 @@ const checkbox_text_color_1 = document.getElementById("text_color_1");
 const checkbox_text_color_2 = document.getElementById("text_color_2");
 const color_picker_1 = document.getElementById("color_picker_1");
 const color_picker_2 = document.getElementById("color_picker_2");
+const jobs_queued_text = document.getElementById("jobs_queued_text");
+const jobs_queued_wrapper = document.getElementById("jobs_queued_wrapper");
+const queue_position_text = document.getElementById("queue_position_text");
+const queue_position_wrapper = document.getElementById("queue_position_wrapper");
 const dl = document.getElementById("dl");
 
 if (document.cookie) {
@@ -98,8 +106,8 @@ convert_button.addEventListener("click", async (evt) => {
 	const alert_message_wrapper = document.getElementById("alert_message_wrapper");
 	if (alert_message_wrapper) {
 		const alert_message = alert_message_wrapper.innerHTML;
-		if (alert_message == "file uploaded" || alert_message == "current pdf incomplete") {
-			show_alert("current pdf incomplete", "danger");
+		if (alert_message == "file uploaded" || alert_message == "current job incomplete") {
+			show_alert("current job incomplete", "danger");
 			return;
 		}
 	}
@@ -110,21 +118,19 @@ convert_button.addEventListener("click", async (evt) => {
 	}
 
 	const file = file_input.files[0];
-	const filename = file.name;
+	let filename = file.name;
 	const filesize = file.size; // in binary bytes
-
+	
 	if (filename.split(".").pop().toLowerCase() != "pdf") {
 		show_alert("this is not a pdf file", "warning");
 		return;
 	}
 
-	const filesize_limit = 5242880; // 5mb binary
 	if (filesize > filesize_limit) {
 		show_alert(`file size limit exceeded (${filesize_limit/1048576}mb)`, "warning");
 		return;
 	}
 
-	const page_limit = 100;
 	try {
 		const num_pages = await new Promise((resolve, reject) => {
 			const reader = new FileReader();
@@ -155,11 +161,12 @@ convert_button.addEventListener("click", async (evt) => {
 	loading_button.classList.remove("d-none");
 	cancel_button.classList.remove("d-none");
 	progress_wrapper.classList.remove("d-none");
+	jobs_queued_text.classList.add("d-none");
 
-	const random_filename = Math.random().toString().substring(2, 17);
+	filename = Math.random().toString().substring(2, 17);
 
 	const data = new FormData();
-	data.append("file", file, random_filename);
+	data.append("file", file, filename);
 
 	const request = new XMLHttpRequest();
 	request.open("post", `${app_index}/upload`);
@@ -205,7 +212,9 @@ convert_button.addEventListener("click", async (evt) => {
 
 			const color_hex = (checkbox_text_color_1.checked ? color_picker_1.value : color_picker_2.value);
 
-			socket.emit("transform", transform_option, random_filename, color_hex);
+			socket.emit("enqueue", filename, transform_option, color_hex);
+
+			queue_position_text.classList.remove("d-none");
 		}
 	}
 
@@ -233,6 +242,20 @@ socket.on("update domain request info", (domain_request_info) => {
 	list_domain_request_info(domain_request_info.last30days_countries, last30days_list_wrapper);
 });
 
+socket.on("set limits", (limits) => {
+	filesize_limit = limits[0];
+	page_limit = limits[1];
+});
+
+socket.on("update jobs queued", (jobs_queued) => queue_size = jobs_queued_wrapper.innerHTML = jobs_queued);
+
+socket.on("update queue position", (queue_position) => queue_position_wrapper.innerHTML = `${queue_position}/${queue_size}`);
+
+socket.on("start", () => {
+	jobs_queued_text.classList.remove("d-none");
+	queue_position_text.classList.add("d-none");
+});
+
 socket.on("message", (message) => {
 	remove_blinking_caret();
 	output_message(message);
@@ -241,8 +264,8 @@ socket.on("message", (message) => {
 	terminal.scrollTop = terminal.scrollHeight; // scroll down
 });
 
-socket.on("download", (random_filename) => {
-	dl.href = `${app_index}/download?socket_id=${socket.id}&random_filename=${random_filename}`;
+socket.on("download", (filename) => {
+	dl.href = `${app_index}/download?socket_id=${socket.id}&filename=${filename}`;
 	dl.click();
 
 	alert_wrapper.innerHTML = "";
@@ -309,9 +332,9 @@ function reset() {
 	file_input.value = null;
 	file_input.disabled = false;
 	file_input_label.innerText = "choose file";
-	cancel_button.classList.add("d-none");
-	loading_button.classList.add("d-none");
 	convert_button.classList.remove("d-none");
+	loading_button.classList.add("d-none");
+	cancel_button.classList.add("d-none");
 	progress_wrapper.classList.add("d-none");
 	progress.setAttribute("style", "width: 0%");
 }

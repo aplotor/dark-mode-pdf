@@ -2,6 +2,7 @@ const project_root = process.cwd();
 const run_config = (project_root.toLowerCase().slice(0, 20) == "/mnt/c/users/j9108c/" ? "dev" : "prod");
 console.log(`${run_config}: ${project_root}`);
 
+const secrets = (run_config == "dev" ? require(`${project_root}/_secrets.js`).dev : require(`${project_root}/_secrets.js`).prod);
 const sql_operations = require(`${project_root}/model/sql_operations.js`);
 const file_operations = require(`${project_root}/model/file_operations.js`);
 
@@ -15,6 +16,9 @@ const fileupload = require("express-fileupload");
 
 sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) => console.error(err));
 file_operations.cleanup(true).then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
+process.nextTick(() => setInterval(() => io.emit("update jobs queued", Object.keys(queue).length), 100));
+
+const queue = {};
 
 const app_name = "dark-mode-pdf";
 const app_index = `/apps/${app_name}`; // index of this server relative to domain
@@ -53,19 +57,21 @@ app.post(`${app_index}/upload`, (req, res) => {
 app.get(`${app_index}/download`, (req, res) => {
 	console.log("sending pdf to your downloads");
 	io.to(req.query.socket_id).emit("message", "sending pdf to your downloads");
-	res.download(`${project_root}/data/${req.query.random_filename}_out.pdf`, `${req.query.random_filename}_out.pdf`, async () => {
+	res.download(`${project_root}/data/${req.query.filename}_out.pdf`, `${req.query.filename}_out.pdf`, async () => {
 		try {
 			console.log("deleting your data from the server");
 			io.to(req.query.socket_id).emit("message", "deleting your data from the server");
-			await file_operations.purge(req.query.random_filename);
+			await file_operations.purge(req.query.filename);
 		} catch (err) {
 			null;
 		} finally {
 			console.log("your data has been deleted from the server");
 			io.to(req.query.socket_id).emit("message", "your data has been deleted from the server");
 
-			console.log(`end ${req.query.random_filename}`);
-			io.to(req.query.socket_id).emit("message", `end ${req.query.random_filename}`);
+			console.log(`end ${req.query.filename}`);
+			io.to(req.query.socket_id).emit("message", `end ${req.query.filename}`);
+
+			delete queue[req.query.socket_id];
 		}
 	});
 });
@@ -87,19 +93,47 @@ io.on("connect", (socket) => {
 		setTimeout(() => (domain_request_info_copy ? io.to(socket.id).emit("update domain request info", domain_request_info_copy) : null), 5000);
 	}
 
-	socket.on("transform", (transform_option, random_filename, color_hex) => {
-		console.log(`start ${random_filename}`);
-		io.to(socket.id).emit("message", `start ${random_filename}`);
+	io.to(socket.id).emit("set limits", [secrets.filesize_limit, secrets.page_limit]);
 
-		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, transform_option, random_filename, color_hex]);
+	socket.on("enqueue", async (filename, transform_option, color_hex) => {
+		queue[socket.id] = {
+			filename: filename,
+			interval_id: null
+		};
+
+		if (Object.keys(queue).length > 1) {
+			io.to(socket.id).emit("message", "other job in progress");
+			setTimeout(() => io.to(socket.id).emit("message", "your job has been queued"), 1000);
+			setTimeout(() => io.to(socket.id).emit("message", "please wait..."), 2000);
+		}
+
+		try {
+			await new Promise((resolve, reject) => {
+				const interval_id = setInterval(() => {
+					io.to(socket.id).emit("update queue position", Object.keys(queue).indexOf(socket.id));
+
+					(Object.keys(queue)[0] == socket.id ? resolve(clearInterval(interval_id)) : null);
+				}, 1000);
+				queue[socket.id].interval_id = interval_id;
+			});
+		} catch (err) {
+			console.error(err);
+			return;
+		}
+		
+		io.to(socket.id).emit("start");
+		console.log(`start ${filename}`);
+		io.to(socket.id).emit("message", `start ${filename}`);
+
+		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, transform_option, filename, color_hex]);
 
 		spawn.stderr.on("data", (data) => {
-			let python_stderr = data.toString();
+			const python_stderr = data.toString();
 			console.error(python_stderr);
 		});
 
 		spawn.stdout.on("data", (data) => {
-			let python_stdout = data.toString();
+			const python_stdout = data.toString();
 			if (python_stdout != "\n") {
 				console.log(python_stdout);
 				io.to(socket.id).emit("message", python_stdout);
@@ -110,24 +144,24 @@ io.on("connect", (socket) => {
 			if (exit_code != 0) {
 				console.error(`error: spawn process exited with code ${exit_code}`);
 				io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
-				return
+				return;
 			}
 			
 			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
 				io.to(socket.id).emit("message", "loading...");
 
-				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${random_filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${random_filename}_in.pdf`]);
+				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${filename}_in.pdf`]);
 
 				spawn.on("exit", () => {
-					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/vendor/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, random_filename]);
+					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/vendor/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, filename]);
 		
 					spawn.stderr.on("data", (data) => {
-						let java_stderr = data.toString();
+						const java_stderr = data.toString();
 						console.error(java_stderr);
 					});
 			
 					spawn.stdout.on("data", (data) => {
-						let java_stdout = data.toString();
+						const java_stdout = data.toString();
 						if (java_stdout != "\n") {
 							console.log(java_stdout);
 							io.to(socket.id).emit("message", java_stdout);
@@ -138,20 +172,28 @@ io.on("connect", (socket) => {
 						if (exit_code != 0) {
 							console.error(`error: spawn process exited with code ${exit_code}`);
 							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
-							return
+							return;
 						}
 						
 						sql_operations.add_conversion().catch((err) => console.error(err));
 						
-						io.to(socket.id).emit("download", random_filename);
+						io.to(socket.id).emit("download", filename);
 					});
 				});
 			} else {
 				sql_operations.add_conversion().catch((err) => console.error(err));
 				
-				io.to(socket.id).emit("download", random_filename);
+				io.to(socket.id).emit("download", filename);
 			}
 		});
+	});
+
+	socket.on("disconnect", () => {
+		if (queue[socket.id]) {
+			file_operations.purge(queue[socket.id].filename).catch((err) => null);
+			clearInterval(queue[socket.id].interval_id);
+			delete queue[socket.id];
+		}
 	});
 });
 
