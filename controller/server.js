@@ -98,7 +98,8 @@ io.on("connect", (socket) => {
 	socket.on("enqueue", async (filename, transform_option, color_hex) => {
 		queue[socket.id] = {
 			filename: filename,
-			interval_id: null
+			interval_id: null,
+			reject: null
 		};
 
 		if (Object.keys(queue).length > 1) {
@@ -112,12 +113,16 @@ io.on("connect", (socket) => {
 				const interval_id = setInterval(() => {
 					io.to(socket.id).emit("update queue position", Object.keys(queue).indexOf(socket.id));
 
-					(Object.keys(queue)[0] == socket.id ? resolve(clearInterval(interval_id)) : null);
+					if (Object.keys(queue)[0] == socket.id) {
+						clearInterval(interval_id);
+						resolve();
+					}
 				}, 1000);
 				queue[socket.id].interval_id = interval_id;
+				queue[socket.id].reject = reject;
 			});
 		} catch (err) {
-			console.error(err);
+			(err != "socket disconnected" ? console.error(err) : null);
 			return;
 		}
 		
@@ -192,6 +197,7 @@ io.on("connect", (socket) => {
 		if (queue[socket.id]) {
 			file_operations.purge(queue[socket.id].filename).catch((err) => null);
 			clearInterval(queue[socket.id].interval_id);
+			queue[socket.id].reject("socket disconnected");
 			delete queue[socket.id];
 		}
 	});

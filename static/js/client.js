@@ -148,8 +148,8 @@ convert_button.addEventListener("click", async (evt) => {
 			return;
 		}
 	} catch (err) {
-		console.error(err);
 		if (err != "no match") {
+			console.error(err);
 			show_alert("error", "danger");
 			return;
 		}
