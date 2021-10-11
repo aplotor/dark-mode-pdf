@@ -2,12 +2,12 @@ const project_root = process.cwd();
 
 const filesystem = require("fs");
 
-async function purge(random_filename) {
+async function purge(filename) {
 	await Promise.all([
-		filesystem.promises.unlink(`${project_root}/data/${random_filename}_in.pdf`),
-		filesystem.promises.unlink(`${project_root}/data/${random_filename}_temp.pdf`),
-		filesystem.promises.unlink(`${project_root}/data/${random_filename}_no_text.pdf`),
-		filesystem.promises.unlink(`${project_root}/data/${random_filename}_out.pdf`)
+		filesystem.promises.unlink(`${project_root}/data/${filename}_in.pdf`),
+		filesystem.promises.unlink(`${project_root}/data/${filename}_temp.pdf`),
+		filesystem.promises.unlink(`${project_root}/data/${filename}_no_text.pdf`),
+		filesystem.promises.unlink(`${project_root}/data/${filename}_out.pdf`)
 	]);
 }
 

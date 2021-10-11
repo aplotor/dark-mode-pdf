@@ -1,8 +1,8 @@
 <div class="mt-5 px-5">
 	<span>
-		<a href="{{{hosts.[1025]}}}">index</a>
+		<a href="{{{all_apps_urls.[j9108c]}}}">index</a>
 		<span class="consolas mx-1">/</span>
-		<a href="{{{hosts.[1025]}}}/apps">apps</a>
+		<a href="{{{all_apps_urls.[j9108c]}}}/apps">apps</a>
 		<span class="consolas mx-1">/</span>
 		<a class="boxed px-1" href="{{{app_index}}}">dark-mode-pdf</a>
 	</span>
@@ -28,28 +28,155 @@
 		<div class="row d-flex justify-content-center">
 			<div class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-8 ml-3 pl-5">
 				<div class="form-check p-0">
-					<input id="no_ocr_dark" class="form-check-input" type="radio" name="transform_option" value="no_ocr_dark" checked/>
-					<label class="form-check-label" for="no_ocr_dark"> dark mode (no OCR: digital docs)</label>
+					<input id="no_ocr_dark_radio" class="form-check-input" type="radio" name="transform_option" value="no_ocr_dark_radio" checked/>
+					<label class="form-check-label" for="no_ocr_dark_radio"> dark mode (no OCR: digital docs)</label>
+				</div>
+				<div class="form-check ml-3 d-flex align-items-center">
+					<input id="text_color_1_checkbox" class="form-check-input" type="checkbox" checked/>
+					<label class="form-check-label" for="text_color_1_checkbox">+ text color: <input id="color_picker_1" type="color" value="#ffffff"/></label>
 				</div>
 				<div class="form-check ml-3">
-					<input id="text_color_1" class="form-check-input" type="checkbox" checked/>
-					<label class="form-check-label" for="text_color_1">+ text color: <input id="color_picker_1" type="color" value="#ffffff"/></label>
-				</div>
-				<div class="form-check ml-3">
-					<input id="retain_img_colors" class="form-check-input" type="checkbox"/>
-					<label class="form-check-label" for="retain_img_colors">+ retain image colors (EXPERIMENTAL)</label>
+					<input id="retain_img_colors_checkbox" class="form-check-input" type="checkbox"/>
+					<label class="form-check-label" for="retain_img_colors_checkbox">+ retain image colors (EXPERIMENTAL)</label>
 				</div>
 				<div class="form-check p-0">
-					<input id="ocr_dark" class="form-check-input" type="radio" name="transform_option" value="ocr_dark"/>
-					<label class="form-check-label" for="ocr_dark"> dark mode (OCR: scanned docs)</label>
+					<input id="ocr_dark_radio" class="form-check-input" type="radio" name="transform_option" value="ocr_dark_radio"/>
+					<label class="form-check-label" for="ocr_dark_radio"> dark mode (OCR: scanned docs)</label>
+				</div>
+				<div class="form-check ml-3 d-flex align-items-center">
+					<input id="text_color_2_checkbox" class="form-check-input" type="checkbox" disabled/>
+					<label class="form-check-label" for="text_color_2_checkbox">+ text color: <input id="color_picker_2" type="color" value="#ffffff"/></label>
 				</div>
 				<div class="form-check ml-3">
-					<input id="text_color_2" class="form-check-input" type="checkbox" disabled/>
-					<label class="form-check-label" for="text_color_2">+ text color: <input id="color_picker_2" type="color" value="#ffffff"/></label>
+					<input id="language_checkbox" class="form-check-input" type="checkbox" disabled/>
+					<label class="form-check-label" for="language_checkbox" id="language_select_container">+ language: 
+						<select id="language_select" class="selectpicker" data-size="5" data-live-search="true" data-width="fit" title="english">
+							<!-- https://github.com/tesseract-ocr/tessdoc/blob/main/Data-Files-in-different-versions.md -->
+							<option value="afr">afrikaans</option>
+							<option value="sqi">albanian</option>
+							<option value="amh">amharic</option>
+							<option value="ara">arabic</option>
+							<option value="hye">armenian</option>
+							<option value="asm">assamese</option>
+							<option value="aze">azerbaijani</option>
+							<option value="aze_cyrl">azerbaijani (cyrilic)</option>
+							<option value="eus">basque</option>
+							<option value="bel">belarusian</option>
+							<option value="ben">bengali</option>
+							<option value="bos">bosnian</option>
+							<option value="bre">breton</option>
+							<option value="bul">bulgarian</option>
+							<option value="mya">burmese</option>
+							<option value="cat">catalan / valencian</option>
+							<option value="ceb">cebuano</option>
+							<option value="chr">cherokee</option>
+							<option value="chi_sim">chinese (simplified)</option>
+							<option value="chi_tra">chinese (traditional)</option>
+							<option value="cos">corsican</option>
+							<option value="hrv">croatian</option>
+							<option value="ces">czech</option>
+							<option value="dan">danish</option>
+							<option value="nld">dutch / flemish</option>
+							<option value="dzo">dzongkha</option>
+							<option value="eng">english</option>
+							<option value="enm">english (middle ages)</option>
+							<option value="epo">esperanto</option>
+							<option value="est">estonian</option>
+							<option value="fao">faroese</option>
+							<option value="fil">filipino (tagalog)</option>
+							<option value="fin">finnish</option>
+							<option value="fra">french</option>
+							<option value="frm">french (middle ages)</option>
+							<option value="fry">frisian (western)</option>
+							<option value="glg">galician</option>
+							<option value="kat">georgian</option>
+							<option value="kat_old">georgian (old)</option>
+							<option value="deu">german</option>
+							<option value="frk">german (fraktur)</option>
+							<option value="ell">greek</option>
+							<option value="grc">greek (ancient)</option>
+							<option value="hat">haitian / creole</option>
+							<option value="heb">hebrew</option>
+							<option value="hin">hindi</option>
+							<option value="hun">hungarian</option>
+							<option value="isl">icelandic</option>
+							<option value="ind">indonesian</option>
+							<option value="iku">inuktitut</option>
+							<option value="gle">irish</option>
+							<option value="ita">italian</option>
+							<option value="ita_old">italian (old)</option>
+							<option value="jpn">japanese</option>
+							<option value="jav">javanese</option>
+							<option value="kan">kannada</option>
+							<option value="kaz">kazakh</option>
+							<option value="khm">khmer (central)</option>
+							<option value="kor">korean</option>
+							<option value="kor_vert">korean (vertical)</option>
+							<option value="kmr">kurmanji</option>
+							<option value="kir">kyrgyz / kirghiz</option>
+							<option value="lao">lao</option>
+							<option value="lat">latin</option>
+							<option value="lav">latvian</option>
+							<option value="lit">lithuanian</option>
+							<option value="ltz">luxembourgish</option>
+							<option value="mkd">macedonian</option>
+							<option value="msa">malay</option>
+							<option value="mal">malayalam</option>
+							<option value="mlt">maltese</option>
+							<option value="mri">maori</option>
+							<option value="mar">marathi</option>
+							<option value="equ">math / equations</option>
+							<option value="mon">mongolian</option>
+							<option value="nep">nepali</option>
+							<option value="nor">norwegian</option>
+							<option value="oci">occitan</option>
+							<option value="ori">oriya</option>
+							<option value="fas">persian</option>
+							<option value="pol">polish</option>
+							<option value="por">portuguese</option>
+							<option value="pan">punjabi / panjabi</option>
+							<option value="pus">pushto / pashto</option>
+							<option value="que">quechua</option>
+							<option value="ron">romanian / moldovan</option>
+							<option value="rus">russian</option>
+							<option value="san">sanskrit</option>
+							<option value="gla">scottish (gaelic)</option>
+							<option value="srp">serbian</option>
+							<option value="srp_latn">serbian (latin)</option>
+							<option value="snd">sindhi</option>
+							<option value="sin">sinhala / sinhalese</option>
+							<option value="slk">slovak</option>
+							<option value="slv">slovenian</option>
+							<option value="spa">spanish / castilian</option>
+							<option value="spa_old">spanish / castilian (old)</option>
+							<option value="sun">sundanese</option>
+							<option value="swa">swahili</option>
+							<option value="swe">swedish</option>
+							<option value="syr">syriac</option>
+							<option value="tgk">tajik</option>
+							<option value="tam">tamil</option>
+							<option value="tat">tatar</option>
+							<option value="tel">telugu</option>
+							<option value="tha">thai</option>
+							<option value="bod">tibetan</option>
+							<option value="tir">tigrinya</option>
+							<option value="ton">tonga</option>
+							<option value="tur">turkish</option>
+							<option value="ukr">ukrainian</option>
+							<option value="urd">urdu</option>
+							<option value="uig">uyghur / uighur</option>
+							<option value="uzb">uzbek</option>
+							<option value="uzb_cyrl">uzbek (cyrilic)</option>
+							<option value="vie">vietnamese</option>
+							<option value="cym">welsh</option>
+							<option value="yid">yiddish</option>
+							<option value="yor">yoruba</option>
+						</select>
+					</label>
 				</div>
 				<div class="form-check p-0">
-					<input id="dim" class="form-check-input" type="radio" name="transform_option" value="dim"/>
-					<label class="form-check-label" for="dim"> dim</label>
+					<input id="dim_radio" class="form-check-input" type="radio" name="transform_option" value="dim_radio"/>
+					<label class="form-check-label" for="dim_radio"> dim</label>
 				</div>
 			</div>
 		</div>
@@ -63,13 +190,13 @@
 					<div class="col-8 pr-0">
 						<span id="jobs_queued_text">jobs queued: <span id="jobs_queued_wrapper">?</span></span>
 						<span id="queue_position_text" class="d-none">your queue position: <span id="queue_position_wrapper">?</span></span>
-						<button id="loading_button" class="btn btn-primary d-none" type="button" disabled>
+						<button id="loading_btn" class="btn btn-primary d-none" type="button" disabled>
 							<span class="spinner-border spinner-border-sm" role="status"><span class="sr-only">loading...</span></span>
 						</button>
 					</div>
 					<div class="col-4 pl-0">
-						<button id="convert_button" class="btn btn-primary float-right">convert</button>
-						<button id="cancel_button" class="btn btn-secondary float-right d-none" type="button">cancel</button>
+						<button id="convert_btn" class="btn btn-primary float-right">convert</button>
+						<button id="cancel_btn" class="btn btn-secondary float-right d-none" type="button">cancel</button>
 					</div>
 				</div>
 			</div>

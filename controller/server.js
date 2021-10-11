@@ -14,20 +14,21 @@ const socket_io_client = require("socket.io-client");
 const child_process = require("child_process");
 const fileupload = require("express-fileupload");
 
+const app = express();
+const app_name = "dark-mode-pdf";
+const app_index = `/apps/${app_name}`; // index of this server relative to domain
+const server = http.createServer(app);
+const io = socket_io(server, {
+	path: `${app_index}/socket.io`
+});
+
 sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) => console.error(err));
 file_operations.cleanup(true).then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
 process.nextTick(() => setInterval(() => io.emit("update jobs queued", Object.keys(queue).length), 100));
 
 const queue = {};
 
-const app_name = "dark-mode-pdf";
-const app_index = `/apps/${app_name}`; // index of this server relative to domain
-
-const app = express();
-const server = http.createServer(app);
-const io = socket_io(server, {
-	path: `${app_index}/socket.io`
-});
+app.use(fileupload());
 
 app.use(`${app_index}/static`, express.static(`${project_root}/static`));
 app.set("views", `${project_root}/static/html`);
@@ -36,8 +37,6 @@ app.engine("handlebars", express_hbs({
 	layoutsDir: `${project_root}/static/html`,
 	defaultLayout: "template.handlebars"
 }));
-
-app.use(fileupload());
 
 app.get(app_index, (req, res) => {
 	res.render("index.handlebars", {
@@ -95,7 +94,7 @@ io.on("connect", (socket) => {
 
 	io.to(socket.id).emit("set limits", [secrets.filesize_limit, secrets.page_limit]);
 
-	socket.on("enqueue", async (filename, transform_option, color_hex) => {
+	socket.on("enqueue", async (filename, transform_option, color_hex, language_code) => {
 		queue[socket.id] = {
 			filename: filename,
 			interval_id: null,
@@ -130,7 +129,7 @@ io.on("connect", (socket) => {
 		console.log(`start ${filename}`);
 		io.to(socket.id).emit("message", `start ${filename}`);
 
-		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, transform_option, filename, color_hex]);
+		const spawn = child_process.spawn(`${project_root}/virtual_environment/bin/python`, ["-u", `${project_root}/model/transform.py`, transform_option, filename, color_hex, language_code]);
 
 		spawn.stderr.on("data", (data) => {
 			const python_stderr = data.toString();
@@ -208,12 +207,15 @@ let countdown_copy = null;
 let domain_request_info_copy = null;
 const io_as_client = socket_io_client.connect("http://localhost:1025", {
 	reconnect: true,
-	extraHeaders: {app: app_name}
+	extraHeaders: {
+		app: app_name,
+		port: secrets.localhost_port
+	}
 });
 io_as_client.on("connect", () => {
 	console.log("connected as client to j9108c (localhost:1025)");
 
-	io_as_client.on("store hosts", (hosts) => app.locals.hosts = hosts);
+	io_as_client.on("store all apps urls", (all_apps_urls) => app.locals.all_apps_urls = all_apps_urls);
 
 	io_as_client.on("store dev private ip", (dev_private_ip) => dev_private_ip_copy = dev_private_ip);
 	
@@ -223,11 +225,11 @@ io_as_client.on("connect", () => {
 });
 
 // set app local vars (auto passed as data to all hbs renders)
-app.locals.hosts = null;
+app.locals.all_apps_urls = null;
 app.locals.app_index = app_index;
 app.locals.repo = `https://github.com/j9108c/${app_name}`;
 app.locals.current_year = new Date().getFullYear();
 
 // port and listen
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || secrets.localhost_port;
 server.listen(port, () => console.log(`server (${app_name}) started on (localhost:${port})`));

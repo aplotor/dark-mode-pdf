@@ -92,17 +92,6 @@ a:visited {
 	box-shadow: none;
 }
 
-#dropdown_menu {
-	left: 50%;
-	right: auto;
-	transform: translate(-50%, 0);
-	border-bottom: 15px solid;
-	border-color: rgb(43, 43, 43);
-	width: 180px;
-} #dropdown_menu.light_mode {
-	border-color: rgb(212, 212, 212);
-}
-
 .custom-file {
 	overflow: hidden;
 }
@@ -113,6 +102,26 @@ a:visited {
 
 .custom-file-label::after {
 	content: "browse";
+}
+
+.bootstrap-select > .dropdown-toggle { /* select btn */
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.bootstrap-select > .dropdown-menu > .inner {
+	overscroll-behavior: none;
+}
+
+#dropdown_menu {
+	left: 50%;
+	right: auto;
+	transform: translate(-50%, 0);
+	border-bottom: 15px solid;
+	border-color: rgb(43, 43, 43);
+	width: 180px;
+} #dropdown_menu.light_mode {
+	border-color: rgb(212, 212, 212);
 }
 
 #terminal {

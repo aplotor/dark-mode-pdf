@@ -17,6 +17,8 @@ filename = sys.argv[2]
 # print(filename)
 text_color = PIL.ImageColor.getcolor(sys.argv[3], "RGB")
 # print(text_color)
+language_code = sys.argv[4]
+# print(language_code)
 
 print("accepting input pdf")
 time.sleep(0.1) # sleep for 0.1s. need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
@@ -113,7 +115,7 @@ else:
 				# ocr the pdf and create output pdf
 				print("child process performing ocr (this might take a while)...")
 				time.sleep(0.1)
-				ocrmypdf.ocr(f"{temp_dir}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language="eng")
+				ocrmypdf.ocr(f"{temp_dir}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language=language_code)
 				print("done ocr")
 				time.sleep(0.1)
 				print("created output pdf")

@@ -19,9 +19,9 @@ const countdown_wrapper = document.getElementById("countdown_wrapper");
 const progress = document.getElementById("progress");
 const progress_wrapper = document.getElementById("progress_wrapper");
 const progress_status = document.getElementById("progress_status");
-const convert_button = document.getElementById("convert_button");
-const loading_button = document.getElementById("loading_button");
-const cancel_button = document.getElementById("cancel_button");
+const convert_btn = document.getElementById("convert_btn");
+const loading_btn = document.getElementById("loading_btn");
+const cancel_btn = document.getElementById("cancel_btn");
 const alert_wrapper = document.getElementById("alert_wrapper");
 const file_input_container = document.getElementById("file_input_container");
 const file_input = document.getElementById("file_input");
@@ -30,14 +30,18 @@ const terminal = document.getElementById("terminal");
 const post_terminal_space = document.getElementById("post_terminal_space");
 const messages = document.getElementById("messages");
 const form_check_inputs = document.getElementsByClassName("form-check-input");
-const radio_no_ocr_dark = document.getElementById("no_ocr_dark");
-const radio_ocr_dark = document.getElementById("ocr_dark");
-const radio_dim = document.getElementById("dim");
-const checkbox_retain_img_colors = document.getElementById("retain_img_colors");
-const checkbox_text_color_1 = document.getElementById("text_color_1");
-const checkbox_text_color_2 = document.getElementById("text_color_2");
+const no_ocr_dark_radio = document.getElementById("no_ocr_dark_radio");
+const ocr_dark_radio = document.getElementById("ocr_dark_radio");
+const dim_radio = document.getElementById("dim_radio");
+const retain_img_colors_checkbox = document.getElementById("retain_img_colors_checkbox");
+const text_color_1_checkbox = document.getElementById("text_color_1_checkbox");
+const text_color_2_checkbox = document.getElementById("text_color_2_checkbox");
 const color_picker_1 = document.getElementById("color_picker_1");
 const color_picker_2 = document.getElementById("color_picker_2");
+const language_checkbox = document.getElementById("language_checkbox");
+const language_select = document.getElementById("language_select");
+let language_select_btn = setTimeout(() => language_select_btn = document.getElementsByClassName("bs-placeholder")[0], 1000);
+let language_select_dropdown = setTimeout(() => language_select_dropdown = document.getElementsByClassName("bootstrap-select")[0], 1000);
 const jobs_queued_text = document.getElementById("jobs_queued_text");
 const jobs_queued_wrapper = document.getElementById("jobs_queued_wrapper");
 const queue_position_text = document.getElementById("queue_position_text");
@@ -53,15 +57,31 @@ if (document.cookie) {
 		dropdown_menu.classList.add("anti_invert");
 		dropdown_menu.classList.add("light_mode");
 		file_input_container.classList.add("anti_invert");
-		convert_button.classList.add("anti_invert");
 		color_picker_1.classList.add("anti_invert");
 		color_picker_2.classList.add("anti_invert");
 		alert_wrapper.classList.add("anti_invert");
+		convert_btn.classList.add("anti_invert");
 		[...form_check_inputs].forEach((form_check_input) => form_check_input.classList.add("anti_invert"));
+		setTimeout(() => [...document.getElementById("language_select_container").children[0].children].forEach((child) => child.classList.add("anti_invert")), 1000);
 	}
 }
 
-document.addEventListener("keydown", (evt) => (evt.code == "Escape" ? setTimeout(() => (!dropdown_menu.classList.contains("show") ? dropdown_btn.blur() : null), 100) : null));
+document.addEventListener("keydown", (evt) => {
+	(evt.code == "Escape" ? setTimeout(() => (!dropdown_menu.classList.contains("show") ? dropdown_btn.blur() : null), 100) : null);
+
+	setTimeout(() => {
+		const no_results = document.getElementsByClassName("no-results")[0];
+		(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
+
+		(typeof language_select_dropdown != "number" && !language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
+	}, 100);
+});
+
+document.addEventListener("click", (evt) => (evt.target.classList.contains("dropdown-item") || evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null));
+
+setTimeout(() => {
+	language_select_btn.addEventListener("click", (evt) => (!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null));
+}, 1000);
 
 dropdown_btn.addEventListener("click", (evt) => {
 	setTimeout(() => (!dropdown_menu.classList.contains("show") ? dropdown_btn.blur() : null), 100);
@@ -76,33 +96,40 @@ dropdown_btn.addEventListener("click", (evt) => {
 
 file_input.addEventListener("input", (evt) => file_input_label.innerText = file_input.files[0].name);
 
-radio_no_ocr_dark.addEventListener("click", (evt) => {
-	checkbox_text_color_1.disabled = false;
-	checkbox_text_color_1.checked = true;
-	checkbox_text_color_2.disabled = true;
-	checkbox_text_color_2.checked = false;
-	checkbox_retain_img_colors.disabled = false;
+no_ocr_dark_radio.addEventListener("click", (evt) => {
+	text_color_1_checkbox.disabled = false;
+	text_color_1_checkbox.checked = true;
+	text_color_2_checkbox.disabled = true;
+	text_color_2_checkbox.checked = false;
+	retain_img_colors_checkbox.disabled = false;
+	language_checkbox.disabled = true;
+	language_checkbox.checked = false;
+
 });
 
-radio_ocr_dark.addEventListener("click", (evt) => {
-	checkbox_text_color_2.disabled = false;
-	checkbox_text_color_2.checked = true;
-	checkbox_text_color_1.disabled = true;
-	checkbox_text_color_1.checked = false;
-	checkbox_retain_img_colors.disabled = true;
-	checkbox_retain_img_colors.checked = false;
+ocr_dark_radio.addEventListener("click", (evt) => {
+	text_color_2_checkbox.disabled = false;
+	text_color_2_checkbox.checked = true;
+	text_color_1_checkbox.disabled = true;
+	text_color_1_checkbox.checked = false;
+	retain_img_colors_checkbox.disabled = true;
+	retain_img_colors_checkbox.checked = false;
+	language_checkbox.disabled = false;
+	language_checkbox.checked = true;
 });
 
-radio_dim.addEventListener("click", (evt) => {
-	checkbox_text_color_1.disabled = true;
-	checkbox_text_color_1.checked = false;
-	checkbox_text_color_2.disabled = true;
-	checkbox_text_color_2.checked = false;
-	checkbox_retain_img_colors.disabled = true;
-	checkbox_retain_img_colors.checked = false;
+dim_radio.addEventListener("click", (evt) => {
+	text_color_1_checkbox.disabled = true;
+	text_color_1_checkbox.checked = false;
+	text_color_2_checkbox.disabled = true;
+	text_color_2_checkbox.checked = false;
+	retain_img_colors_checkbox.disabled = true;
+	retain_img_colors_checkbox.checked = false;
+	language_checkbox.disabled = true;
+	language_checkbox.checked = false;
 });
 
-convert_button.addEventListener("click", async (evt) => {
+convert_btn.addEventListener("click", async (evt) => {
 	const alert_message_wrapper = document.getElementById("alert_message_wrapper");
 	if (alert_message_wrapper) {
 		const alert_message = alert_message_wrapper.innerHTML;
@@ -157,9 +184,9 @@ convert_button.addEventListener("click", async (evt) => {
 
 	alert_wrapper.innerHTML = "";
 	file_input.disabled = true;
-	convert_button.classList.add("d-none");
-	loading_button.classList.remove("d-none");
-	cancel_button.classList.remove("d-none");
+	convert_btn.classList.add("d-none");
+	loading_btn.classList.remove("d-none");
+	cancel_btn.classList.remove("d-none");
 	progress_wrapper.classList.remove("d-none");
 	jobs_queued_text.classList.add("d-none");
 
@@ -196,7 +223,7 @@ convert_button.addEventListener("click", async (evt) => {
 		show_alert("upload cancelled", "primary");
 	});
 
-	cancel_button.addEventListener("click", (evt) => request.abort());
+	cancel_btn.addEventListener("click", (evt) => request.abort());
 
 	request.onreadystatechange = function () {
 		if (this.readyState == 4 && this.status == 200) {
@@ -207,12 +234,14 @@ convert_button.addEventListener("click", async (evt) => {
 				});
 			}, 1000);
 
-			let transform_option = document.querySelector("input[name='transform_option']:checked").value;
-			(transform_option == "no_ocr_dark" && checkbox_retain_img_colors.checked ? transform_option = "no_ocr_dark_retain_img_colors" : null);
+			let transform_option = document.querySelector("input[name='transform_option']:checked").value.replace("_radio", "");
+			(transform_option == "no_ocr_dark" && retain_img_colors_checkbox.checked ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
-			const color_hex = (checkbox_text_color_1.checked ? color_picker_1.value : color_picker_2.value);
+			const color_hex = (text_color_1_checkbox.checked ? color_picker_1.value : color_picker_2.value);
 
-			socket.emit("enqueue", filename, transform_option, color_hex);
+			const language_code = (language_select.value == "" ? "eng" : language_select.value);
+			
+			socket.emit("enqueue", filename, transform_option, color_hex, language_code);
 
 			queue_position_text.classList.remove("d-none");
 		}
@@ -332,9 +361,9 @@ function reset() {
 	file_input.value = null;
 	file_input.disabled = false;
 	file_input_label.innerText = "choose file";
-	convert_button.classList.remove("d-none");
-	loading_button.classList.add("d-none");
-	cancel_button.classList.add("d-none");
+	convert_btn.classList.remove("d-none");
+	loading_btn.classList.add("d-none");
+	cancel_btn.classList.add("d-none");
 	progress_wrapper.classList.add("d-none");
 	progress.setAttribute("style", "width: 0%");
 }
