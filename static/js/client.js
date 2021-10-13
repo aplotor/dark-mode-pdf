@@ -77,7 +77,7 @@ document.addEventListener("keydown", (evt) => {
 	}, 100);
 });
 
-document.addEventListener("click", (evt) => (evt.target.classList.contains("dropdown-item") || evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null));
+document.addEventListener("click", (evt) => (evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null));
 
 setTimeout(() => {
 	language_select_btn.addEventListener("click", (evt) => (!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null));

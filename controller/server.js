@@ -75,6 +75,13 @@ app.get(`${app_index}/download`, (req, res) => {
 	});
 });
 
+app.get(`${app_index}/*`, (req, res) => {
+	res.status(404).render("error.handlebars", {
+		title: `404 — j9108c`,
+		http_status: 404
+	});
+});
+
 io.on("connect", (socket) => {
 	console.log(`socket (${socket.id}) connected`);
 
