@@ -155,6 +155,11 @@ io.on("connect", (socket) => {
 			if (exit_code != 0) {
 				console.error(`error: spawn process exited with code ${exit_code}`);
 				io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+
+				file_operations.purge(queue[socket.id].filename).catch((err) => null);
+				queue[socket.id].reject("spawn error");
+				delete queue[socket.id];
+
 				return;
 			}
 			
@@ -163,7 +168,18 @@ io.on("connect", (socket) => {
 
 				const spawn = child_process.spawn("gs", ["-o", `${project_root}/data/${filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${project_root}/data/${filename}_in.pdf`]);
 
-				spawn.on("exit", () => {
+				spawn.on("exit", (exit_code) => {
+					if (exit_code != 0) {
+						console.error(`error: spawn process exited with code ${exit_code}`);
+						io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+
+						file_operations.purge(queue[socket.id].filename).catch((err) => null);
+						queue[socket.id].reject("spawn error");
+						delete queue[socket.id];
+
+						return;
+					}
+
 					const spawn = child_process.spawn("java", ["-classpath", `${project_root}/vendor/pdfbox CLI tool — v=2.0.22.jar`, `${project_root}/model/overlay.java`, transform_option, filename]);
 		
 					spawn.stderr.on("data", (data) => {
@@ -183,6 +199,11 @@ io.on("connect", (socket) => {
 						if (exit_code != 0) {
 							console.error(`error: spawn process exited with code ${exit_code}`);
 							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+
+							file_operations.purge(queue[socket.id].filename).catch((err) => null);
+							queue[socket.id].reject("spawn error");
+							delete queue[socket.id];
+
 							return;
 						}
 						
