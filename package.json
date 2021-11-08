@@ -3,18 +3,21 @@
 	"name": "dark-mode-pdf",
 	"repository": "github:j9108c/dark-mode-pdf",
 	"license": "MIT",
-	"main": "./controller/server.js",
+	"type": "module",
+	"main": "./controller/server.mjs",
 	"scripts": {
-		"dev": "nodemon ./controller/server.js",
-		"prod_start": "pm2 start ./controller/server.js --interpreter node --name dark-mode-pdf",
-		"prod_restart": "pm2 restart ./controller/server.js",
-		"prod_stop": "pm2 stop ./controller/server.js"
+		"dev": "nodemon ./controller/server.mjs",
+		"prod_start": "pm2 start ./controller/server.mjs --interpreter node --name dark-mode-pdf",
+		"prod_restart": "pm2 restart ./controller/server.mjs",
+		"prod_stop": "pm2 stop ./controller/server.mjs"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.7"
 	},
 	"nodemonConfig": {
 		"ignore": [
+			"*.js",
+			"*.json",
 			"./data/"
 		]
 	},

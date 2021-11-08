@@ -73,7 +73,7 @@ else:
 		# convert input pdf pages to images
 		print("loading...")
 		time.sleep(0.1)
-		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=temp_dir) # pdf −> list of pil image objects
+		images = pdf2image.convert_from_path(inpdf, dpi=300, output_folder=temp_dir) # pdf ➔ list of pil image objects
 
 		# convert images to dark mode
 		print("applying dark mode")

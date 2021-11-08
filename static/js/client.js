@@ -234,7 +234,7 @@ convert_btn.addEventListener("click", async (evt) => {
 				});
 			}, 1000);
 
-			let transform_option = document.querySelector("input[name='transform_option']:checked").value.replace("_radio", "");
+			let transform_option = document.querySelector('input[name="transform_option"]:checked').value.replace("_radio", "");
 			(transform_option == "no_ocr_dark" && retain_img_colors_checkbox.checked ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
 			const color_hex = (text_color_1_checkbox.checked ? color_picker_1.value : color_picker_2.value);
@@ -301,37 +301,23 @@ socket.on("download", (filename) => {
 });
 
 function list_domain_request_info(countries_array, parent_ul) {
-	let li = null;
-
 	if (countries_array.length == 0) {
 		return;
 	} else if (countries_array.length <= 3) {
 		countries_array.forEach((country) => {
-			li = document.createElement("li");
-			li.classList.add("mt-n1");
-			li.innerHTML = `${country.clientCountryName}: ${country.requests}`;
-			parent_ul.appendChild(li);
+			parent_ul.insertAdjacentHTML("beforeend", `<li class="mt-n1">${country.clientCountryName}: ${country.requests}</li>`);
 		});
 	} else {
 		countries_array.slice(0, 3).forEach((country) => {
-			li = document.createElement("li");
-			li.classList.add("mt-n1");
-			li.innerHTML = `${country.clientCountryName}: ${country.requests}`;
-			parent_ul.appendChild(li);
+			parent_ul.insertAdjacentHTML("beforeend", `<li class="mt-n1">${country.clientCountryName}: ${country.requests}</li>`);
 		});
 
-		li = document.createElement("li");
-		li.classList.add("mt-n1");
-		li.innerHTML = `${countries_array.length - 3} more`;
-		parent_ul.appendChild(li);
+		parent_ul.insertAdjacentHTML("beforeend", `<li class="mt-n1">${countries_array.length - 3} more</li>`);
 	}
 }
 
 function output_message(message) {
-	const p = document.createElement("p");
-	p.classList.add("mb-1");
-	p.innerHTML = `> ${message}`;
-	messages.appendChild(p);
+	messages.insertAdjacentHTML("beforeend", `<p class="mb-1">> ${message}</p>`);
 }
 
 function remove_blinking_caret() {
@@ -339,20 +325,14 @@ function remove_blinking_caret() {
 }
 
 function add_blinking_caret() {
-	const p = document.createElement("p");
-	p.id = "gt_sign";
-	p.classList.add("mb-1");
-	p.innerHTML = "> <span id='blinking_caret'>|</span>";
-	messages.appendChild(p);
+	messages.insertAdjacentHTML("beforeend", '<p id="gt_sign" class="mb-1">> <span id="blinking_caret">|</span></p>');
 }
 
 function show_alert(message, type) {
 	alert_wrapper.innerHTML = `
 		<div id="alert" class="alert alert-${type} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
 			<span id="alert_message_wrapper">${message}</span>
-			<button class="close" type="button" data-dismiss="alert">
-				<span>&times;</span>
-			</button>
+			<button class="close" type="button" data-dismiss="alert"><span>&times;</span></button>
 		</div>
 	`;
 }

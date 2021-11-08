@@ -1,6 +1,6 @@
 const project_root = process.cwd();
 
-const filesystem = require("fs");
+const filesystem = (await import("fs")).default;
 
 async function purge(filename) {
 	await Promise.all([
@@ -14,7 +14,7 @@ async function purge(filename) {
 let leftover_pdfs = [];
 
 async function log_leftover_pdfs() {
-	files = await filesystem.promises.readdir(`${project_root}/data`);
+	const files = await filesystem.promises.readdir(`${project_root}/data`);
 	files.forEach((file) => (file.endsWith(".pdf") ? leftover_pdfs.push(file) : null));
 	// console.log("logged leftover pdfs");
 }
@@ -33,9 +33,12 @@ async function cleanup(init=false) {
 	// console.log("cleanup completed");
 }
 function cycle_cleanup() {
-	setInterval(() => cleanup().catch((err) => console.error(err)), 36000000); // 10h
+	cleanup(true).catch((err) => console.error(err));
+
+	setInterval(() => cleanup().catch((err) => console.error(err)), 14400000); // 4h
 }
 
-module.exports.purge = purge;
-module.exports.cleanup = cleanup;
-module.exports.cycle_cleanup = cycle_cleanup;
+export {
+	purge,
+	cycle_cleanup
+};

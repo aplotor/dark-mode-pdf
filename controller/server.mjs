@@ -2,38 +2,43 @@ const project_root = process.cwd();
 const run_config = (project_root.toLowerCase().slice(0, 20) == "/mnt/c/users/j9108c/" ? "dev" : "prod");
 console.log(`${run_config}: ${project_root}`);
 
-const secrets = (run_config == "dev" ? require(`${project_root}/_secrets.js`).dev : require(`${project_root}/_secrets.js`).prod);
-const sql_operations = require(`${project_root}/model/sql_operations.js`);
-const file_operations = require(`${project_root}/model/file_operations.js`);
+const secrets = (run_config == "dev" ? (await import(`${project_root}/_secrets.mjs`)).dev : (await import(`${project_root}/_secrets.mjs`)).prod);
+const sql = (await import(`${project_root}/model/sql.mjs`));
+const file = (await import(`${project_root}/model/file.mjs`));
 
-const express = require("express");
-const express_hbs = require("express-handlebars");
-const http = require("http");
-const socket_io = require("socket.io");
-const socket_io_client = require("socket.io-client");
-const child_process = require("child_process");
-const fileupload = require("express-fileupload");
+const express = (await import("express")).default;
+const handlebars = (await import("express-handlebars")).default;
+const http = (await import("http")).default;
+const socket_io_server = (await import("socket.io")).Server;
+const socket_io_client = (await import("socket.io-client")).default;
+const child_process = (await import("child_process")).default;
+const fileupload = (await import("express-fileupload")).default;
 
 const app = express();
 const app_name = "dark-mode-pdf";
 const app_index = `/apps/${app_name}`; // index of this server relative to domain
 const server = http.createServer(app);
-const io = socket_io(server, {
+const io = new socket_io_server(server, {
 	path: `${app_index}/socket.io`
 });
 
-sql_operations.connect_to_db().then(() => sql_operations.init_db()).catch((err) => console.error(err));
-file_operations.cleanup(true).then(() => file_operations.cycle_cleanup()).catch((err) => console.error(err));
+await sql.connect_to_db();
+await sql.init_db();
+file.cycle_cleanup();
 process.nextTick(() => setInterval(() => io.emit("update jobs queued", Object.keys(queue).length), 100));
 
 const queue = {};
 
-app.use(fileupload());
+app.use(fileupload({
+	limits: {
+		fileSize: secrets.filesize_limit
+	}
+}));
 
 app.use(`${app_index}/static`, express.static(`${project_root}/static`));
 app.set("views", `${project_root}/static/html`);
 app.set("view engine", "handlebars");
-app.engine("handlebars", express_hbs({
+app.engine("handlebars", handlebars({
 	layoutsDir: `${project_root}/static/html`,
 	defaultLayout: "template.handlebars"
 }));
@@ -43,6 +48,8 @@ app.get(app_index, (req, res) => {
 		title: `${app_name} — j9108c`,
 		description: "converts PDFs to dark mode"
 	});
+
+	sql.add_visit().catch((err) => console.error(err));
 });
 app.get(app_index.split("-").join(""), (req, res) => {
 	res.redirect(302, app_index);
@@ -60,7 +67,7 @@ app.get(`${app_index}/download`, (req, res) => {
 		try {
 			console.log("deleting your data from the server");
 			io.to(req.query.socket_id).emit("message", "deleting your data from the server");
-			await file_operations.purge(req.query.filename);
+			await file.purge(req.query.filename);
 		} catch (err) {
 			null;
 		} finally {
@@ -89,8 +96,6 @@ io.on("connect", (socket) => {
 	// console.log(headers);
 	const socket_address = headers.host.split(":")[0];
 	(socket_address == dev_private_ip_copy ? io.to(socket.id).emit("replace localhost with dev private ip", dev_private_ip_copy) : null);
-
-	sql_operations.add_visit().catch((err) => console.error(err));
 
 	io.to(socket.id).emit("update countdown", countdown_copy);
 	if (domain_request_info_copy) {
@@ -156,7 +161,7 @@ io.on("connect", (socket) => {
 				console.error(`error: spawn process exited with code ${exit_code}`);
 				io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 
-				file_operations.purge(queue[socket.id].filename).catch((err) => null);
+				file.purge(queue[socket.id].filename).catch((err) => null);
 				queue[socket.id].reject("spawn error");
 				delete queue[socket.id];
 
@@ -173,7 +178,7 @@ io.on("connect", (socket) => {
 						console.error(`error: spawn process exited with code ${exit_code}`);
 						io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 
-						file_operations.purge(queue[socket.id].filename).catch((err) => null);
+						file.purge(queue[socket.id].filename).catch((err) => null);
 						queue[socket.id].reject("spawn error");
 						delete queue[socket.id];
 
@@ -200,20 +205,20 @@ io.on("connect", (socket) => {
 							console.error(`error: spawn process exited with code ${exit_code}`);
 							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 
-							file_operations.purge(queue[socket.id].filename).catch((err) => null);
+							file.purge(queue[socket.id].filename).catch((err) => null);
 							queue[socket.id].reject("spawn error");
 							delete queue[socket.id];
 
 							return;
 						}
 						
-						sql_operations.add_conversion().catch((err) => console.error(err));
+						sql.add_conversion().catch((err) => console.error(err));
 						
 						io.to(socket.id).emit("download", filename);
 					});
 				});
 			} else {
-				sql_operations.add_conversion().catch((err) => console.error(err));
+				sql.add_conversion().catch((err) => console.error(err));
 				
 				io.to(socket.id).emit("download", filename);
 			}
@@ -222,7 +227,7 @@ io.on("connect", (socket) => {
 
 	socket.on("disconnect", () => {
 		if (queue[socket.id]) {
-			file_operations.purge(queue[socket.id].filename).catch((err) => null);
+			file.purge(queue[socket.id].filename).catch((err) => null);
 			clearInterval(queue[socket.id].interval_id);
 			queue[socket.id].reject("socket disconnected");
 			delete queue[socket.id];
