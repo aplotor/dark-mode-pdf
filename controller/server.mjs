@@ -22,7 +22,6 @@ const io = new socket_io_server(server, {
 	path: `${app_index}/socket.io`
 });
 
-await sql.connect_to_db();
 await sql.init_db();
 file.cycle_cleanup();
 process.nextTick(() => setInterval(() => io.emit("update jobs queued", Object.keys(queue).length), 100));

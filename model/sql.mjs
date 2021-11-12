@@ -5,14 +5,15 @@ const secrets = (run_config == "dev" ? (await import(`${project_root}/_secrets.m
 
 const node_pg = (await import("pg")).default;
 
-const client = new node_pg.Client(secrets.sql_connection);
-
-async function connect_to_db() {
-	await client.connect();
-	(run_config == "dev" ? console.log("connected to (test) sql db") : console.log("connected to (prod) sql db"));
-}
+const pool = new node_pg.Pool({ // https://node-postgres.com/api/pool
+	connectionString: secrets.sql_connection,
+	max: (run_config == "dev" ? 1 : 5),
+	idleTimeoutMillis: 0
+});
 
 async function init_db() {
+	const client = await pool.connect();
+
 	if (run_config == "dev") {
 		const result = await client.query(
 			"select table_name " +
@@ -56,10 +57,12 @@ async function init_db() {
 		"values (0, 0) " +
 		"on conflict do nothing;"
 	);
+
+	client.release();
 }
 
 async function add_visit() {
-	await client.query(
+	await query(
 		"update visit " +
 		"set count = count+1 " +
 		"where id = 0;"
@@ -67,7 +70,7 @@ async function add_visit() {
 }
 
 async function add_conversion() {
-	await client.query(
+	await query(
 		"update conversion " +
 		"set count = count+1 " +
 		"where id = 0;"
@@ -75,7 +78,6 @@ async function add_conversion() {
 }
 
 export {
-	connect_to_db,
 	init_db,
 	add_visit,
 	add_conversion
