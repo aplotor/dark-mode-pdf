@@ -61,6 +61,20 @@ async function init_db() {
 	client.release();
 }
 
+async function query(query) {
+	const client = await pool.connect();
+	let result = null;
+	try {
+		result = await client.query(query);
+	} catch (err) {
+		console.error(err);
+	} finally {
+		client.release();
+	}
+	const rows = (result ? result.rows : null);
+	return rows;
+}
+
 async function add_visit() {
 	await query(
 		"update visit " +
