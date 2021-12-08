@@ -31,6 +31,7 @@ const app_socket = socket_io_client.io("http://localhost:1026", {
 
 await sql.init_db();
 sql.cycle_backup_db();
+file.init();
 file.cycle_cleanup();
 process.nextTick(() => {
 	setInterval(() => {

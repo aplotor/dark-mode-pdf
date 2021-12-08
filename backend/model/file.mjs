@@ -2,6 +2,10 @@ const backend = process.cwd();
 
 import filesystem from "fs";
 
+function init() {
+	(!filesystem.existsSync(`${backend}/tempfiles/`) ? filesystem.mkdirSync(`${backend}/tempfiles/`) : null);
+}
+
 async function purge(filename) {
 	await Promise.all([
 		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_in.pdf`),
@@ -43,6 +47,7 @@ function cycle_cleanup() {
 }
 
 export {
+	init,
 	purge,
 	cycle_cleanup
 };
