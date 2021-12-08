@@ -1,9 +1,10 @@
 # ignore
-**/#*
 **/.*
-**/_*
-node_modules
-virtual_environment
+**/#*
+**/node_modules/
+frontend/build/
+backend/virtual_environment/
+backend/tempfiles/
 
 # keep
 !.git

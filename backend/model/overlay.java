@@ -45,8 +45,8 @@ public class overlay {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		String project_root = System.getProperty("user.dir"); // where the app is started from; NOT where the controller file is and NOT where this file is
-		// System.out.println(project_root);
+		String backend = System.getProperty("user.dir");
+		// System.out.println(backend);
 
 		String transform_option = args[0];
 		// System.out.println(transform_option);
@@ -54,15 +54,15 @@ public class overlay {
 		// System.out.println(filename);
 
 		// load original pdf to be the background overlay
-		File file = new File(project_root + "/data/" + filename + "_in.pdf");
+		File file = new File(backend + "/tempfiles/" + filename + "_in.pdf");
 		PDDocument background_pdf = PDDocument.load(file);
 
 		// load dark mode transformed pdf (will be middle layer)
-		file = new File(project_root + "/data/" + filename + "_temp.pdf");
+		file = new File(backend + "/tempfiles/" + filename + "_temp.pdf");
 		PDDocument middle_pdf = PDDocument.load(file);
 
 		// load text-stripped pdf to be the foreground overlay
-		file = new File(project_root + "/data/" + filename + "_no_text.pdf");
+		file = new File(backend + "/tempfiles/" + filename + "_no_text.pdf");
 		PDDocument foreground_pdf = PDDocument.load(file);
 
 		// split each pdf into its own list of PDDocument
@@ -90,7 +90,7 @@ public class overlay {
 		// save final pdf
 		System.out.println("creating output pdf");
 		Thread.sleep(100);
-		out_pdf.save(project_root + "/data/" + filename + "_out.pdf");
+		out_pdf.save(backend + "/tempfiles/" + filename + "_out.pdf");
 		System.out.println("created output pdf");
 		Thread.sleep(100);
 

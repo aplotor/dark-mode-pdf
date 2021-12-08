@@ -1,0 +1,20 @@
+{
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon ./controller/server.mjs",
+		"prod_start": "pm2 start ./controller/server.mjs --interpreter node --name dark-mode-pdf",
+		"prod_stop": "pm2 stop ./controller/server.mjs",
+		"prod_restart": "pm2 restart ./controller/server.mjs"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.7"
+	},
+	"dependencies": {
+		"axios": "^0.24.0",
+		"express": "^4.17.1",
+		"express-fileupload": "^1.2.1",
+		"pg": "^8.6.0",
+		"socket.io": "^4.1.2",
+		"socket.io-client": "^4.1.2"
+	}
+}

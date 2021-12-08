@@ -8,8 +8,8 @@ import sys
 import tempfile
 import time
 
-project_root = os.getcwd() # where the app is started from; NOT where the controller file is and NOT where this file is
-# print(project_root)
+backend = os.getcwd()
+# print(backend)
 
 option = sys.argv[1]
 # print(option)
@@ -22,7 +22,7 @@ language_code = sys.argv[4]
 
 print("accepting input pdf")
 time.sleep(0.1) # sleep for 0.1s. need these small time delays after each print because of issue with spawn grouping the print outputs without the delays
-inpdf = f"{project_root}/data/{filename}_in.pdf"
+inpdf = f"{backend}/tempfiles/{filename}_in.pdf"
 print("accepted input pdf")
 time.sleep(0.1)
 
@@ -37,7 +37,7 @@ if option == "dim":
 	# create reportlab canvas
 	print("creating canvas")
 	time.sleep(0.1)
-	outpdf = f"{project_root}/data/{filename}_out.pdf"
+	outpdf = f"{backend}/tempfiles/{filename}_out.pdf"
 	canvas = reportlab.pdfgen.canvas.Canvas(outpdf, pagesize=reportlab.lib.pagesizes.A4)
 	canvas.setTitle("")
 	print("created canvas")
@@ -98,7 +98,7 @@ else:
 		for num in range(2, i):
 			images.append(PIL.Image.open(f"{temp_dir}/image_{str(num)}.jpg"))
 		if option == "no_ocr_dark" or option == "no_ocr_dark_retain_img_colors":
-			image_1.save(f"{project_root}/data/{filename}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
+			image_1.save(f"{backend}/tempfiles/{filename}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 		elif option == "ocr_dark":
 			image_1.save(f"{temp_dir}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 
@@ -115,7 +115,7 @@ else:
 				# ocr the pdf and create output pdf
 				print("child process performing ocr (this might take a while)...")
 				time.sleep(0.1)
-				ocrmypdf.ocr(f"{temp_dir}/temp.pdf", f"{project_root}/data/{filename}_out.pdf", force_ocr=True, output_type="pdf", language=language_code)
+				ocrmypdf.ocr(f"{temp_dir}/temp.pdf", f"{backend}/tempfiles/{filename}_out.pdf", force_ocr=True, output_type="pdf", language=language_code)
 				print("done ocr")
 				time.sleep(0.1)
 				print("created output pdf")

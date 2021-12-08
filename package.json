@@ -3,30 +3,15 @@
 	"name": "dark-mode-pdf",
 	"repository": "github:j9108c/dark-mode-pdf",
 	"license": "MIT",
-	"type": "module",
-	"main": "./controller/server.mjs",
 	"scripts": {
-		"dev": "nodemon ./controller/server.mjs",
-		"prod_start": "pm2 start ./controller/server.mjs --interpreter node --name dark-mode-pdf",
-		"prod_restart": "pm2 restart ./controller/server.mjs",
-		"prod_stop": "pm2 stop ./controller/server.mjs"
+		"dev": "concurrently --names \"backend,frontend\" --prefix \"{name}:\" --prefix-colors \"#f2caff,#61f2f2\" \"cd ./backend/ && npm run dev\" \"wait-on tcp:1101 && cd ./frontend/ && npm run dev\"",
+		"build": "cd ./frontend/ && npm run build",
+		"prod_start": "cd ./backend/ && npm run prod_start",
+		"prod_stop": "cd ./backend/ && npm run prod_stop",
+		"prod_update": "npm run prod_stop && git pull && (cd ./frontend/ && npm install) && (cd ./backend/ && npm install) && npm run build && npm run prod_start"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.7"
-	},
-	"nodemonConfig": {
-		"ignore": [
-			"*.js",
-			"*.json",
-			"./data/"
-		]
-	},
-	"dependencies": {
-		"express": "^4.17.1",
-		"express-fileupload": "^1.2.1",
-		"express-handlebars": "^4.0.6",
-		"pg": "^8.6.0",
-		"socket.io": "^4.1.2",
-		"socket.io-client": "^4.1.2"
+		"concurrently": "^6.4.0",
+		"wait-on": "^6.0.0"
 	}
 }
