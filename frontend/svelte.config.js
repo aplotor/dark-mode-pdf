@@ -20,12 +20,12 @@ export default {
 			},
 			server: {
 				host: "0.0.0.0",
-				port: 1100,
+				port: 1200,
 				strictPort: true,
 				proxy: {
 					"/backend": {
 						rewrite: (path) => path.replace(/^(\/backend)/, ""),
-						target: "http://localhost:1101",
+						target: "http://localhost:1201",
 						secure: false,
 						changeOrigin: true,
 						ws: true // not working with socket.io. check again after switching to vanilla ws

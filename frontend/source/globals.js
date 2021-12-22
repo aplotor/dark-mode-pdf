@@ -10,12 +10,11 @@ const readonly = {
 	repo: `https://github.com/j9108c/${app_name}`,
 	description: "converts PDFs to dark mode",
 	backend: (run_config == "dev" ? "/backend" : ""),
-	socket: socket_io_client.io((run_config == "dev" ? `http://${(env.browser ? location.hostname : "localhost")}:1101` : "")),
-	j9108c_url: (run_config == "dev" ? `http://${(env.browser ? location.hostname : "localhost")}:1025` : "http://j9108c.com")
+	socket: socket_io_client.io((run_config == "dev" ? `http://${(env.browser ? location.hostname : "localhost")}:1201` : ""))
 };
 
 const writable = svelte_store.writable({ // global state
-
+	other_apps_urls: null
 });
 
 export {

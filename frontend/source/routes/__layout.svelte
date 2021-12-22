@@ -1,11 +1,11 @@
 <script context="module">
 	import * as globals from "frontend/source/globals.js";
-	import Navbar from "frontend/source/components/navbar.svelte";
 	import Footer from "frontend/source/components/footer.svelte";
 
 	import * as svelte from "svelte";
 
 	const globals_r = globals.readonly;
+	const globals_w = globals.writable;
 
 	export async function load(obj) {
 		let interval_id = null;
@@ -39,24 +39,32 @@
 </script>
 <script>
 	svelte.onMount(() => {
-		if (document.cookie) {
-			const light_mode = document.cookie.split("; ").find((cookie) => cookie.startsWith("light_mode")).split("=")[1];
-			(light_mode == "on" ? null : null); // TODO add tailwind dark mode
-		}
+		globals_r.socket.emit("layout mounted");
+
+		globals_r.socket.on("store other apps urls", (other_apps_urls) => {
+			$globals_w.other_apps_urls = other_apps_urls;
+
+			if (location.hostname.startsWith("192.168.")) {
+				for (const app_name in other_apps_urls) {
+					$globals_w.other_apps_urls[app_name].link = other_apps_urls[app_name].link.replace("localhost", location.hostname);
+				}
+			}
+		});
+	});
+	svelte.onDestroy(() => {
+		globals_r.socket.off("store other apps urls");
 	});
 </script>
 
 <div class="container-fluid text-light">
 	<div class="row d-flex justify-content-center">
 		<content class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-8">
-			<Navbar/>
 			<slot></slot>
 			<div class="text-center my-4">
 				<a href={globals_r.repo} target="_blank"><i id="bottom_gh" class="fab fa-github"></i></a>
 			</div>
 			<div class="text-center">
 				<p class="font_size_10 m-0"><a target="_blank" href="{globals_r.repo}/issues">report issues</a></p>
-				<p class="font_size_10 m-0"><a target="_blank" href="https://www.buymeacoffee.com/j9108c">help support server costs</a></p>
 			</div>
 		</content>
 		<Footer/>

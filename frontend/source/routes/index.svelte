@@ -155,11 +155,11 @@
 				const num_pages = await new Promise((resolve, reject) => {
 					const reader = new FileReader();
 					reader.readAsBinaryString(file);
-					reader.onloadend = function () {
+					reader.onloadend = function (evt) {
 						const match = reader.result.match(/\/Type[\s]*\/Page[^s]/g);
 						(match ? resolve(match.length) : reject("no match"));
 					}
-					reader.onerror = function () {
+					reader.onerror = function (evt) {
 						reject(reader.error);
 					}
 				});
@@ -342,7 +342,7 @@
 					<label class="form-check-label" for="ocr_dark_radio"> dark mode (OCR: scanned docs)</label>
 				</div>
 				<div class="form-check ml-3 d-flex align-items-center">
-					<input id="text_color_checkbox_2" class="form-check-input" type="checkbox" disabled/>
+					<input bind:this={text_color_checkbox_2} id="text_color_checkbox_2" class="form-check-input" type="checkbox" disabled/>
 					<label class="form-check-label" for="text_color_checkbox_2">+ text color: <input bind:this={color_picker_2} type="color" value="#ffffff"/></label>
 				</div>
 				<div class="form-check ml-3">

@@ -1,3 +1,3 @@
-# [dark-mode-pdf](https://dark-mode-pdf.j9108c.com)
+# [dark-mode-pdf](https://dark-mode-pdf.portals.sh)
 
 converts PDFs to dark mode

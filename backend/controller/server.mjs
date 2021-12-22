@@ -17,15 +17,15 @@ const app = express();
 const app_name = "dark-mode-pdf";
 const server = http.createServer(app);
 const io = new socket_io_server.Server(server, {
-	cors: (run_config == "dev" ? {origin: "*"} : null)
+	cors: (run_config == "dev" ? {origin: "*"} : null),
+	maxHttpBufferSize: 1000000 // 1mb in bytes
 });
-const app_socket = socket_io_client.io("http://localhost:1026", {
+const app_socket = socket_io_client.io("http://localhost:1101", {
 	autoConnect: false,
 	reconnect: true,
 	extraHeaders: {
 		app: app_name,
-		port: secrets.port - 1,
-		secret: secrets.app_socket_secret
+		secret: secrets.local_sockets_secret
 	}
 });
 
@@ -40,9 +40,9 @@ process.nextTick(() => {
 });
 
 const frontend = backend.replace("backend", "frontend");
-let countdown_copy = null;
-let domain_request_info_copy = null;
-let dev_private_ip_copy = null;
+let dev_private_ip = null;
+let other_apps_urls = null;
+let domain_request_info = null;
 const queue = {};
 
 app.use(fileupload({
@@ -91,16 +91,13 @@ app.all("*", (req, res) => {
 io.on("connect", (socket) => {
 	console.log(`socket (${socket.id}) connected`);
 
+	socket.on("layout mounted", () => {
+		io.to(socket.id).emit("store other apps urls", other_apps_urls);
+
+		io.to(socket.id).emit("update domain request info", domain_request_info);
+	});
+
 	socket.on("navigation", (route) => {
-		io.to(socket.id).emit("update countdown", countdown_copy);
-		if (domain_request_info_copy) {
-			io.to(socket.id).emit("update domain request info", domain_request_info_copy);
-		} else {
-			setTimeout(() => {
-				(domain_request_info_copy ? io.to(socket.id).emit("update domain request info", domain_request_info_copy) : null);
-			}, 5000);
-		}
-		
 		switch (route) {
 			case "index":
 				io.to(socket.id).emit("set limits", [secrets.filesize_limit, secrets.page_limit]);
@@ -175,8 +172,6 @@ io.on("connect", (socket) => {
 			}
 			
 			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
-				io.to(socket.id).emit("message", "loading...");
-
 				const spawn = child_process.spawn("gs", ["-o", `${backend}/tempfiles/${filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${backend}/tempfiles/${filename}_in.pdf`]);
 
 				spawn.on("exit", (exit_code) => {
@@ -242,19 +237,23 @@ io.on("connect", (socket) => {
 });
 
 app_socket.on("connect", () => {
-	console.log("connected as client to j9108c (localhost:1026)");
+	console.log("connected as client to portals (localhost:1101)");
+});
+
+app_socket.on("store dev private ip", (ip) => {
+	dev_private_ip = ip;
+});
+
+app_socket.on("store other apps urls", (urls) => {
+	other_apps_urls = urls;
 });
 
 app_socket.on("update countdown", (countdown) => {
-	io.emit("update countdown", countdown_copy = countdown);
+	io.emit("update countdown", countdown);
 });
 
-app_socket.on("update domain request info", (domain_request_info) => {
-	io.emit("update domain request info", domain_request_info_copy = domain_request_info);
-});
-
-app_socket.on("store dev private ip", (dev_private_ip) => {
-	dev_private_ip_copy = dev_private_ip;
+app_socket.on("update domain request info", (info) => {
+	io.emit("update domain request info", domain_request_info = info);
 });
 
 app_socket.connect();

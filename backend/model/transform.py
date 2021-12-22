@@ -91,7 +91,7 @@ else:
 		time.sleep(0.1)
 
 		# combine images into pdf
-		print("saving...")
+		print("loading...")
 		time.sleep(0.1)
 		image_1 = PIL.Image.open(f"{temp_dir}/image_1.jpg")
 		images = []
