@@ -94,7 +94,7 @@
 
 <svelte:window on:keydown={handle_window_keydown}/>
 <footer class="text-center">
-	<p class="font_size_10 m-0">released under the <a target="_blank" href="https://choosealicense.com/licenses/mit">MIT License</a> &#169; 2020–{current_year}</p>
+	<p class="font_size_10 m-0">released under the <a target="_blank" href="https://choosealicense.com/licenses/agpl-3.0">AGPL3 License</a> &#169; 2020–{current_year}</p>
 	<p class="font_size_10 m-0"><a href="{($globals_w.other_apps_urls ? $globals_w.other_apps_urls.portals.link : "#")}/stats">cloudflare zone stats</a></p>
 	<div class="btn-group dropdown">
 		<button bind:this={dropdown_btn} type="button" class="btn btn-link dropdown-toggle mt-n2 px-1 py-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></button>
