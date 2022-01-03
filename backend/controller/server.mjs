@@ -40,7 +40,6 @@ process.nextTick(() => {
 });
 
 const frontend = backend.replace("backend", "frontend");
-let dev_private_ip = null;
 let other_apps_urls = null;
 let domain_request_info = null;
 const queue = {};
@@ -52,10 +51,6 @@ app.use(fileupload({
 }));
 
 app.use("/", express.static(`${frontend}/build/`));
-
-app.get("/", (req, res) => {
-	res.status(200).sendFile(`${frontend}/build/index.html`);
-});
 
 app.post("/upload", (req, res) => {
 	req.files.file.mv(`${backend}/tempfiles/${req.files.file.name}_in.pdf`, (err) => (err ? console.error(err) : null));
@@ -238,10 +233,6 @@ io.on("connect", (socket) => {
 
 app_socket.on("connect", () => {
 	console.log("connected as client to portals (localhost:1101)");
-});
-
-app_socket.on("store dev private ip", (ip) => {
-	dev_private_ip = ip;
 });
 
 app_socket.on("store other apps urls", (urls) => {
