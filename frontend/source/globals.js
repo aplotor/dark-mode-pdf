@@ -9,6 +9,7 @@ const readonly = {
 	app_name: app_name,
 	repo: `https://github.com/j9108c/${app_name}`,
 	description: "converts PDFs to dark mode",
+	gh_sponsors_url: "https://github.com/sponsors/j9108c",
 	backend: (run_config == "dev" ? "/backend" : ""),
 	socket: socket_io_client.io((run_config == "dev" ? `http://${(env.browser ? location.hostname : "localhost")}:1201` : ""))
 };
