@@ -1,5 +1,5 @@
 const backend = process.cwd();
-const run_config = (backend.toLowerCase().slice(0, 20) == "/mnt/c/users/j9108c/" ? "dev" : "prod");
+const run_config = (backend.toLowerCase().startsWith("/mnt/c/") ? "dev" : "prod");
 console.log(`${run_config}: ${backend}`);
 
 const secrets = (run_config == "dev" ? (await import(`${backend}/.secrets.mjs`)).dev : (await import(`${backend}/.secrets.mjs`)).prod);
@@ -20,7 +20,7 @@ const io = new socket_io_server.Server(server, {
 	cors: (run_config == "dev" ? {origin: "*"} : null),
 	maxHttpBufferSize: 1000000 // 1mb in bytes
 });
-const app_socket = socket_io_client.io("http://localhost:1101", {
+const app_socket = socket_io_client.io("http://localhost:1026", {
 	autoConnect: false,
 	reconnect: true,
 	extraHeaders: {
@@ -40,7 +40,7 @@ process.nextTick(() => {
 });
 
 const frontend = backend.replace("backend", "frontend");
-let other_apps_urls = null;
+let all_apps_urls = null;
 let domain_request_info = null;
 const queue = {};
 
@@ -87,7 +87,7 @@ io.on("connect", (socket) => {
 	console.log(`socket (${socket.id}) connected`);
 
 	socket.on("layout mounted", () => {
-		io.to(socket.id).emit("store other apps urls", other_apps_urls);
+		io.to(socket.id).emit("store all apps urls", all_apps_urls);
 
 		io.to(socket.id).emit("update domain request info", domain_request_info);
 	});
@@ -232,11 +232,11 @@ io.on("connect", (socket) => {
 });
 
 app_socket.on("connect", () => {
-	console.log("connected as client to portals (localhost:1101)");
+	console.log("connected as client to portals (localhost:1026)");
 });
 
-app_socket.on("store other apps urls", (urls) => {
-	other_apps_urls = urls;
+app_socket.on("store all apps urls", (urls) => {
+	all_apps_urls = urls;
 });
 
 app_socket.on("update countdown", (countdown) => {

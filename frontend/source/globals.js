@@ -7,15 +7,15 @@ const app_name = "dark-mode-pdf";
 
 const readonly = {
 	app_name: app_name,
-	repo: `https://github.com/j9108c/${app_name}`,
+	repo: `https://github.com/jc9108/${app_name}`,
 	description: "converts PDFs to dark mode",
-	gh_sponsors_url: "https://github.com/sponsors/j9108c",
+	gh_sponsors_url: "https://github.com/sponsors/jc9108",
 	backend: (run_config == "dev" ? "/backend" : ""),
 	socket: socket_io_client.io((run_config == "dev" ? `http://${(env.browser ? location.hostname : "localhost")}:1201` : ""))
 };
 
 const writable = svelte_store.writable({ // global state
-	other_apps_urls: null
+	all_apps_urls: null
 });
 
 export {
