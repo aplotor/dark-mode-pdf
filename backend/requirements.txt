@@ -1,0 +1,9 @@
+wheel==0.37.1
+pillow==8.3.1
+ghostscript==0.7
+pytesseract==0.3.8
+ocrmypdf==12.2.0
+pdf2image==1.16.0
+pdfrw==0.4
+reportlab==3.5.68
+sip==6.1.1
