@@ -139,7 +139,10 @@ io.on("connect", (socket) => {
 		console.log(`start ${filename}`);
 		io.to(socket.id).emit("message", `start ${filename}`);
 
-		const spawn = child_process.spawn(`${backend}/virtual_environment/bin/python`, ["-u", `${backend}/model/transform.py`, transform_option, filename, color_hex, language_code]);
+		const spawn = child_process.spawn(`${backend}/virtual_environment/bin/python`, [
+			"-u",
+			`${backend}/model/transform.py`, transform_option, filename, color_hex, language_code
+		]);
 
 		spawn.stderr.on("data", (data) => {
 			const python_stderr = data.toString();
@@ -167,7 +170,12 @@ io.on("connect", (socket) => {
 			}
 			
 			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
-				const spawn = child_process.spawn("gs", ["-o", `${backend}/tempfiles/${filename}_no_text.pdf`, "-sDEVICE=pdfwrite", "-dFILTERTEXT", `${backend}/tempfiles/${filename}_in.pdf`]);
+				const spawn = child_process.spawn("gs", [
+					"-o", `${backend}/tempfiles/${filename}_no_text.pdf`,
+					"-sDEVICE=pdfwrite",
+					"-dFILTERTEXT",
+					`${backend}/tempfiles/${filename}_in.pdf`
+				]);
 
 				spawn.on("exit", (exit_code) => {
 					if (exit_code != 0 && queue[socket.id]) {
@@ -181,7 +189,10 @@ io.on("connect", (socket) => {
 						return;
 					}
 
-					const spawn = child_process.spawn("java", ["-classpath", `${backend}/vendor/pdfbox CLI tool — v=2.0.22.jar`, `${backend}/model/overlay.java`, transform_option, filename]);
+					const spawn = child_process.spawn("java", [
+						"-classpath", `${backend}/vendor/pdfbox CLI tool — v=2.0.22.jar`,
+						`${backend}/model/overlay.java`, transform_option, filename
+					]);
 		
 					spawn.stderr.on("data", (data) => {
 						const java_stderr = data.toString();
