@@ -40,7 +40,7 @@
 		queue_position_text,
 		queue_position_wrapper,
 		dl
-	] = [null];
+	] = [];
 	svelte.onMount(() => {
 		globals_r.socket.emit("navigation", "index");
 

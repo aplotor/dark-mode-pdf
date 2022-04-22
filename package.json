@@ -1,8 +1,4 @@
 {
-	"author": "jc9108",
-	"name": "dark-mode-pdf",
-	"repository": "github:jc9108/dark-mode-pdf",
-	"license": "MIT",
 	"scripts": {
 		"dev": "concurrently --names \"backend,frontend\" --prefix \"{name}:\" --prefix-colors \"#f2caff,#61f2f2\" \"cd ./backend/ && npm run dev\" \"wait-on tcp:1201 && cd ./frontend/ && npm run dev\"",
 		"build": "cd ./frontend/ && npm run build",
