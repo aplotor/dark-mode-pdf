@@ -7,14 +7,20 @@
 		"prod_restart": "pm2 restart ./controller/server.mjs"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.15"
+		"axios": "^0.26.1",
+		"express": "^4.18.1",
+		"express-fileupload": "^1.4.0",
+		"nodemon": "^2.0.16",
+		"pg": "^8.7.3",
+		"socket.io": "^4.5.1",
+		"socket.io-client": "^4.5.1"
 	},
 	"dependencies": {
 		"axios": "^0.26.1",
-		"express": "^4.17.3",
-		"express-fileupload": "^1.3.1",
+		"express": "^4.18.1",
+		"express-fileupload": "^1.4.0",
 		"pg": "^8.7.3",
-		"socket.io": "^4.4.1",
-		"socket.io-client": "^4.4.1"
+		"socket.io": "^4.5.1",
+		"socket.io-client": "^4.5.1"
 	}
 }

@@ -113,8 +113,12 @@ io.on("connect", (socket) => {
 
 		if (Object.keys(queue).length > 1) {
 			io.to(socket.id).emit("message", "other job in progress");
-			setTimeout(() => io.to(socket.id).emit("message", "your job has been queued"), 1000);
-			setTimeout(() => io.to(socket.id).emit("message", "please wait..."), 2000);
+			setTimeout(() => {
+				io.to(socket.id).emit("message", "your job has been queued");
+			}, 1000);
+			setTimeout(() => {
+				io.to(socket.id).emit("message", "please wait...");
+			}, 2000);
 		}
 
 		try {
