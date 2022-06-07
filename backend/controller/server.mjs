@@ -104,7 +104,7 @@ io.on("connect", (socket) => {
 		sql.add_visit().catch((err) => console.error(err));
 	});
 
-	socket.on("enqueue", async (filename, transform_option, color_hex, language_code) => {
+	socket.on("enqueue", async (filename, transform_option, text_color_hex, gradient_tone_hex, language_code) => {
 		queue[socket.id] = {
 			filename: filename,
 			interval_id: null,
@@ -145,7 +145,7 @@ io.on("connect", (socket) => {
 
 		const spawn = child_process.spawn(`${backend}/virtual_environment/bin/python`, [
 			"-u",
-			`${backend}/model/transform.py`, transform_option, filename, color_hex, language_code
+			`${backend}/model/transform.py`, transform_option, filename, text_color_hex, gradient_tone_hex, language_code
 		]);
 
 		spawn.stderr.on("data", (data) => {

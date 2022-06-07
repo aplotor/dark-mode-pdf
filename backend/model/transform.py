@@ -17,7 +17,9 @@ filename = sys.argv[2]
 # print(filename)
 text_color = PIL.ImageColor.getcolor(sys.argv[3], "RGB")
 # print(text_color)
-language_code = sys.argv[4]
+gradient_tone = (None if sys.argv[4] == "null" else PIL.ImageColor.getcolor(sys.argv[4], "RGB"))
+# print(gradient_tone)
+language_code = sys.argv[5]
 # print(language_code)
 
 print("accepting input pdf")
@@ -81,7 +83,7 @@ else:
 		for image in images:
 			image = PIL.ImageOps.grayscale(image)
 			image = PIL.ImageOps.invert(image)
-			image = PIL.ImageOps.colorize(image, black=(43,43,43), white=text_color)
+			image = PIL.ImageOps.colorize(image, black=(43,43,43), mid=gradient_tone, white=text_color)
 			image.save(f"{temp_dir}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
 			image.close() # release memory (method seems to be bugged; memory leaks from this loop (till this python spawn process exits))
 			print("done 1 page") if i==1 else print(f"done {i} pages")

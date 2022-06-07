@@ -21,24 +21,28 @@
 		file_input,
 		file_input_label,
 		terminal,
-		post_terminal_space,
 		messages,
+		post_terminal_space,
+		jobs_queued_text,
+		jobs_queued_wrapper,
+		queue_position_text,
+		queue_position_wrapper,
 		no_ocr_dark_radio,
 		ocr_dark_radio,
 		dim_radio,
 		retain_img_colors_checkbox,
 		text_color_checkbox_1,
 		text_color_checkbox_2,
-		color_picker_1,
-		color_picker_2,
+		text_color_picker_1,
+		text_color_picker_2,
+		gradient_tone_checkbox_1,
+		gradient_tone_checkbox_2,
+		gradient_tone_picker_1,
+		gradient_tone_picker_2,
 		language_checkbox,
 		language_select,
 		language_select_btn,
 		language_select_dropdown,
-		jobs_queued_text,
-		jobs_queued_wrapper,
-		queue_position_text,
-		queue_position_wrapper,
 		dl
 	] = [];
 	svelte.onMount(() => {
@@ -94,10 +98,14 @@
 			text_color_checkbox_1.checked = true;
 			text_color_checkbox_2.disabled = true;
 			text_color_checkbox_2.checked = false;
+			gradient_tone_checkbox_1.disabled = false;
+			gradient_tone_checkbox_1.checked = false;
+			gradient_tone_checkbox_2.disabled = true;
+			gradient_tone_checkbox_2.checked = false;
 			retain_img_colors_checkbox.disabled = false;
+			retain_img_colors_checkbox.checked = false;
 			language_checkbox.disabled = true;
 			language_checkbox.checked = false;
-
 		});
 
 		ocr_dark_radio.addEventListener("click", (evt) => {
@@ -105,6 +113,10 @@
 			text_color_checkbox_2.checked = true;
 			text_color_checkbox_1.disabled = true;
 			text_color_checkbox_1.checked = false;
+			gradient_tone_checkbox_1.disabled = true;
+			gradient_tone_checkbox_1.checked = false;
+			gradient_tone_checkbox_2.disabled = false;
+			gradient_tone_checkbox_2.checked = false;
 			retain_img_colors_checkbox.disabled = true;
 			retain_img_colors_checkbox.checked = false;
 			language_checkbox.disabled = false;
@@ -116,6 +128,10 @@
 			text_color_checkbox_1.checked = false;
 			text_color_checkbox_2.disabled = true;
 			text_color_checkbox_2.checked = false;
+			gradient_tone_checkbox_1.disabled = true;
+			gradient_tone_checkbox_1.checked = false;
+			gradient_tone_checkbox_2.disabled = true;
+			gradient_tone_checkbox_2.checked = false;
 			retain_img_colors_checkbox.disabled = true;
 			retain_img_colors_checkbox.checked = false;
 			language_checkbox.disabled = true;
@@ -228,11 +244,18 @@
 					let transform_option = document.querySelector('input[name="transform_option"]:checked').value.replace("_radio", "");
 					(transform_option == "no_ocr_dark" && retain_img_colors_checkbox.checked ? transform_option = "no_ocr_dark_retain_img_colors" : null);
 
-					const color_hex = (text_color_checkbox_1.checked ? color_picker_1.value : color_picker_2.value);
+					const text_color_hex = (text_color_checkbox_1.checked ? text_color_picker_1.value : text_color_picker_2.value);
+
+					let gradient_tone_hex = null;
+					if (gradient_tone_checkbox_1.checked) {
+						gradient_tone_hex = gradient_tone_picker_1.value;
+					} else if (gradient_tone_checkbox_2.checked) {
+						gradient_tone_hex = gradient_tone_picker_2.value;
+					}
 
 					const language_code = (language_select.value == "" ? "eng" : language_select.value);
 					
-					globals_r.socket.emit("enqueue", filename, transform_option, color_hex, language_code);
+					globals_r.socket.emit("enqueue", filename, transform_option, text_color_hex, gradient_tone_hex, language_code);
 
 					queue_position_text.classList.remove("d-none");
 				}
@@ -331,7 +354,11 @@
 				</div>
 				<div class="form-check ml-3 d-flex align-items-center">
 					<input bind:this={text_color_checkbox_1} id="text_color_checkbox_1" class="form-check-input" type="checkbox" checked/>
-					<label class="form-check-label" for="text_color_checkbox_1">+ text color: <input bind:this={color_picker_1} type="color" value="#ffffff"/></label>
+					<label class="form-check-label" for="text_color_checkbox_1">+ text color: <input bind:this={text_color_picker_1} type="color" value="#ffffff"/></label>
+				</div>
+				<div class="form-check ml-3 d-flex align-items-center">
+					<input bind:this={gradient_tone_checkbox_1} id="gradient_tone_checkbox_1" class="form-check-input" type="checkbox"/>
+					<label class="form-check-label" for="gradient_tone_checkbox_1">+ gradient tone: <input bind:this={gradient_tone_picker_1} type="color" value="#f2caff"/></label>
 				</div>
 				<div class="form-check ml-3">
 					<input bind:this={retain_img_colors_checkbox} id="retain_img_colors_checkbox" class="form-check-input" type="checkbox"/>
@@ -343,7 +370,11 @@
 				</div>
 				<div class="form-check ml-3 d-flex align-items-center">
 					<input bind:this={text_color_checkbox_2} id="text_color_checkbox_2" class="form-check-input" type="checkbox" disabled/>
-					<label class="form-check-label" for="text_color_checkbox_2">+ text color: <input bind:this={color_picker_2} type="color" value="#ffffff"/></label>
+					<label class="form-check-label" for="text_color_checkbox_2">+ text color: <input bind:this={text_color_picker_2} type="color" value="#ffffff"/></label>
+				</div>
+				<div class="form-check ml-3 d-flex align-items-center">
+					<input bind:this={gradient_tone_checkbox_2} id="gradient_tone_checkbox_2" class="form-check-input" type="checkbox" disabled/>
+					<label class="form-check-label" for="gradient_tone_checkbox_2">+ gradient tone: <input bind:this={gradient_tone_picker_2} type="color" value="#f2caff"/></label>
 				</div>
 				<div class="form-check ml-3">
 					<input bind:this={language_checkbox} id="language_checkbox" class="form-check-input" type="checkbox" disabled/>
