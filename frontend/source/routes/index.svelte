@@ -273,11 +273,11 @@
 		globals_r.socket.off("download");
 	});
 
-	function handle_window_click(evt) {
+	function handle_body_click(evt) {
 		(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
 	}
 
-	function handle_window_keydown(evt) {
+	function handle_body_keydown(evt) {
 		setTimeout(() => {
 			const no_results = document.getElementsByClassName("no-results")[0];
 			(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
@@ -323,7 +323,7 @@
 	}
 </script>
 
-<svelte:window on:click={handle_window_click} on:keydown={handle_window_keydown}/>
+<svelte:body on:click={handle_body_click} on:keydown={handle_body_keydown}/>
 <svelte:head>
 	<title>{globals_r.app_name}</title>
 	<meta name="description" content={globals_r.description}/>

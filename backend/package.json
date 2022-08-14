@@ -7,7 +7,7 @@
 		"prod_restart": "pm2 restart ./controller/server.mjs"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.16"
+		"nodemon": "^2.0.19"
 	},
 	"dependencies": {
 		"axios": "^0.26.1",
