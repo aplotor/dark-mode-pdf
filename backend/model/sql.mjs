@@ -34,19 +34,6 @@ async function init_db() {
 	}
 
 	await client.query(`
-		create table if not exists visit (
-			id int primary key, 
-			count int not null
-		);
-	`);
-	console.log("created table (visit) if not exist");
-	await client.query(`
-		insert into visit 
-		values (0, 0) 
-		on conflict do nothing;
-	`);
-
-	await client.query(`
 		create table if not exists conversion (
 			id int primary key, 
 			count int not null
@@ -93,14 +80,6 @@ async function query(query) {
 	return rows;
 }
 
-async function add_visit() {
-	await query(`
-		update visit 
-		set count = count+1 
-		where id = 0;
-	`);
-}
-
 async function add_conversion() {
 	await query(`
 		update conversion 
@@ -112,6 +91,5 @@ async function add_conversion() {
 export {
 	init_db,
 	cycle_backup_db,
-	add_visit,
 	add_conversion
 };

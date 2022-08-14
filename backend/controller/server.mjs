@@ -100,8 +100,6 @@ io.on("connect", (socket) => {
 			default:
 				break;
 		}
-
-		sql.add_visit().catch((err) => console.error(err));
 	});
 
 	socket.on("enqueue", async (filename, transform_option, text_color_hex, gradient_tone_hex, language_code) => {
@@ -173,65 +171,71 @@ io.on("connect", (socket) => {
 				return;
 			}
 			
-			if (transform_option == "no_ocr_dark" || transform_option == "no_ocr_dark_retain_img_colors") {
-				const spawn = child_process.spawn("gs", [
-					"-o", `${backend}/tempfiles/${filename}_no_text.pdf`,
-					"-sDEVICE=pdfwrite",
-					"-dFILTERTEXT",
-					`${backend}/tempfiles/${filename}_in.pdf`
-				]);
-
-				spawn.on("exit", (exit_code) => {
-					if (exit_code != 0 && queue[socket.id]) {
-						console.error(`error: spawn process exited with code ${exit_code}`);
-						io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
-
-						file.purge(queue[socket.id].filename).catch((err) => null);
-						queue[socket.id].reject("spawn error");
-						delete queue[socket.id];
-
-						return;
-					}
-
-					const spawn = child_process.spawn("java", [
-						"-classpath", `${backend}/vendor/pdfbox CLI tool — v=2.0.22.jar`,
-						`${backend}/model/overlay.java`, transform_option, filename
+			switch (transform_option) {
+				case "no_ocr_dark":
+				case "no_ocr_dark_retain_img_colors":
+					const spawn = child_process.spawn("gs", [
+						"-o", `${backend}/tempfiles/${filename}_no_text.pdf`,
+						"-sDEVICE=pdfwrite",
+						"-dFILTERTEXT",
+						`${backend}/tempfiles/${filename}_in.pdf`
 					]);
-		
-					spawn.stderr.on("data", (data) => {
-						const java_stderr = data.toString();
-						console.error(java_stderr);
-					});
-			
-					spawn.stdout.on("data", (data) => {
-						const java_stdout = data.toString();
-						if (java_stdout != "\n") {
-							console.log(java_stdout);
-							io.to(socket.id).emit("message", java_stdout);
-						}
-					});
-			
+	
 					spawn.on("exit", (exit_code) => {
 						if (exit_code != 0 && queue[socket.id]) {
 							console.error(`error: spawn process exited with code ${exit_code}`);
 							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
-
+	
 							file.purge(queue[socket.id].filename).catch((err) => null);
 							queue[socket.id].reject("spawn error");
 							delete queue[socket.id];
-
+	
 							return;
 						}
-						
-						sql.add_conversion().catch((err) => console.error(err));
-						
-						io.to(socket.id).emit("download", filename);
-					});
-				});
-			} else {
-				sql.add_conversion().catch((err) => console.error(err));
+	
+						const spawn = child_process.spawn("java", [
+							"-classpath", `${backend}/vendor/pdfbox CLI tool — v=2.0.22.jar`,
+							`${backend}/model/overlay.java`, transform_option, filename
+						]);
+			
+						spawn.stderr.on("data", (data) => {
+							const java_stderr = data.toString();
+							console.error(java_stderr);
+						});
 				
-				io.to(socket.id).emit("download", filename);
+						spawn.stdout.on("data", (data) => {
+							const java_stdout = data.toString();
+							if (java_stdout != "\n") {
+								console.log(java_stdout);
+								io.to(socket.id).emit("message", java_stdout);
+							}
+						});
+				
+						spawn.on("exit", (exit_code) => {
+							if (exit_code != 0 && queue[socket.id]) {
+								console.error(`error: spawn process exited with code ${exit_code}`);
+								io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
+	
+								file.purge(queue[socket.id].filename).catch((err) => null);
+								queue[socket.id].reject("spawn error");
+								delete queue[socket.id];
+	
+								return;
+							}
+							
+							sql.add_conversion().catch((err) => console.error(err));
+							
+							io.to(socket.id).emit("download", filename);
+						});
+					});
+
+					break;
+				default:
+					sql.add_conversion().catch((err) => console.error(err));
+				
+					io.to(socket.id).emit("download", filename);
+					
+					break;
 			}
 		});
 	});
@@ -256,10 +260,6 @@ app_socket.on("store all apps urls", (urls) => {
 
 app_socket.on("update domain request info", (info) => {
 	io.emit("update domain request info", domain_request_info = info);
-});
-
-app_socket.on("update countdown", (countdown) => {
-	io.emit("update countdown", countdown);
 });
 
 app_socket.connect();
