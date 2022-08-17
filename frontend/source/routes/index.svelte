@@ -85,19 +85,6 @@
 		language_select_btn = document.querySelector(".bs-placeholder");
 		language_select_dropdown = document.querySelector(".bootstrap-select");
 
-		document.body.addEventListener("click", (evt) => {
-			(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
-		});
-
-		document.body.addEventListener("keydown", (evt) => {
-			setTimeout(() => {
-				const no_results = document.querySelector(".no-results");
-				(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
-		
-				(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
-			}, 100);
-		});
-
 		language_select_btn.addEventListener("click", (evt) => {
 			(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
 		});
@@ -286,6 +273,19 @@
 		globals_r.socket.off("download");
 	});
 
+	function handle_body_click(evt) {
+		(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
+	}
+
+	function handle_body_keydown(evt) {
+		setTimeout(() => {
+			const no_results = document.querySelector(".no-results");
+			(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
+
+			(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
+		}, 100);
+	}
+
 	function output_message(message) {
 		messages.insertAdjacentHTML("beforeend", `
 			<p class="mb-1">> ${message}</p>
@@ -323,6 +323,7 @@
 	}
 </script>
 
+<svelte:body on:click={handle_body_click} on:keydown={handle_body_keydown}/>
 <svelte:head>
 	<title>{globals_r.app_name}</title>
 	<meta name="description" content={globals_r.description}/>
