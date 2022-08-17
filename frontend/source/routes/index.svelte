@@ -82,8 +82,21 @@
 		});
 
 		jQuery(language_select).selectpicker();
-		language_select_btn = document.getElementsByClassName("bs-placeholder")[0];
-		language_select_dropdown = document.getElementsByClassName("bootstrap-select")[0];
+		language_select_btn = document.querySelector(".bs-placeholder");
+		language_select_dropdown = document.querySelector(".bootstrap-select");
+
+		document.body.addEventListener("click", (evt) => {
+			(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
+		});
+
+		document.body.addEventListener("keydown", (evt) => {
+			setTimeout(() => {
+				const no_results = document.querySelector(".no-results");
+				(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
+		
+				(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
+			}, 100);
+		});
 
 		language_select_btn.addEventListener("click", (evt) => {
 			(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
@@ -139,7 +152,7 @@
 		});
 		
 		convert_btn.addEventListener("click", async (evt) => {
-			const alert_message_wrapper = document.getElementById("alert_message_wrapper");
+			const alert_message_wrapper = document.querySelector("#alert_message_wrapper");
 			if (alert_message_wrapper) {
 				const alert_message = alert_message_wrapper.innerHTML;
 				if (alert_message == "file uploaded" || alert_message == "current job incomplete") {
@@ -273,19 +286,6 @@
 		globals_r.socket.off("download");
 	});
 
-	function handle_body_click(evt) {
-		(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
-	}
-
-	function handle_body_keydown(evt) {
-		setTimeout(() => {
-			const no_results = document.getElementsByClassName("no-results")[0];
-			(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
-
-			(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
-		}, 100);
-	}
-
 	function output_message(message) {
 		messages.insertAdjacentHTML("beforeend", `
 			<p class="mb-1">> ${message}</p>
@@ -293,7 +293,7 @@
 	}
 
 	function remove_blinking_caret() {
-		messages.removeChild(document.getElementById("gt_sign"));
+		messages.removeChild(document.querySelector("#gt_sign"));
 	}
 
 	function add_blinking_caret() {
@@ -323,7 +323,6 @@
 	}
 </script>
 
-<svelte:body on:click={handle_body_click} on:keydown={handle_body_keydown}/>
 <svelte:head>
 	<title>{globals_r.app_name}</title>
 	<meta name="description" content={globals_r.description}/>

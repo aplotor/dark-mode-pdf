@@ -101,7 +101,7 @@ match option:
 			for num in range(2, i):
 				images.append(PIL.Image.open(f"{temp_dir}/image_{str(num)}.jpg"))
 			match option:
-				case "no_ocr_dark"|"no_ocr_dark_retain_img_colors":
+				case "no_ocr_dark" | "no_ocr_dark_retain_img_colors":
 					image_1.save(f"{backend}/tempfiles/{filename}_temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
 				case "ocr_dark":
 					image_1.save(f"{temp_dir}/temp.pdf", format="PDF", append_images=images, save_all=True, title="", resolution=300) # resolution affects page dimensions, not file size. match resolution with dpi
