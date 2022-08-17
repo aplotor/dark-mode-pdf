@@ -6,11 +6,10 @@
 	const globals_r = globals.readonly;
 </script>
 <script>
-	let filesize_limit = null;
-	let page_limit = null;
-	let queue_length = null;
-
 	let [
+		filesize_limit,
+		page_limit,
+		queue_length,
 		convert_btn,
 		loading_btn,
 		cancel_btn,
@@ -45,6 +44,56 @@
 		language_select_dropdown,
 		dl
 	] = [];
+
+	function handle_body_click(evt) {
+		(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
+	}
+
+	function handle_body_keydown(evt) {
+		setTimeout(() => {
+			const no_results = document.querySelector(".no-results");
+			(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
+
+			(language_select_dropdown && typeof language_select_dropdown != "number" && !language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
+		}, 100);
+	}
+
+	function output_message(message) {
+		messages.insertAdjacentHTML("beforeend", `
+			<p class="mb-1">> ${message}</p>
+		`);
+	}
+
+	function remove_blinking_caret() {
+		messages.removeChild(document.querySelector("#gt_sign"));
+	}
+
+	function add_blinking_caret() {
+		messages.insertAdjacentHTML("beforeend", `
+			<p id="gt_sign" class="mb-1">> <span id="blinking_caret">|</span></p>
+		`);
+	}
+
+	function show_alert(message, type) {
+		alert_wrapper.innerHTML = `
+			<div id="alert" class="alert alert-${type} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
+				<span id="alert_message_wrapper">${message}</span>
+				<button class="close" type="button" data-dismiss="alert"><span>&times;</span></button>
+			</div>
+		`;
+	}
+
+	function reset() {
+		file_input.value = null;
+		file_input.disabled = false;
+		file_input_label.innerHTML = "choose file";
+		convert_btn.classList.remove("d-none");
+		loading_btn.classList.add("d-none");
+		cancel_btn.classList.add("d-none");
+		progress_wrapper.classList.add("d-none");
+		progress_bar.setAttribute("style", "width: 0%");
+	}
+
 	svelte.onMount(() => {
 		globals_r.socket.emit("navigation", "index");
 
@@ -272,55 +321,6 @@
 		globals_r.socket.off("message");
 		globals_r.socket.off("download");
 	});
-
-	function handle_body_click(evt) {
-		(evt.target.classList.contains("dropdown-item") || evt.target.parentElement && evt.target.parentElement.classList.contains("dropdown-item") ? language_select_btn.blur() : null);
-	}
-
-	function handle_body_keydown(evt) {
-		setTimeout(() => {
-			const no_results = document.querySelector(".no-results");
-			(no_results && !no_results.classList.contains("d-none") ? no_results.classList.add("d-none") : null);
-
-			(!language_select_dropdown.classList.contains("show") ? language_select_btn.blur() : null);
-		}, 100);
-	}
-
-	function output_message(message) {
-		messages.insertAdjacentHTML("beforeend", `
-			<p class="mb-1">> ${message}</p>
-		`);
-	}
-
-	function remove_blinking_caret() {
-		messages.removeChild(document.querySelector("#gt_sign"));
-	}
-
-	function add_blinking_caret() {
-		messages.insertAdjacentHTML("beforeend", `
-			<p id="gt_sign" class="mb-1">> <span id="blinking_caret">|</span></p>
-		`);
-	}
-
-	function show_alert(message, type) {
-		alert_wrapper.innerHTML = `
-			<div id="alert" class="alert alert-${type} alert-dismissable fade show mt-2 mb-0 py-1" role="alert">
-				<span id="alert_message_wrapper">${message}</span>
-				<button class="close" type="button" data-dismiss="alert"><span>&times;</span></button>
-			</div>
-		`;
-	}
-
-	function reset() {
-		file_input.value = null;
-		file_input.disabled = false;
-		file_input_label.innerHTML = "choose file";
-		convert_btn.classList.remove("d-none");
-		loading_btn.classList.add("d-none");
-		cancel_btn.classList.add("d-none");
-		progress_wrapper.classList.add("d-none");
-		progress_bar.setAttribute("style", "width: 0%");
-	}
 </script>
 
 <svelte:body on:click={handle_body_click} on:keydown={handle_body_keydown}/>

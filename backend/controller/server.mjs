@@ -13,6 +13,11 @@ import http from "http";
 import fileupload from "express-fileupload";
 import child_process from "child_process";
 
+let [
+	all_apps_urls,
+	domain_request_info
+] = [];
+
 const app = express();
 const app_name = "dark-mode-pdf";
 const server = http.createServer(app);
@@ -29,6 +34,10 @@ const app_socket = socket_io_client.io("http://localhost:1026", {
 	}
 });
 
+const frontend = backend.replace("backend", "frontend");
+
+const queue = {};
+
 file.init();
 file.cycle_cleanup();
 await sql.init_db();
@@ -38,11 +47,6 @@ process.nextTick(() => {
 		io.emit("update jobs queued", Object.keys(queue).length);
 	}, 100);
 });
-
-const frontend = backend.replace("backend", "frontend");
-let all_apps_urls = null;
-let domain_request_info = null;
-const queue = {};
 
 app.use(fileupload({
 	limits: {
@@ -95,7 +99,10 @@ io.on("connect", (socket) => {
 	socket.on("navigation", (route) => {
 		switch (route) {
 			case "index":
-				io.to(socket.id).emit("set limits", [secrets.filesize_limit, secrets.page_limit]);
+				io.to(socket.id).emit("set limits", [
+					secrets.filesize_limit,
+					secrets.page_limit
+				]);
 				break;
 			default:
 				break;

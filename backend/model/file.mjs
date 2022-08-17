@@ -2,6 +2,8 @@ const backend = process.cwd();
 
 import filesystem from "fs";
 
+let leftover_pdfs = [];
+
 function init() {
 	(!filesystem.existsSync(`${backend}/tempfiles/`) ? filesystem.mkdirSync(`${backend}/tempfiles/`) : null);
 }
@@ -14,8 +16,6 @@ async function purge(filename) {
 		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_out.pdf`)
 	]);
 }
-
-let leftover_pdfs = [];
 
 async function log_leftover_pdfs() {
 	const files = await filesystem.promises.readdir(`${backend}/tempfiles/`);
