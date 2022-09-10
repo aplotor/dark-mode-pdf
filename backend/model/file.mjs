@@ -2,44 +2,40 @@ const backend = process.cwd();
 
 import filesystem from "fs";
 
-let leftover_pdfs = [];
+let leftover_files = [];
 
-function init() {
-	(!filesystem.existsSync(`${backend}/tempfiles/`) ? filesystem.mkdirSync(`${backend}/tempfiles/`) : null);
+async function init() {
+	for (const dir of [`${backend}/logs/`, `${backend}/tempfiles/`]) {
+		if (filesystem.existsSync(dir)) {
+			if (process.env.RUN == "dev") {
+				const files = await filesystem.promises.readdir(dir);
+				await Promise.all(files.map((file, idx, arr) => (dir == `${backend}/logs/` ? filesystem.promises.truncate(`${dir}/${file}`.replace("//", "/"), 0) : filesystem.promises.unlink(`${dir}/${file}`.replace("//", "/")))));
+			}
+		} else {
+			filesystem.mkdirSync(dir);
+		}
+	}
 }
 
 async function purge(filename) {
-	await Promise.all([
-		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_in.pdf`),
-		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_temp.pdf`),
-		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_no_text.pdf`),
-		filesystem.promises.unlink(`${backend}/tempfiles/${filename}_out.pdf`)
-	]);
+	await Promise.all([`${filename}_in`, `${filename}_temp`, `${filename}_no_text`, `${filename}_out`].map((full_filename, idx, arr) => filesystem.promises.unlink(`${backend}/tempfiles/${full_filename}.pdf`)));
 }
 
-async function log_leftover_pdfs() {
-	const files = await filesystem.promises.readdir(`${backend}/tempfiles/`);
-	for (const file of files) {
-		(file.endsWith(".pdf") ? leftover_pdfs.push(file) : null);
-	}
-	// console.log("logged leftover pdfs");
+async function track_leftover_files() {
+	leftover_files = await filesystem.promises.readdir(`${backend}/tempfiles/`);
 }
 
-async function delete_leftover_pdfs() {
-	await Promise.all(leftover_pdfs.map((pdf) => filesystem.promises.unlink(`${backend}/tempfiles/${pdf}`)));
-	// console.log("deleted leftover pdfs");
-
-	leftover_pdfs = [];
+async function delete_leftover_files() {
+	await Promise.all(leftover_files.map((file, idx, arr) => filesystem.promises.unlink(`${backend}/tempfiles/${file}`)));
+	leftover_files = [];
 }
 
-async function cleanup(init=false) {
-	(init ? await log_leftover_pdfs() : null);
-	await delete_leftover_pdfs();
-	log_leftover_pdfs();
-	// console.log("cleanup completed");
+async function cleanup() {
+	await delete_leftover_files();
+	await track_leftover_files();
 }
 function cycle_cleanup() {
-	cleanup(true).catch((err) => console.error(err));
+	cleanup().catch((err) => console.error(err));
 
 	setInterval(() => {
 		cleanup().catch((err) => console.error(err));

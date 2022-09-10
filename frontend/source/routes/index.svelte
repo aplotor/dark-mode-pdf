@@ -95,7 +95,7 @@
 	}
 
 	svelte.onMount(() => {
-		globals_r.socket.emit("navigation", "index");
+		globals_r.socket.emit("route", "index");
 
 		globals_r.socket.on("set limits", (limits) => {
 			filesize_limit = limits[0];
@@ -217,7 +217,7 @@
 			}
 
 			try {
-				const num_pages = await new Promise((resolve, reject) => {
+				const page_count = await new Promise((resolve, reject) => {
 					const reader = new FileReader();
 					reader.readAsBinaryString(file);
 					reader.onloadend = function (evt) {
@@ -228,7 +228,7 @@
 						reject(reader.error);
 					}
 				});
-				if (num_pages > page_limit) {
+				if (page_count > page_limit) {
 					show_alert(`page limit exceeded (${page_limit})`, "warning");
 					return;
 				}
@@ -251,7 +251,7 @@
 			filename = Math.random().toString().substring(2, 17);
 
 			const data = new FormData();
-			data.append("file", file, filename);
+			data.append("pdf", file, filename);
 			
 			const request = new XMLHttpRequest();
 			request.open("post", `${globals_r.backend}/upload`);

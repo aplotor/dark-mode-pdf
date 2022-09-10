@@ -35,7 +35,7 @@ match option:
 		# initialization
 		read_inpdf = pdfrw.PdfReader(inpdf)
 		inpdf_pages = read_inpdf.pages
-		inpdf_num_pages = len(read_inpdf.pages)
+		inpdf_page_count = len(read_inpdf.pages)
 
 		# create reportlab canvas
 		print("creating canvas")
@@ -49,7 +49,7 @@ match option:
 		# set up input pdf to transfer to reportlab canvas
 		print("setting up input pdf to transfer to canvas")
 		time.sleep(0.1)
-		inpdf_pages = [pdfrw.buildxobj.pagexobj(page) for page in inpdf_pages[0:inpdf_num_pages]]
+		inpdf_pages = [pdfrw.buildxobj.pagexobj(page) for page in inpdf_pages[0:inpdf_page_count]]
 
 		# put input pdf pages onto canvas and add a dimmer layer on top of each page
 		print("dimming pages")

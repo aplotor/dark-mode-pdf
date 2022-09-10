@@ -63,9 +63,6 @@
 			<div class="text-center my-4">
 				<a href={globals_r.repo} target="_blank"><i id="bottom_gh" class="fab fa-github"></i></a>
 			</div>
-			<div class="text-center">
-				<p class="font_size_10 m-0"><a href={globals_r.gh_sponsors_url} target="_blank">sponsor this project</a></p>
-			</div>
 		</content>
 		<Footer/>
 	</div>

@@ -1,10 +1,11 @@
 const backend = process.cwd();
-const run_config = (backend.toLowerCase().startsWith("/mnt/c/") ? "dev" : "prod");
-console.log(`${run_config}: ${backend}`);
+import * as dotenv from "dotenv";
+dotenv.config({
+	path: `${backend}/.env_${process.env.RUN}`
+});
 
-const secrets = (run_config == "dev" ? (await import(`${backend}/.secrets.mjs`)).dev : (await import(`${backend}/.secrets.mjs`)).prod);
-const sql = await import(`${backend}/model/sql.mjs`);
 const file = await import(`${backend}/model/file.mjs`);
+const sql = await import(`${backend}/model/sql.mjs`);
 
 import * as socket_io_server from "socket.io";
 import * as socket_io_client from "socket.io-client";
@@ -19,18 +20,17 @@ let [
 ] = [];
 
 const app = express();
-const app_name = "dark-mode-pdf";
 const server = http.createServer(app);
 const io = new socket_io_server.Server(server, {
-	cors: (run_config == "dev" ? {origin: "*"} : null),
+	cors: (process.env.RUN == "dev" ? {origin: "*"} : null),
 	maxHttpBufferSize: 1000000 // 1mb in bytes
 });
 const app_socket = socket_io_client.io("http://localhost:1026", {
 	autoConnect: false,
 	reconnect: true,
 	extraHeaders: {
-		app: app_name,
-		secret: secrets.local_sockets_secret
+		app: "dark-mode-pdf",
+		secret: process.env.LOCAL_SOCKETS_SECRET
 	}
 });
 
@@ -38,26 +38,24 @@ const frontend = backend.replace("backend", "frontend");
 
 const queue = {};
 
-file.init();
+await file.init();
 file.cycle_cleanup();
 await sql.init_db();
 sql.cycle_backup_db();
-process.nextTick(() => {
-	setInterval(() => {
-		io.emit("update jobs queued", Object.keys(queue).length);
-	}, 100);
-});
+setInterval(() => {
+	io.emit("update jobs queued", Object.keys(queue).length);
+}, 100);
 
 app.use(fileupload({
 	limits: {
-		fileSize: secrets.filesize_limit
+		fileSize: Number.parseInt(process.env.FILESIZE_LIMIT)
 	}
 }));
 
 app.use("/", express.static(`${frontend}/build/`));
 
 app.post("/upload", (req, res) => {
-	req.files.file.mv(`${backend}/tempfiles/${req.files.file.name}_in.pdf`, (err) => (err ? console.error(err) : null));
+	(req.files.pdf ? req.files.pdf.mv(`${backend}/tempfiles/${req.files.pdf.name}_in.pdf`).catch((err) => console.error(err)) : null);
 	res.end();
 });
 
@@ -96,12 +94,12 @@ io.on("connect", (socket) => {
 		io.to(socket.id).emit("update domain request info", domain_request_info);
 	});
 
-	socket.on("navigation", (route) => {
+	socket.on("route", (route) => {
 		switch (route) {
 			case "index":
 				io.to(socket.id).emit("set limits", [
-					secrets.filesize_limit,
-					secrets.page_limit
+					Number.parseInt(process.env.FILESIZE_LIMIT),
+					Number.parseInt(process.env.PAGE_LIMIT)
 				]);
 				break;
 			default:
@@ -168,7 +166,7 @@ io.on("connect", (socket) => {
 
 		spawn.on("exit", (exit_code) => {
 			if (exit_code != 0 && queue[socket.id]) {
-				console.error(`error: spawn process exited with code ${exit_code}`);
+				console.error(`spawn process exited with code ${exit_code}`);
 				io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 
 				file.purge(queue[socket.id].filename).catch((err) => null);
@@ -190,7 +188,7 @@ io.on("connect", (socket) => {
 	
 					spawn.on("exit", (exit_code) => {
 						if (exit_code != 0 && queue[socket.id]) {
-							console.error(`error: spawn process exited with code ${exit_code}`);
+							console.error(`spawn process exited with code ${exit_code}`);
 							io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 	
 							file.purge(queue[socket.id].filename).catch((err) => null);
@@ -220,7 +218,7 @@ io.on("connect", (socket) => {
 				
 						spawn.on("exit", (exit_code) => {
 							if (exit_code != 0 && queue[socket.id]) {
-								console.error(`error: spawn process exited with code ${exit_code}`);
+								console.error(`spawn process exited with code ${exit_code}`);
 								io.to(socket.id).emit("message", `error: spawn process exited with code ${exit_code}`);
 	
 								file.purge(queue[socket.id].filename).catch((err) => null);
@@ -271,6 +269,14 @@ app_socket.on("update domain request info", (info) => {
 
 app_socket.connect();
 
-server.listen(secrets.port, secrets.host, () => {
-	console.log(`server (${app_name}) started on (localhost:${secrets.port})`);
+server.listen(Number.parseInt(process.env.PORT), "0.0.0.0", () => {
+	console.log(`server (dark-mode-pdf) started on (localhost:${process.env.PORT})`);
+});
+
+process.on("beforeExit", async (exit_code) => {
+	try {
+		await sql.pool.end();
+	} catch (err) {
+		console.error(err);
+	}
 });
