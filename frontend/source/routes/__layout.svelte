@@ -5,7 +5,6 @@
 	import * as svelte from "svelte";
 
 	const globals_r = globals.readonly;
-	const globals_w = globals.writable;
 
 	export async function load(obj) {
 		let interval_id = null;
@@ -40,19 +39,6 @@
 <script>
 	svelte.onMount(() => {
 		globals_r.socket.emit("layout mounted");
-
-		globals_r.socket.on("store all apps urls", (all_apps_urls) => {
-			$globals_w.all_apps_urls = all_apps_urls;
-
-			if (window.location.hostname.startsWith("192.168.")) {
-				for (const app_name in all_apps_urls) {
-					$globals_w.all_apps_urls[app_name].link = all_apps_urls[app_name].link.replace("localhost", window.location.hostname);
-				}
-			}
-		});
-	});
-	svelte.onDestroy(() => {
-		globals_r.socket.off("store all apps urls");
 	});
 </script>
 

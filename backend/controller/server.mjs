@@ -14,10 +14,7 @@ import http from "http";
 import fileupload from "express-fileupload";
 import child_process from "child_process";
 
-let [
-	all_apps_urls,
-	domain_request_info
-] = [];
+let domain_request_info = null;
 
 const app = express();
 const server = http.createServer(app);
@@ -89,8 +86,6 @@ io.on("connect", (socket) => {
 	console.log(`socket (${socket.id}) connected`);
 
 	socket.on("layout mounted", () => {
-		io.to(socket.id).emit("store all apps urls", all_apps_urls);
-
 		io.to(socket.id).emit("update domain request info", domain_request_info);
 	});
 
@@ -257,10 +252,6 @@ io.on("connect", (socket) => {
 
 app_socket.on("connect", () => {
 	console.log("connected as client to portals (localhost:1026)");
-});
-
-app_socket.on("store all apps urls", (urls) => {
-	all_apps_urls = urls;
 });
 
 app_socket.on("update domain request info", (info) => {
