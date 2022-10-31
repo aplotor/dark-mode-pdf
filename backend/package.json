@@ -6,15 +6,15 @@
 		"prod_stop": "pm2 stop ./controller/server.mjs"
 	},
 	"devDependencies": {
-		"nodemon": "2.0.19"
+		"nodemon": "2.0.20"
 	},
 	"dependencies": {
 		"axios": "0.26.1",
-		"dotenv": "16.0.2",
-		"express": "4.18.1",
+		"dotenv": "16.0.3",
+		"express": "4.18.2",
 		"express-fileupload": "1.4.0",
-		"pg": "8.7.3",
-		"socket.io": "4.5.1",
-		"socket.io-client": "4.5.1"
+		"pg": "8.8.0",
+		"socket.io": "4.5.3",
+		"socket.io-client": "4.5.3"
 	}
 }

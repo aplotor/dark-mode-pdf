@@ -86,7 +86,7 @@ match option:
 				image = PIL.ImageOps.invert(image)
 				image = PIL.ImageOps.colorize(image, black=(43,43,43), mid=gradient_tone, white=text_color)
 				image.save(f"{temp_dir}/image_{str(i)}.jpg", format="JPEG", progressive=True, optimize=True)
-				image.close() # release memory (method seems to be bugged; memory leaks from this loop (till this python spawn process exits))
+				image.close() # release memory (method seems to be bugged; memory leaks from this loop (freed when this python spawn process exits))
 				print("done 1 page") if i==1 else print(f"done {i} pages")
 				time.sleep(0.1)
 				i += 1

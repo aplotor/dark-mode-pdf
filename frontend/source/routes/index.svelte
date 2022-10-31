@@ -221,7 +221,7 @@
 					const reader = new FileReader();
 					reader.readAsBinaryString(file);
 					reader.onloadend = function (evt) {
-						const match = reader.result.match(/\/Type[\s]*\/Page[^s]/g);
+						const match = evt.target.result.match(/\/Type[\s]*\/Page[^s]/g);
 						(match ? resolve(match.length) : reject("no match"));
 					}
 					reader.onerror = function (evt) {
