@@ -21,6 +21,7 @@ if [ "$1" = "dev" ]; then
 elif [ "$1" = "prod" ]; then
 	if [ "$2" = "build" ]; then
 		(cd ./backend/ && npm ci)
+		(cd ./backend/ && python -m venv ./virtual_environment/ && . ./virtual_environment/bin/activate && for line in $(cat ./requirements.txt); do python -m pip install "$line"; done && deactivate)
 		cd ./frontend/ && npm ci && npm run build
 		return
 	elif [ "$2" = "up" ]; then
