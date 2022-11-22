@@ -248,7 +248,7 @@
 			progress_wrapper.classList.remove("d-none");
 			jobs_queued_text.classList.add("d-none");
 
-			filename = Math.random().toString().substring(2, 17);
+			filename = Math.random().toString().slice(2, 17);
 
 			const data = new FormData();
 			data.append("pdf", file, filename);

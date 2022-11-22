@@ -50,17 +50,17 @@ footer {
 }
 
 a {
-	color: rgb(113, 142, 183);
+	color: #718eb7;
 	text-decoration: none;
 }
 
 a:hover {
-	color: rgb(113, 142, 183);
+	color: #718eb7;
 	text-decoration: underline;
 }
 
 a:visited {
-	color: rgb(169, 110, 110);
+	color: #a96e6e;
 }
 
 .invert {
@@ -84,7 +84,7 @@ a:visited {
 }
 
 .dropdown-toggle {
-	color: rgb(113, 142, 183);
+	color: #718eb7;
 }
 
 .dropdown-toggle:focus {

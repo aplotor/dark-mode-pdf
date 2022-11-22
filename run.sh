@@ -4,12 +4,14 @@ if [ "$1" = "dev" ]; then
 	if [ "$2" = "audit" ]; then
 		(cd ./backend/ && npm audit)
 		cd ./frontend/ && npm audit
+		return
 	elif [ "$2" = "outdated" ]; then
 		(cd ./backend/ && npm outdated)
 		cd ./frontend/ && npm outdated
 		return
 	elif [ "$2" = "build" ]; then
 		(cd ./backend/ && npm install)
+		(cd ./backend/ && python -m venv ./virtual_environment/ && . ./virtual_environment/bin/activate && for line in $(cat ./requirements.txt); do python -m pip install "$line"; done && deactivate)
 		cd ./frontend/ && npm install && npm run build
 		return
 	elif [ "$2" = "up" ]; then
