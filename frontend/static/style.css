@@ -50,17 +50,17 @@ footer {
 }
 
 a {
-	color: #718eb7;
+	color: #8ab4f8;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #718eb7;
+	color: #8ab4f8;
 	text-decoration: underline;
 }
 
 a:visited {
-	color: #a96e6e;
+	color: #f28b82;
 }
 
 .invert {
@@ -84,7 +84,7 @@ a:visited {
 }
 
 .dropdown-toggle {
-	color: #718eb7;
+	color: #8ab4f8;
 }
 
 .dropdown-toggle:focus {
