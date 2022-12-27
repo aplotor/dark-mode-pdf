@@ -1,4 +1,4 @@
-wheel==0.37.1
+wheel==0.38.1
 sip==6.5.1
 pillow==9.3.0
 ghostscript==0.7
